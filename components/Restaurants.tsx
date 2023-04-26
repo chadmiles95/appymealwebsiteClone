@@ -68,7 +68,7 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
                     () => null
                     //go to individual restaurant page
                   }
-                  className="w-20 h-9 bg-primary text-white rounded-full flex gap-1 items-center justify-center hover:bg-[#004f9a] duration-300"
+                  className="w-20 h-9 bg-primary text-white rounded-full flex gap-1 items-center justify-center hover:bg-muted duration-300"
                 >
                   <span>
                     <GoPlus />
@@ -86,18 +86,10 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
                   }}
                   as={`restaurants/${restaurant.name}`}
                 >
-                  <button className="w-24 h-9 bg-white border-[1px] border-black text-black   rounded-full flex items-center justify-center gap-1 hover:bg-black hover:text-white duration-300">
+                  <button className="w-24 h-9 bg-white border-[1px] border-black text-black   rounded-full flex items-center justify-center gap-1 hover:bg-secondary hover:text-white duration-300">
                     Details
                   </button>
                 </Link>
-              </div>
-              <div className="flex items-center gap-3 ">
-                <p className="font-titleFont text-lg text-green-700 font-semibold">
-                  Now $80.80
-                </p>
-                <p className="text-gray-500 line-through decoration-[1px]">
-                  $80.80
-                </p>
               </div>
 
               <p className="text-lg font-semibold py-2">
