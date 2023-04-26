@@ -1,22 +1,54 @@
-import React from "react";
-import { Item } from "../type";
+// components/Restaurants.tsx
+import React, { useState, useEffect } from "react";
+import { Restaurant } from "../type";
 import Image from "next/image";
 import { GoPlus } from "react-icons/go";
 import { BsStarFill } from "react-icons/bs";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../redux/shoppersSlice";
 import toast, { Toaster } from "react-hot-toast";
+import { db } from "../pages/_app";
+import { collection, onSnapshot } from "firebase/firestore";
 
-const Products = ({ productData }: any) => {
+type RestaurantsProps = {
+  // If you have any props, you can define their types here
+};
+
+console.log("page trigs");
+
+const Restaurants: React.FC<RestaurantsProps> = () => {
   const dispatch = useDispatch();
+  const [restaurantData, setRestaurantData] = useState<Restaurant[]>([]);
+
+  console.log("restaurantData", restaurantData);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "restaurants"),
+      (snapshot) => {
+        const restaurants: Restaurant[] = snapshot.docs.map((doc) => ({
+          // Use the Restaurant interface here
+          ...doc.data(),
+          id: doc.id,
+        })) as Restaurant[];
+        setRestaurantData(restaurants);
+      }
+    );
+
+    // Clean up the listener on component unmount
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  console.log(restaurantData);
 
   return (
     <div className="py-6 px-4 grid grid-cols-4 gap-4">
-      {productData.map((item: Item) => {
+      {restaurantData.map((restaurant: Restaurant) => {
         return (
           <div
-            key={item._id}
+            key={restaurant.name}
             className="border-[1px] border-gray-200 mb-6 group"
           >
             <div className="w-full h-[350px] overflow-hidden p-1">
@@ -24,7 +56,7 @@ const Products = ({ productData }: any) => {
                 className="w-full h-full object-contain scale-100 group-hover:scale-105"
                 width={300}
                 height={250}
-                src={item.image}
+                src={restaurant.photo}
                 alt="itemImage"
               />
             </div>
@@ -32,48 +64,27 @@ const Products = ({ productData }: any) => {
             <div className="px-2 py-4 flex flex-col  justify-center">
               <div className="flex justify-between py-2">
                 <button
-                  onClick={() =>
-                    dispatch(
-                      addToCart({
-                        _id: item._id,
-                        title: item.title,
-                        description: item.description,
-                        price: item.price,
-                        oldPrice: item.oldPrice,
-                        brand: item.brand,
-                        category: item.category,
-                        image: item.image,
-                        isNew: item.isNew,
-                        quantity: 1,
-                      })
-                    ) &&
-                    toast.success(
-                      `${item.title.substring(0, 20)} is added to cart`
-                    )
+                  onClick={
+                    () => null
+                    //go to individual restaurant page
                   }
                   className="w-20 h-9 bg-blue text-white rounded-full flex gap-1 items-center justify-center hover:bg-[#004f9a] duration-300"
                 >
                   <span>
                     <GoPlus />
                   </span>
-                  Add
+                  See Menu
                 </button>
                 <Link
                   href={{
-                    pathname: `product/${item._id}`,
+                    pathname: `restaurants/${restaurant.name}`,
                     query: {
-                      _id: item._id,
-                      title: item.title,
-                      description: item.description,
-                      price: item.price,
-                      oldPrice: item.oldPrice,
-                      brand: item.brand,
-                      category: item.category,
-                      image: item.image,
-                      isNew: item.isNew,
+                      name: restaurant.name,
+                      description: restaurant.desc,
+                      photo: restaurant.photo,
                     },
                   }}
-                  as={`product/${item._id}`}
+                  as={`restaurants/${restaurant.name}`}
                 >
                   <button className="w-24 h-9 bg-white border-[1px] border-black text-black   rounded-full flex items-center justify-center gap-1 hover:bg-black hover:text-white duration-300">
                     Details
@@ -82,18 +93,18 @@ const Products = ({ productData }: any) => {
               </div>
               <div className="flex items-center gap-3 ">
                 <p className="font-titleFont text-lg text-green-700 font-semibold">
-                  Now ${item.price}
+                  Now $80.80
                 </p>
                 <p className="text-gray-500 line-through decoration-[1px]">
-                  ${item.oldPrice}
+                  $80.80
                 </p>
               </div>
 
               <p className="text-lg font-semibold py-2">
-                {item.title.substring(0, 25)}
+                {restaurant.name.substring(0, 25)}
               </p>
               <p className="text-base text-zinc-500">
-                {item.description.substring(0, 80)}...
+                {restaurant.desc.substring(0, 80)}...
               </p>
               <div className="flex gap-2 items-center text-sm mt-2">
                 <div className="flex text-sm gap-1">
@@ -124,4 +135,4 @@ const Products = ({ productData }: any) => {
   );
 };
 
-export default Products;
+export default Restaurants;

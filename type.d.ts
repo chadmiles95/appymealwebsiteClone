@@ -11,6 +11,42 @@ export interface Product {
 }
 [];
 
+export interface Restaurant {
+  id: string;
+  name: string;
+  username: string;
+  city: string;
+  zip: string;
+  state: string;
+  desc: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  hours: object;
+  lat: number;
+  lng: number;
+  accountType: string;
+  menus: object;
+  isOpen: boolean;
+  isShowing: boolean;
+  createdAt: string;
+  photo: string;
+  location: object;
+  viewport: object;
+  fanDiscount: number;
+  fanCount: number;
+  images: any[];
+  fans: any[];
+  enableFans: boolean;
+  enableDelivery: boolean;
+  enablePrinting: boolean;
+  deliveryType: object;
+  expectedWaitTime: number;
+}
+[];
+
+const restaurants: Restaurant[] = [];
+
 export interface Item {
   _id: number;
   title: string;
