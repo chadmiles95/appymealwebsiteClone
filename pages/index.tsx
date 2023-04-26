@@ -16,7 +16,7 @@ export default function Home({ productData }: Props) {
   return (
     <>
       <Head>
-        <title>Appymeal.com | Local Love</title>
+        <title>Appymeal.com | Order Now</title>
         <meta name="description" content="AppyMeal Online Ordering" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/smallLogo.ico.png" />
@@ -24,7 +24,7 @@ export default function Home({ productData }: Props) {
       <main className="bg-lightBlue">
         <div className="max-w-contentContainer mx-auto bg-white">
           <Banner />
-          <Products productData={productData} />
+          {/* <Products productData={productData} /> */}
           <Restaurants />
         </div>
       </main>

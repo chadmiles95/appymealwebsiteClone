@@ -30,6 +30,11 @@ module.exports = {
         yellow: "#ffc220",
         hoverBg: "#004f9a",
         lightText: "#46474a",
+        primary: "#BF1F2E",
+        secondary: "#CC4C58",
+        muted: "#D97982",
+        preparing: "yellow",
+        gray: "#CAD2C5",
       },
       boxShadow: {
         bannerShadow: "0px 1px 2px 1px #00000026",

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { addUser, removeUser } from "../redux/shoppersSlice";
+import { colors } from "../infastructure/theme/colors";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -44,7 +45,7 @@ const Navbar = () => {
   }, [productData]);
 
   return (
-    <div className="w-full bg-blue text-white sticky top-0 z-50">
+    <div className="w-full bg-primary text-white sticky top-0 z-50">
       <div className="w-full h-full border-b-[1px] border-b-white">
         <div className="max-w-container mx-auto h-20 px-4 flex items-center justify-between gap-2">
           {/* LOGO */}
@@ -128,7 +129,7 @@ const Navbar = () => {
             </div>
           </div> */}
           <Link href="/cart">
-            <div className="flex flex-col justify-center items-center gap-2 h-12 px-5 rounded-full bg-transparent hover:bg-hoverBg duration-300 relative">
+            <div className="flex flex-col justify-center items-center gap-2 h-12 px-5 rounded-full bg-transparent hover:bg-secondary duration-300 relative">
               <BsCart2 className="text-2xl" />
               <p className="text-[10px] -mt-2">${totalAmt}</p>
               <span className="absolute w-4 h-4 bg-yellow text-black top-0 right-4 rounded-full flex items-center justify-center font-bodyFont text-xs">

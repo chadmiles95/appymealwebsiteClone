@@ -68,12 +68,12 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
                     () => null
                     //go to individual restaurant page
                   }
-                  className="w-20 h-9 bg-blue text-white rounded-full flex gap-1 items-center justify-center hover:bg-[#004f9a] duration-300"
+                  className="w-20 h-9 bg-primary text-white rounded-full flex gap-1 items-center justify-center hover:bg-[#004f9a] duration-300"
                 >
                   <span>
                     <GoPlus />
                   </span>
-                  See Menu
+                  Menu
                 </button>
                 <Link
                   href={{
