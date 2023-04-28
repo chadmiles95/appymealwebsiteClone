@@ -77,8 +77,8 @@ const Navbar = () => {
                 alt="userImage"
               />
               <div>
-                <p className="text-xs">Sign Out</p>
-                <h2 className="text-base font-semibold -mt-1">
+                <p className="text-xs text-dark">Sign Out</p>
+                <h2 className="text-base font-semibold -mt-1 text-dark">
                   {userInfo.name}
                 </h2>
               </div>
