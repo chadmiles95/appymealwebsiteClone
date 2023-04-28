@@ -7,8 +7,8 @@ import { MdOutlineLocationOn } from "react-icons/md";
 
 const NavBarBottom = () => {
   return (
-    <div className="max-w-container mx-auto py-2 px-6 flex items-center justify-between">
-      <div className="flex item-center gap-4">
+    <div className="max-w-container mx-auto py-2 px-6 flex justify-end">
+      {/* <div className="flex item-center gap-4">
         <div className="flex items-center gap-2">
           <Image className="w-6" src={phoneImg} alt="phoneImg" />
           <p className="text-sm font-semibold">How do you want your items?</p>
@@ -21,16 +21,14 @@ const NavBarBottom = () => {
           <FaPlaceOfWorship />
           <p className="text-sm text-zinc-100">Sacramento Supercenter</p>
         </div>
-      </div>
+      </div> */}
       <ul className="flex gap-6 text-sm font-semibold">
-        <li className="bottomNavLi">Deals</li>
-        <li className="bottomNavLi">Easter</li>
-        <li className="bottomNavLi">Grocery & Essentials</li>
         <li className="bottomNavLi">Home</li>
-        <li className="bottomNavLi">Tech</li>
-        <li className="bottomNavLi">Fashion</li>
-        <li className="bottomNavLi">Auto</li>
-        <li className="bottomNavLi">Shoppers+</li>
+        <li className="bottomNavLi">About</li>
+        <li className="bottomNavLi">Partner</li>
+        <li className="bottomNavLi">Add Restaurant</li>
+        <li className="bottomNavLi">Download iOS App</li>
+        <li className="bottomNavLi">Download Android App</li>
       </ul>
     </div>
   );

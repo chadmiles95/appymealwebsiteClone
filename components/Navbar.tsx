@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 
-import { logo } from "../public/assets/images/index";
+import { CircleLogo } from "../public/assets/images/index";
 import { IoSearchOutline } from "react-icons/io5";
 import { AiOutlineHeart, AiOutlineUser } from "react-icons/ai";
 import { BsCart2 } from "react-icons/bs";
@@ -46,55 +46,26 @@ const Navbar = () => {
 
   return (
     <div className="w-full bg-primary text-white sticky top-0 z-50">
-      <div className="w-full h-full border-b-[1px] border-b-white">
-        <div className="max-w-container mx-auto h-20 px-4 flex items-center justify-between gap-2">
+      <div className="w-full border-b-[1px] border-b-white">
+        <div className="max-w-container h-20 mx-5 px-4 flex items-center justify-between gap-2">
           {/* LOGO */}
           <Link href="/">
             <div className="navBarHover">
-              <Image src={logo} className="w-44" alt="logo" />
+              <Image src={CircleLogo} className="w-12" alt="logo" />
+              <span>
+                <p className="font-semibold text-xl">AppyMeal</p>
+              </span>
             </div>
           </Link>
 
           {/* DEPARTMENTS */}
-          <div className="navBarHover">
-            <div className="w-4 grid grid-cols-2 gap-[2px]">
-              <span className="w-1.5 h-1.5 border-[1px] border-white inline-flex"></span>
-              <span className="w-1.5 h-1.5 border-[1px] border-white inline-flex"></span>
-              <span className="w-1.5 h-1.5 border-[1px] border-white inline-flex"></span>
-              <span className="w-1.5 h-1.5 border-[1px] border-white inline-flex"></span>
-            </div>
-            <p className="text-base font-semibold">Departments</p>
-          </div>
+          <div></div>
           {/* SERVICES */}
           <div>
-            <div className="navBarHover">
-              <div className="w-4 grid grid-cols-2 gap-[2px]">
-                <span className="w-1.5 h-1.5 rounded-md border-[1px] border-white inline-flex br-10"></span>
-                <span className="w-1.5 h-1.5 rounded-md border-[1px] border-white inline-flex"></span>
-                <span className="w-1.5 h-1.5 rounded-md border-[1px] border-white inline-flex"></span>
-                <span className="w-1.5 h-1.5 rounded-md border-[1px] border-white inline-flex"></span>
-              </div>
-              <p className="text-base font-semibold">Services</p>
-            </div>
+            <div></div>
           </div>
-          <div className="h-10 flex flex-1 relative">
-            <input
-              className="h-full w-full rounded-full px-4 text-black text-base outline-none border-[1px] border-transparent focus-visible:border-black duraction-200
-          "
-              type="text"
-              placeholder="Search everything at shoppers online and in store"
-            />
-            <span className="absolute w-8 h-8 rounded-full flex items-center justify-center top-1 right-1 bg-yellow text-black text-xl">
-              <IoSearchOutline />
-            </span>
-          </div>
-          <div className="navBarHover">
-            <AiOutlineHeart />
-            <div>
-              <p className="text-xs">Recorder</p>
-              <h2 className="text-base font-semibold -mt-1">My Items</h2>
-            </div>
-          </div>
+          <div className="h-10 flex flex-1 relative"></div>
+          <div></div>
           {/* account starts here */}
           {userInfo ? (
             <div onClick={() => signOut()} className="navBarHover">
@@ -121,13 +92,7 @@ const Navbar = () => {
               </div>
             </div>
           )}
-          {/* <div onClick={() => signIn()} className="navBarHover">
-            <AiOutlineUser />
-            <div>
-              <p className="text-xs">Sign In</p>
-              <h2 className="text-base font-semibold -mt-1">Account</h2>
-            </div>
-          </div> */}
+
           <Link href="/cart">
             <div className="flex flex-col justify-center items-center gap-2 h-12 px-5 rounded-full bg-transparent hover:bg-secondary duration-300 relative">
               <BsCart2 className="text-2xl" />

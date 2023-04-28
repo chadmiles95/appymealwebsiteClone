@@ -6,6 +6,7 @@ import Products from "../components/Products";
 import Footer from "../components/Footer";
 import TopFooter from "../components/TopFooter";
 import Restaurants from "../components/Restaurants";
+import LandingPage from "../components/LandingPage";
 
 interface Props {
   productData: Product;
@@ -22,10 +23,8 @@ export default function Home({ productData }: Props) {
         <link rel="icon" href="/smallLogo.ico.png" />
       </Head>
       <main className="bg-lightBlue">
-        <div className="max-w-contentContainer mx-auto bg-white">
-          <Banner />
-          {/* <Products productData={productData} /> */}
-          <Restaurants />
+        <div className="max-w-container mx-auto bg-white">
+          <LandingPage />
         </div>
       </main>
     </>
