@@ -14,6 +14,8 @@ import {
   browserLocalPersistence,
   initializeAuth,
 } from "firebase/auth";
+import { ThemeProvider } from "../infastructure/ThemeProvider";
+import { theme } from "../infastructure/theme";
 
 const open_sans = Open_Sans({
   subsets: ["latin"],
@@ -46,9 +48,11 @@ export default function App({
       <SessionProvider session={session}>
         <PersistGate loading={"loading"} persistor={persistor}>
           <main className={`${open_sans.variable} font-sans`}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+            <ThemeProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
           </main>
         </PersistGate>
       </SessionProvider>

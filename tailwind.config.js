@@ -34,8 +34,7 @@ module.exports = {
         secondary: "#CC4C58",
         muted: "#D97982",
         preparing: "yellow",
-        gray: "#CAD2C5",
-        dark: "#210D0D",
+        dark: "#240115",
       },
       boxShadow: {
         bannerShadow: "0px 1px 2px 1px #00000026",

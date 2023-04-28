@@ -1,9 +1,11 @@
+// infastructure/theme/index.ts
 import { colors } from "./colors";
 import { space, lineHeights } from "./spacing";
-import { sizes, iconSizes } from "./sizes";
+import { sizes } from "./sizes";
 import { fonts, fontWeights, fontSizes } from "./fonts";
+import { Theme } from "./theme.types";
 
-export const theme = {
+export const theme: Theme = {
   colors,
   space,
   lineHeights,
@@ -11,5 +13,4 @@ export const theme = {
   fonts,
   fontSizes,
   fontWeights,
-  iconSizes,
 };
