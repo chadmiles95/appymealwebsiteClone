@@ -4,10 +4,10 @@
 
 @layer components {
   .navBarHover {
-    @apply h-12 px-5 rounded-full bg-transparent flex items-center gap-2 hover:bg-secondary duration-300 cursor-pointer;
+    @apply h-14 px-5 rounded-full bg-transparent flex items-center gap-2 hover:bg-lightdark duration-300 cursor-pointer;
   }
   .bottomNavLi {
-    @apply hover:underline underline-offset-2 cursor-pointer decoration-[1px] duration-200;
+    @apply hover:underline underline-offset-2 cursor-pointer decoration-[1px] duration-200 text-dark;
   }
   .bottomFooterHover {
     @apply hover:text-white duration-200 ml-2 cursor-pointer;

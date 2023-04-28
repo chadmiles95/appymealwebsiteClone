@@ -44,7 +44,7 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
   console.log(restaurantData);
 
   return (
-    <div className="py-6 px-4 grid grid-cols-4 gap-4">
+    <div className="py-6 px-4 grid grid-cols-4 gap-4 bg-smoke">
       {restaurantData.map((restaurant: Restaurant) => {
         return (
           <div
