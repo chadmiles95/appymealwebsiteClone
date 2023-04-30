@@ -1,14 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { StoreProduct, UserInfo } from "../type";
+import { StoreProduct, UserInfo, Restaurants } from "../type";
 
 interface ShopperState {
   productData: StoreProduct[];
+  restaurants: Restaurants[];
   userInfo: null | UserInfo;
+  currentTime: Date;
+  militaryTime: string;
 }
 
 const initialState: ShopperState = {
   productData: [],
+  restaurants: [],
   userInfo: null,
+  currentTime: new Date(),
+  militaryTime: "0000",
 };
 
 export const shopperslice = createSlice({
@@ -58,6 +64,16 @@ export const shopperslice = createSlice({
     removeUser: (state) => {
       state.userInfo = null;
     },
+    updateCurrentTime: (state, action) => {
+      state.currentTime = action.payload.currentTime;
+      state.militaryTime = action.payload.militaryTime;
+    },
+    setRestaurants: (state, action) => {
+      state.restaurants = action.payload;
+    },
+    addRestaurant: (state, action) => {
+      state.restaurants.push(action.payload);
+    },
   },
 });
 
@@ -69,5 +85,8 @@ export const {
   resetCart,
   addUser,
   removeUser,
+  updateCurrentTime,
+  setRestaurants,
+  addRestaurant,
 } = shopperslice.actions;
 export default shopperslice.reducer;

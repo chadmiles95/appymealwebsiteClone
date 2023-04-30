@@ -45,7 +45,7 @@ export interface Restaurant {
 }
 [];
 
-const restaurants: Restaurant[] = [];
+const Restaurants: Restaurant[] = [];
 
 export interface Item {
   _id: number;
