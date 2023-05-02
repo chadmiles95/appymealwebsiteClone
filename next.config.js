@@ -7,6 +7,7 @@ const nextConfig = {
       "fakestoreapi.com",
       "lh3.googleusercontent.com",
       "firebasestorage.googleapis.com",
+      "appymeal.net",
     ],
   },
   env: {
