@@ -1,7 +1,14 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Spacer } from "./Spacer";
 import Image from "next/image";
+import { PopupModal } from "./PopupModal";
+
+interface MenuItemProps {
+  name: string;
+  description: string;
+  price: number;
+}
 
 interface RestaurantPageProps {
   restaurant: any; // You can replace 'any' with the appropriate type for a restaurant
@@ -10,6 +17,18 @@ interface RestaurantPageProps {
 export const RestaurantPage: React.FC<RestaurantPageProps> = ({
   restaurant,
 }) => {
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemProps>();
+
+  const handleMenuItemClick = (item: MenuItemProps) => {
+    setSelectedMenuItem(item);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedMenuItem(undefined);
+    setModalOpen(false);
+  };
   return (
     <div className="w-full h-full ">
       <div className="w-full h-10 bg-white  justify-center items-center flex">
@@ -79,7 +98,17 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           <div className="w-full mt-20 flex flex-col">
             <p className="font-semibold text-xl text-dark mb-8">Burgers</p>
             <div className="py-6 px-4 grid grid-cols-2 gap-4">
-              <div className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300">
+              <div
+                onClick={() =>
+                  handleMenuItemClick({
+                    name: "Burger 1",
+                    description:
+                      "The best burger in the world that you have ever had by far",
+                    price: 11.99,
+                  })
+                }
+                className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300"
+              >
                 <div className="h-1/4">
                   <p className="text-dark">Burger 1</p>
                 </div>
@@ -154,7 +183,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
               <p className="font-semibold text-dark">Current Cart</p>
             </div>
             <div className="px-8 py-2">
-              <p className="text-dark">Restaurant: Sam's On Main</p>
+              <p className="text-dark">Restaurant: Sam`s On Main</p>
               <div className="px-2 py-2">
                 <div className="justify-between flex flex-row pb-2">
                   <p className="font-semibold underline underline-offset-2">
@@ -183,6 +212,9 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           </div>
         </div>
       </div>
+      {selectedMenuItem && (
+        <PopupModal isOpen={modalOpen} closeModal={handleCloseModal} />
+      )}
     </div>
   );
 };
