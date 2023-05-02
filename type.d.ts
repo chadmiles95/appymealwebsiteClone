@@ -22,11 +22,11 @@ export interface Restaurant {
   email: string;
   phoneNumber: string;
   address: string;
-  hours: object;
+  hours: any;
   lat: number;
   lng: number;
   accountType: string;
-  menus: object;
+  menus: any;
   isOpen: boolean;
   isShowing: boolean;
   createdAt: string;
@@ -42,6 +42,9 @@ export interface Restaurant {
   enablePrinting: boolean;
   deliveryType: object;
   expectedWaitTime: number;
+  menuSelected?: string;
+  menuHours?: string;
+  menuStatus?: any;
 }
 [];
 

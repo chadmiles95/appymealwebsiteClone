@@ -52,14 +52,16 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           <div className="justify-start">
             <Image
               src={restaurant.photo}
-              width={125}
-              height={125}
+              width={160}
+              height={160}
               alt="restaurantLogo"
               className="object-cover rounded-xl"
             />
           </div>
           <div className="justify-start pl-8 ">
-            <p className="text-xl font-semibold text-dark">{restaurant.name}</p>
+            <p className="text-2xl font-semibold text-dark">
+              {restaurant.name}
+            </p>
           </div>
         </div>
         <div className="flex flex-col justify-start items-start">
@@ -95,8 +97,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
             })}
           </div>
           {/* MENU ITEMS START */}
-          <div className="w-full mt-20 flex flex-col">
-            <p className="font-semibold text-xl text-dark mb-8">Burgers</p>
+          <div className="w-full mt-12 flex flex-col">
+            <p className="font-semibold text-xl text-dark mb-6">Burgers</p>
             <div className="py-6 px-4 grid grid-cols-2 gap-4">
               <div
                 onClick={() =>

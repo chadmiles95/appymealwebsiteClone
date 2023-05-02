@@ -18,36 +18,36 @@ const RestaurantCard = ({ restaurant }: any) => {
     updateTime();
   }, []);
 
-  //   useEffect(() => {
-  //     if (
-  //       typeof restaurant.hours === "undefined" ||
-  //       restaurant?.menuStatus === false
-  //     ) {
-  //       setCurrentlyOpen(false);
-  //     } else if (
-  //       parseFloat(militaryTime) >
-  //         parseFloat(restaurant?.hours?.substring(0, 4)) &&
-  //       parseFloat(militaryTime) <
-  //         parseFloat(restaurant?.hours?.substring(5, 9)) &&
-  //       restaurant.isOpen === true &&
-  //       (parseFloat(militaryTime) >
-  //         parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
-  //         restaurant?.menuHours === "All Day") &&
-  //       (parseFloat(militaryTime) <
-  //         parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
-  //         restaurant?.menuHours === "All Day")
-  //     ) {
-  //       setCurrentlyOpen(true);
-  //     } else {
-  //       setCurrentlyOpen(false);
-  //     }
-  //   }, [
-  //     restaurant.hours,
-  //     militaryTime,
-  //     restaurant.isOpen,
-  //     restaurant.menuStatus,
-  //     restaurant,
-  //   ]);
+  useEffect(() => {
+    if (
+      typeof restaurant.hours === "undefined" ||
+      restaurant?.menuStatus === false
+    ) {
+      setCurrentlyOpen(false);
+    } else if (
+      parseFloat(militaryTime) >
+        parseFloat(restaurant?.hours?.substring(0, 4)) &&
+      parseFloat(militaryTime) <
+        parseFloat(restaurant?.hours?.substring(5, 9)) &&
+      restaurant.isOpen === true &&
+      (parseFloat(militaryTime) >
+        parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
+        restaurant?.menuHours === "All Day") &&
+      (parseFloat(militaryTime) <
+        parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
+        restaurant?.menuHours === "All Day")
+    ) {
+      setCurrentlyOpen(true);
+    } else {
+      setCurrentlyOpen(false);
+    }
+  }, [
+    restaurant.hours,
+    militaryTime,
+    restaurant.isOpen,
+    restaurant.menuStatus,
+    restaurant,
+  ]);
 
   return (
     <div
@@ -122,7 +122,17 @@ const RestaurantCard = ({ restaurant }: any) => {
               </div>
             )}
           </div>
-          <p>CLOSED</p>
+          {currentlyOpen && (
+            <div className="flex bg-primary w-16 h-auto justify-center items-center rounded-xl">
+              <p className="text-white">OPEN</p>
+            </div>
+          )}
+          {!currentlyOpen && (
+            <div className="flex bg-white w-20 h-auto justify-center items-center rounded-xl">
+              <p className="text-dark">CLOSED</p>
+            </div>
+          )}
+          {/* <p>CLOSED</p> */}
         </div>
       </div>
     </div>
