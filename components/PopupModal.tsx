@@ -74,7 +74,7 @@ export const PopupModal: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
           </div>
         </div>
         <button
-          className="bg-primary text-white py-2 px-4 rounded mt-4 hover:bg-muted duration-300"
+          className="bg-primary text-white py-2 px-4 rounded-full mt-4 hover:bg-muted duration-300 shadow-md"
           onClick={handleAddToCart}
         >
           Add to Cart
