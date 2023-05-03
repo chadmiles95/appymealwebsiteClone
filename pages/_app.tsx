@@ -22,8 +22,6 @@ const open_sans = Open_Sans({
   variable: "--font-open_sans",
 });
 
-// console.log("KKEYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyy", process.env.FIREBASE_API_KEY);
-
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -43,6 +41,23 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
+  // adding track last page
+
+  // const router = useRouter();
+  // const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   const handleRouteChange = (url: string) => {
+  //     dispatch(setLastVisitedPage(url));
+  //   };
+
+  //   router.events.on("routeChangeComplete", handleRouteChange);
+
+  //   return () => {
+  //     router.events.off("routeChangeComplete", handleRouteChange);
+  //   };
+  // }, [dispatch, router]);
+
   return (
     <Provider store={store}>
       <SessionProvider session={session}>

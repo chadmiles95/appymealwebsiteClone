@@ -3,10 +3,11 @@ import { StoreProduct, UserInfo, Restaurants } from "../type";
 
 interface ShopperState {
   productData: StoreProduct[];
-  restaurants: Restaurants[];
+  restaurants: typeof Restaurants[];
   userInfo: null | UserInfo;
   currentTime: Date;
   militaryTime: string;
+  lastVisitedPage: string;
 }
 
 const initialState: ShopperState = {
@@ -15,6 +16,7 @@ const initialState: ShopperState = {
   userInfo: null,
   currentTime: new Date(),
   militaryTime: "0000",
+  lastVisitedPage: "",
 };
 
 export const shopperslice = createSlice({
@@ -74,6 +76,9 @@ export const shopperslice = createSlice({
     addRestaurant: (state, action) => {
       state.restaurants.push(action.payload);
     },
+    setLastVisitedPage: (state, action) => {
+      state.lastVisitedPage = action.payload;
+    },
   },
 });
 
@@ -88,5 +93,6 @@ export const {
   updateCurrentTime,
   setRestaurants,
   addRestaurant,
+  setLastVisitedPage,
 } = shopperslice.actions;
 export default shopperslice.reducer;

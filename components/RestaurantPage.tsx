@@ -1,8 +1,11 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Spacer } from "./Spacer";
 import Image from "next/image";
 import { PopupModal } from "./PopupModal";
+import { useSelector } from "react-redux";
+import useUpdateTime from "../redux/useUpdateTime";
+import { useRouter } from "next/router";
 
 interface MenuItemProps {
   name: string;
@@ -19,6 +22,41 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
 }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemProps>();
+  const [currentlyOpen, setCurrentlyOpen] = useState<boolean>(false);
+
+  //   GET LAST PAGE URL FOR BACK BUTTON
+  const lastURL = useSelector((state: any) => state.shopper.lastVisitedPage);
+  const router = useRouter();
+
+  //   GET THE CURRENT TIME AND UPDATES IT IN REDUX
+  const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
+  const updateTime = useUpdateTime();
+
+  //   SET RESTAURNAT OPEN/CLOSED DEPENDING ON TIME, MENU & MASTER TOGGLE
+  useEffect(() => {
+    if (
+      typeof restaurant.hours === "undefined" ||
+      restaurant?.menuStatus === false
+    ) {
+      setCurrentlyOpen(false);
+    } else if (
+      parseFloat(militaryTime) >
+        parseFloat(restaurant?.hours?.substring(0, 4)) &&
+      parseFloat(militaryTime) <
+        parseFloat(restaurant?.hours?.substring(5, 9)) &&
+      restaurant.isOpen === true &&
+      (parseFloat(militaryTime) >
+        parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
+        restaurant?.menuHours === "All Day") &&
+      (parseFloat(militaryTime) <
+        parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
+        restaurant?.menuHours === "All Day")
+    ) {
+      setCurrentlyOpen(true);
+    } else {
+      setCurrentlyOpen(false);
+    }
+  }, [militaryTime, restaurant]);
 
   const handleMenuItemClick = (item: MenuItemProps) => {
     setSelectedMenuItem(item);
@@ -29,9 +67,29 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
     setSelectedMenuItem(undefined);
     setModalOpen(false);
   };
+
+  const handleBackButtonClick = () => {
+    if (lastURL) {
+      router.push(lastURL);
+    } else {
+      // If there's no last visited page, navigate to a default page or handle this case as needed
+      router.push("/");
+    }
+  };
+
   return (
     <div className="w-full h-full ">
       <div className="w-full h-10 bg-white  justify-center items-center flex">
+        <div className="absolute w-full justify-start px-10">
+          <p
+            onClick={() => {
+              handleBackButtonClick();
+            }}
+            className="font-semibold  hover:text-lightdark duration-200  cursor-pointer text-dark w-10"
+          >
+            Back
+          </p>
+        </div>
         <p className="font-semibold  px-8 text-dark">
           Rewards & Discounts On App:
         </p>
@@ -52,8 +110,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           <div className="justify-start">
             <Image
               src={restaurant.photo}
-              width={160}
-              height={160}
+              width={125}
+              height={125}
               alt="restaurantLogo"
               className="object-cover rounded-xl"
             />
@@ -97,8 +155,39 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
             })}
           </div>
           {/* MENU ITEMS START */}
-          <div className="w-full mt-12 flex flex-col">
-            <p className="font-semibold text-xl text-dark mb-6">Burgers</p>
+          {Object.entries(restaurant.menus)
+            .filter(([category]) => category !== "properties")
+            .map(([category, items]) => (
+              <div key={category} className="w-full mt-12 flex flex-col">
+                <p className="font-semibold text-xl text-dark mb-6">
+                  {category}
+                </p>
+                <div className="py-6 px-4 grid grid-cols-2 gap-4">
+                  {items.map((item: any) => (
+                    <div
+                      key={item.name}
+                      onClick={() => handleMenuItemClick(item)}
+                      className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300"
+                    >
+                      <div className="h-1/4">
+                        <p className="text-dark">{item.name}</p>
+                      </div>
+                      <div className="h-2/4 py-1">
+                        <p className="text-dark text-sm">
+                          {item.desc.substring(0, 100)}
+                          {"..."}
+                        </p>
+                      </div>
+                      <div className="h-1/4">
+                        <p className="text-dark">${item.price}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          {/* <div className="w-full mt-12 flex flex-col"> */}
+          {/* <p className="font-semibold text-xl text-dark mb-6">Burgers</p>
             <div className="py-6 px-4 grid grid-cols-2 gap-4">
               <div
                 onClick={() =>
@@ -162,8 +251,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                   <p className="text-dark">$13.99</p>
                 </div>
               </div>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
         </div>
         <div className="w-1/3 flex flex-col px-16 items-center">
           <p className="text-xl font-semibold text-dark">Methods Available</p>
@@ -180,18 +269,18 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
               )}
             </div>
           </div>
-          <div className="mt-8  border-dark border-solid border-2 rounded-xl w-full items-center">
-            <div className="px-8 py-2 border-b border-dark border-solid border-1">
+          <div className="mt-8  border-lightdark border-solid border rounded-xl w-full items-center">
+            <div className="px-8 py-2 border-b border-lightdark border-solid border-1">
               <p className="font-semibold text-dark">Current Cart</p>
             </div>
             <div className="px-8 py-2">
               <p className="text-dark">Restaurant: Sam`s On Main</p>
               <div className="px-2 py-2">
                 <div className="justify-between flex flex-row pb-2">
-                  <p className="font-semibold underline underline-offset-2">
+                  <p className=" underline underline-offset-2 decoration-dark decoration-1">
                     Items
                   </p>
-                  <p className="font-semibold underline underline-offset-2">
+                  <p className="underline underline-offset-2 decoration-dark decoration-1">
                     Price
                   </p>
                 </div>
