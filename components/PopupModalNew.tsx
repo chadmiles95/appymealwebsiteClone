@@ -668,7 +668,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
   const [sidePrice, setSidePrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [allergyArray, setAllergyArray] = useState<Array<string>>([]);
-
+  const [valueTemp, setValueTemp] = useState<string | null>(null);
   const [getTemps, setGetTemps] = useState([
     { label: "rare", value: "rare" },
     { label: "medium-rare", value: "medium-rare" },
@@ -876,7 +876,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
                   placeholder="Temperature selection"
                   options={getTemps}
                   onChange={(selectedOption) => {
-                    console.log(selectedOption);
+                    setValueTemp(selectedOption.value);
                   }}
                   styles={{
                     container: (base) => ({
