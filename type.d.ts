@@ -81,3 +81,35 @@ export interface UserInfo {
   name: string;
   email: string;
 }
+
+export interface OptionType {
+  name: string;
+  price: number | string;
+}
+
+export interface MenuItemType {
+  allergies: Array<any>;
+  desc: string;
+  firstOptionMultiple: boolean;
+  firstOptionName: string;
+  firstOptionRequired: boolean;
+  firstOptions: Array<OptionType>;
+  ingredient: Array<any>;
+  isAvailable: boolean;
+  isShowing: boolean;
+  name: string;
+  price: number;
+  secondOptionMultiple: boolean;
+  secondOptionName: string;
+  secondOptionRequired: boolean;
+  secondOptions: Array<OptionType>;
+  selectTempRequired: boolean;
+  showRawWarning: boolean;
+  showTemp: boolean;
+  sides: Array<OptionType>;
+  sidesRequired: boolean;
+}
+
+export interface MenuItemProps {
+  item: MenuItemType;
+}

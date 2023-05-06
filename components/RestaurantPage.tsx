@@ -6,6 +6,7 @@ import { PopupModal } from "./PopupModal";
 import { useSelector } from "react-redux";
 import useUpdateTime from "../redux/useUpdateTime";
 import { useRouter } from "next/router";
+import { PopupModalNew } from "./PopupModalNew";
 
 interface MenuItemProps {
   name: string;
@@ -76,6 +77,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
       router.push("/");
     }
   };
+
+  //   console.log(restaurant.menus.burgers[0]);
 
   return (
     <div className="w-full h-full ">
@@ -174,12 +177,20 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                       </div>
                       <div className="h-2/4 py-1">
                         <p className="text-dark text-sm">
-                          {item.desc.substring(0, 100)}
-                          {"..."}
+                          {item.desc.length > 90
+                            ? item.desc.substring(0, 90) + "..."
+                            : item.desc}
                         </p>
                       </div>
                       <div className="h-1/4">
-                        <p className="text-dark">${item.price}</p>
+                        <p className="text-dark">
+                          $
+                          {new Intl.NumberFormat("en-US", {
+                            style: "decimal",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(item.price)}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -304,7 +315,11 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
         </div>
       </div>
       {selectedMenuItem && (
-        <PopupModal isOpen={modalOpen} closeModal={handleCloseModal} />
+        <PopupModalNew
+          isOpen={modalOpen}
+          closeModal={handleCloseModal}
+          item={selectedMenuItem}
+        />
       )}
     </div>
   );
