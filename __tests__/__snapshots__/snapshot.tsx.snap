@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders homepage unchanged 1`] = `
+<div>
+  <main
+    class="bg-lightBlue"
+  >
+    <div
+      class="max-w-container mx-auto bg-white"
+    >
+      <div
+        class="w-full h-full bg-[#F1EDEE]  font-titleFont flex border-b-[1px]"
+      >
+        <div
+          class="w-1/2 h-[750px] flex"
+        >
+          <div
+            class="flex flex-col justify-center items-center w-full h-full gap-2"
+          >
+            <p
+              class="font-semibold text-5xl"
+            >
+              Order Online Now
+            </p>
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <a
+              href="/restaurants"
+            >
+              <button
+                class="w-72 h-9 bg-white border-[0px] border-dark text-dark   rounded-full flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 shadow-md"
+              >
+                Order Online
+              </button>
+            </a>
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <p
+              class="font-semibold text-4xl text-dark"
+            >
+              Discounts & Rewards On App
+            </p>
+            <div
+              class="sc-bgqQcB gNeyFB"
+            />
+            <a
+              href="https://apps.apple.com/us/app/appymeal/id6443683011"
+            >
+              <button
+                class="w-72 h-9 bg-white border-[0px] border-dark text-dark   rounded-full flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 shadow-md"
+              >
+                Download iOS App
+              </button>
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US"
+            >
+              <button
+                class="w-72 h-9 bg-white border-[0px] border-dark text-dark   rounded-full flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 shadow-md"
+              >
+                Download Android App
+              </button>
+            </a>
+          </div>
+        </div>
+        <div
+          class="w-1/2 flex relative"
+        >
+          <img
+            alt="LandingPageImg"
+            class="w-full h-full object-cover"
+            data-nimg="1"
+            decoding="async"
+            height="40"
+            loading="lazy"
+            src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+            srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+            style="color: transparent;"
+            width="40"
+          />
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+`;
