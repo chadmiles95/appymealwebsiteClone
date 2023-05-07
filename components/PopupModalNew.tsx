@@ -974,7 +974,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         {item.sides.length > 0 && (
           <>
             <div className="w-3/4">
-              <h3 className="text-lg text-dark mb-4">Choose: Side Item</h3>
+              <h3 className="text-lg text-dark mb-4">Choose: side item</h3>
               <div className="py-4 px-2 grid grid-cols-2 gap-4 mt-2">
                 {item.sides.map((side, index) => (
                   <div key={index} className="flex mb-2">
