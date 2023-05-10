@@ -3,16 +3,16 @@
 exports[`renders homepage unchanged 1`] = `
 <div>
   <main
-    class="bg-lightBlue"
+    class="bg-lightBlue flex-1 flex flex-col"
   >
     <div
-      class="max-w-container mx-auto bg-white"
+      class="max-w-container mx-auto bg-white flex-1 flex flex-col"
     >
       <div
-        class="w-full h-full bg-[#F1EDEE]  font-titleFont flex border-b-[1px]"
+        class="w-full grid lg:grid-cols-2 h-full bg-[#F1EDEE] font-titleFont flex-1 flex border-b-[1px]"
       >
         <div
-          class="w-1/2 h-[750px] flex"
+          class="h-[750px] flex"
         >
           <div
             class="flex flex-col justify-center items-center w-full h-full gap-2"
@@ -81,7 +81,7 @@ exports[`renders homepage unchanged 1`] = `
           </div>
         </div>
         <div
-          class="w-1/2 flex relative"
+          class="flex relative"
         >
           <img
             alt="LandingPageImg"
