@@ -32,20 +32,20 @@ const Footer = () => {
           <Link href="/addrestaurant">
             <li className="bottomFooterHover">Add Restaurant</li>
           </Link>
-          <Link href="https://apps.apple.com/us/app/appymeal/id6443683011">
+          <Link href="https://apps.apple.com/us/app/appymeal/id6443683011" target="_blank">
             <li className="bottomFooterHover">Download iOS App</li>
           </Link>
-          <Link href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US">
+          <Link href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US" target="_blank">
             <li className="bottomFooterHover">Download Android App</li>
           </Link>
 
-          <Link href={instagramHref}>
+          <Link href={instagramHref} target="_blank">
             <li className="bottomFooterHover">Instagram</li>
           </Link>
-          <Link href={facebookHref}>
+          <Link href={facebookHref} target="_blank">
             <li className="bottomFooterHover">Facebook</li>
           </Link>
-          <Link href={linkedinHref}>
+          <Link href={linkedinHref} target="_blank">
             <li className="bottomFooterHover">LinkedIn</li>
           </Link>
           <Link href="/contact">

@@ -49,11 +49,11 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
   // }, []);
 
   return (
-    <div className=" bg-smoke flex flex-col justify-center items-center">
+    <div className=" bg-smoke flex flex-col flex-1 justify-center items-center">
       <div className="justify-center items-center w-1/3 mt-8">
         <SearchBar />
       </div>
-      <div className="py-6 px-4 grid grid-cols-4 gap-4 mt-2">
+      <div className="py-6 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-2">
         {restaurantData.map((restaurant: Restaurant) => {
           return (
             <RestaurantCard key={restaurant.name} restaurant={restaurant} />

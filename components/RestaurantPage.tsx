@@ -81,9 +81,9 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
   //   console.log(restaurant.menus.burgers[0]);
 
   return (
-    <div className="w-full h-full ">
-      <div className="w-full h-10 bg-white  justify-center items-center flex">
-        <div className="absolute w-full justify-start px-10">
+    <div className="w-full h-full flex-1">
+      <div className="w-full lg:h-10 bg-white justify-center items-center flex flex-row flex-wrap lg:flex-nowrap">
+        <div className="w-full justify-start px-10 basis-full lg:flx-basis-1/4 py-2 lg:py-0">
           <p
             onClick={() => {
               handleBackButtonClick();
@@ -93,22 +93,22 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
             Back
           </p>
         </div>
-        <p className="font-semibold  px-8 text-dark">
+        <p className="font-semibold px-8 text-dark basis-full lg:flx-basis-1/4 py-2 lg:py-0">
           Rewards & Discounts On App:
         </p>
-        <Link href="https://apps.apple.com/us/app/appymeal/id6443683011">
-          <p className="font-semibold  hover:text-lightdark duration-200  cursor-pointer text-dark">
+        <Link href="https://apps.apple.com/us/app/appymeal/id6443683011" className="basis-full lg:flx-basis-1/4 py-2 lg:py-0">
+          <p className="font-semibold px-8 hover:text-lightdark duration-200 cursor-pointer text-dark">
             Download iOS Now
           </p>
         </Link>
-        <Link href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US">
+        <Link href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US" className="basis-full lg:flx-basis-1/4 py-2 lg:py-0">
           <p className="font-semibold px-8 hover:text-lightdark duration-200 cursor-pointer text-dark">
             Download Android Now
           </p>
         </Link>
       </div>
       {/* TOP NAVBAR FOR RESTAURANTS */}
-      <div className="bg-smoke w-full h-40  items-center flex px-16 justify-between">
+      <div className="bg-smoke w-full h-40  items-center flex pg-4 gap-2  px-4 lg:px-16 justify-between">
         <div className="flex items-center">
           <div className="justify-start">
             <Image
@@ -133,24 +133,24 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           <p className="text-dark">Status - Open</p>
         </div>
       </div>
-      <div className="w-full h-full flex py-12 ">
-        <div className="w-2/3 flex flex-col  px-16">
+      <div className="w-full h-full flex flex-row flex-wrap lg:flex-nowrap  py-12 ">
+        <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col  px-4 lg:px-16">
           <p className="text-dark">{restaurant.desc}</p>
           {/* restaurant photos extra */}
-          <div className="mt-12 flex flex-row w-full">
+          <div className="mt-12 flex flex-row w-full flex-wrap xl:flex-nowrap">
             {restaurant.images.map((image: string) => {
               return (
                 <div
                   key={image.substring(15)}
-                  className="w-1/3 h-60 overflow-hidden"
+                  className="basis-full flex justify-center my-2 md:basis-1/2 xl:basis-1/3 h-80 lg:h-60 overflow-hidden"
                 >
-                  <div className="rounded-xl overflow-hidden h-60 mx-4">
+                  <div className="rounded-xl overflow-hidden h-80 lg:h-60 mx-4">
                     <Image
                       src={image}
-                      width={250}
+                      width={300}
                       height={60}
                       alt="restaurantLogo"
-                      className="object-cover h-full overflow-hidden  hover:scale-105 "
+                      className="rounded-xl object-cover h-full overflow-hidden  hover:scale-105 "
                     />
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                 <p className="font-semibold text-xl text-dark mb-6">
                   {category}
                 </p>
-                <div className="py-6 px-4 grid grid-cols-2 gap-4">
+                <div className="py-6 px-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {items.map((item: any) => (
                     <div
                       key={item.name}
@@ -265,7 +265,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
             </div> */}
           {/* </div> */}
         </div>
-        <div className="w-1/3 flex flex-col px-16 items-center">
+        <div className="basis-full lg:basis-1/3 lg:flex-1 flex-auto flex flex-col mx-auto px-4 lg:px-16 items-center">
           <p className="text-xl font-semibold text-dark">Methods Available</p>
           <div className="w-full flex flex-row gap-2 justify-center items-center mt-4">
             <div className="flex flex-row gap-8">
