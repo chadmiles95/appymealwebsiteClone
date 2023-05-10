@@ -3,8 +3,10 @@ import CartPageComponent from "../components/CartPageComponent";
 
 const cart = () => {
   return (
-    <div className="max-w-contentContainer">
-      <CartPageComponent />
+    <div className="w-full flex-1 flex flex-col">
+      <div className="max-w-contentContainer mx-auto flex-1 w-full">
+        <CartPageComponent />
+      </div>
     </div>
   );
 };

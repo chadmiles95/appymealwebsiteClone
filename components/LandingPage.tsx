@@ -6,8 +6,8 @@ import Link from "next/link";
 
 const LandingPage = () => {
   return (
-    <div className="w-full h-full bg-[#F1EDEE]  font-titleFont flex border-b-[1px]">
-      <div className="w-1/2 h-[750px] flex">
+    <div className="w-full grid lg:grid-cols-2 h-full bg-[#F1EDEE] font-titleFont flex-1 flex border-b-[1px]">
+      <div className="h-[750px] flex">
         <div className="flex flex-col justify-center items-center w-full h-full gap-2">
           <p className="font-semibold text-5xl">Order Online Now</p>
           <Spacer size="small" />
@@ -40,7 +40,7 @@ const LandingPage = () => {
           </Link>
         </div>
       </div>
-      <div className="w-1/2 flex relative">
+      <div className="flex relative">
         <Image
           className="w-full h-full object-cover"
           src={home_bg}

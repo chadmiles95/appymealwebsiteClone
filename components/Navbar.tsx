@@ -47,13 +47,13 @@ const Navbar = () => {
   return (
     <div className="w-full bg-smoke text-white sticky top-0 z-50">
       <div className="w-full border-b-[1px] border-b-dark">
-        <div className="max-w-container h-20 mx-5 px-4 flex items-center justify-between gap-2">
+        <div className="max-w-container h-20 mx-auto px-4 flex items-center justify-between gap-2">
           {/* LOGO */}
           <Link href="/">
             <div className="navBarHover">
               <Image src={CircleLogo} className="w-12" alt="logo" />
-              <span>
-                <p className="font-semibold text-xl text-dark">AppyMeal</p>
+              <span className="">
+                <p className="font-semibold text-sm md:text-xl text-dark">AppyMeal</p>
               </span>
             </div>
           </Link>

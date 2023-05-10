@@ -81,7 +81,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
   //   console.log(restaurant.menus.burgers[0]);
 
   return (
-    <div className="w-full h-full ">
+    <div className="w-full h-full flex-1">
       <div className="w-full h-10 bg-white  justify-center items-center flex">
         <div className="absolute w-full justify-start px-10">
           <p

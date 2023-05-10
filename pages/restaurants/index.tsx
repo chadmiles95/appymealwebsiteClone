@@ -3,9 +3,7 @@ import Restaurants from "../../components/Restaurants";
 
 const RestaurantsPage = () => {
   return (
-    <div>
-      <Restaurants />
-    </div>
+    <Restaurants />
   );
 };
 

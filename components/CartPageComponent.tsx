@@ -76,8 +76,8 @@ const CartPageComponent = () => {
 
   return (
     <div className="w-full py-10">
-      <div className="w-full flex gap-10">
-        <div className="w-2/3 flex flex-col gap-5 px-5">
+      <div className="w-full flex flex-row flex-wrap lg:flex-nowrap gap-7">
+        <div className="lg:basis-2/3 lg:flex-1 flex-auto flex flex-col gap-5 m-4">
           <h1 className="text-2xl font-bold text-black">
             Cart{" "}
             <span className="text-lightText font-normal">
@@ -241,7 +241,7 @@ const CartPageComponent = () => {
             </div>
           </div>
         </div>
-        <div className="w-1/3 p-4 mt-24 h-[500px] border-[1px] border-zinc-400 rounded-md flex flex-col justify-center gap-4">
+        <div className="lg:basis-1/3 lg:flex-1 flex-auto m-4 p-4 lg:mt-28 h-[500px] border-[1px] border-zinc-400 rounded-md flex flex-col justify-center gap-4">
           <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
             {userInfo ? (
               <button

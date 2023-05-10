@@ -62,7 +62,7 @@ export default function App({
     <Provider store={store}>
       <SessionProvider session={session}>
         <PersistGate loading={"loading"} persistor={persistor}>
-          <main className={`${open_sans.variable} font-sans`}>
+          <main className={`${open_sans.variable} font-sans flex flex-col`} style={{ minHeight: '100vh' }}>
             <ThemeProvider>
               <Layout>
                 <Component {...pageProps} />

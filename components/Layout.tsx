@@ -39,7 +39,7 @@ const Layout = ({ children }: Props) => {
     <>
       <Navbar />
       <LastVisitedPageTracker />
-      <main>{children}</main>
+      {children}
       {/* <TopFooter /> */}
       <Footer />
     </>

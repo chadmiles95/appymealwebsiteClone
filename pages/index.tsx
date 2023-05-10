@@ -22,8 +22,8 @@ export default function Home({ productData }: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/smallLogo.ico.png" />
       </Head>
-      <main className="bg-lightBlue">
-        <div className="max-w-container mx-auto bg-white">
+      <main className="bg-lightBlue flex-1 flex flex-col">
+        <div className="max-w-container mx-auto bg-white flex-1 flex flex-col">
           <LandingPage />
         </div>
       </main>
