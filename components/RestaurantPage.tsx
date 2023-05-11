@@ -3,10 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Spacer } from "./Spacer";
 import Image from "next/image";
 import { PopupModal } from "./PopupModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useUpdateTime from "../redux/useUpdateTime";
 import { useRouter } from "next/router";
 import { PopupModalNew } from "./PopupModalNew";
+import { Toaster } from "react-hot-toast";
+import { MdClose } from "react-icons/md";
+import { deleteItem } from "redux/shoppersSlice";
 
 interface MenuItemProps {
   name: string;
@@ -27,7 +30,12 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
 
   //   GET LAST PAGE URL FOR BACK BUTTON
   const lastURL = useSelector((state: any) => state.shopper.lastVisitedPage);
+  const cart = useSelector((state: any) => state.shopper.productData);
+  const currentRest = useSelector(
+    (state: any) => state.shopper.currentRestaurant
+  );
   const router = useRouter();
+  const dispatch = useDispatch();
 
   //   GET THE CURRENT TIME AND UPDATES IT IN REDUX
   const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
@@ -96,12 +104,18 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
         <p className="font-semibold px-8 text-dark basis-full lg:flx-basis-1/4 py-2 lg:py-0">
           Rewards & Discounts On App:
         </p>
-        <Link href="https://apps.apple.com/us/app/appymeal/id6443683011" className="basis-full lg:flx-basis-1/4 py-2 lg:py-0">
+        <Link
+          href="https://apps.apple.com/us/app/appymeal/id6443683011"
+          className="basis-full lg:flx-basis-1/4 py-2 lg:py-0"
+        >
           <p className="font-semibold px-8 hover:text-lightdark duration-200 cursor-pointer text-dark">
             Download iOS Now
           </p>
         </Link>
-        <Link href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US" className="basis-full lg:flx-basis-1/4 py-2 lg:py-0">
+        <Link
+          href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US"
+          className="basis-full lg:flx-basis-1/4 py-2 lg:py-0"
+        >
           <p className="font-semibold px-8 hover:text-lightdark duration-200 cursor-pointer text-dark">
             Download Android Now
           </p>
@@ -197,73 +211,6 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                 </div>
               </div>
             ))}
-          {/* <div className="w-full mt-12 flex flex-col"> */}
-          {/* <p className="font-semibold text-xl text-dark mb-6">Burgers</p>
-            <div className="py-6 px-4 grid grid-cols-2 gap-4">
-              <div
-                onClick={() =>
-                  handleMenuItemClick({
-                    name: "Burger 1",
-                    description:
-                      "The best burger in the world that you have ever had by far",
-                    price: 11.99,
-                  })
-                }
-                className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300"
-              >
-                <div className="h-1/4">
-                  <p className="text-dark">Burger 1</p>
-                </div>
-                <div className="h-2/4 py-1">
-                  <p className="text-dark text-sm">
-                    The best burger in the world that you have ever had by far
-                  </p>
-                </div>
-                <div className="h-1/4">
-                  <p className="text-dark">$13.99</p>
-                </div>
-              </div>
-              <div className="flex flex-col w-full  border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300">
-                <div className="h-1/4">
-                  <p className="text-dark">Burger 1</p>
-                </div>
-                <div className="h-2/4 py-1">
-                  <p className="text-dark text-sm">
-                    The best burger in the world that you have ever had by far
-                  </p>
-                </div>
-                <div className="h-1/4">
-                  <p className="text-dark">$13.99</p>
-                </div>
-              </div>
-              <div className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300">
-                <div className="h-1/4">
-                  <p className="text-dark">Burger 1</p>
-                </div>
-                <div className="h-2/4 py-1">
-                  <p className="text-dark text-sm">
-                    The best burger in the world that you have ever had by far
-                  </p>
-                </div>
-                <div className="h-1/4">
-                  <p className="text-dark">$13.99</p>
-                </div>
-              </div>
-              <div className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300">
-                <div className="h-1/4">
-                  <p className="text-dark">Burger 1</p>
-                </div>
-                <div className="h-2/4 py-1">
-                  <p className="text-dark text-sm">
-                    The best burger in the world that you have ever had by far
-                  </p>
-                </div>
-                <div className="h-1/4">
-                  <p className="text-dark">$13.99</p>
-                </div>
-              </div>
-            </div> */}
-          {/* </div> */}
         </div>
         <div className="basis-full lg:basis-1/3 lg:flex-1 flex-auto flex flex-col mx-auto px-4 lg:px-16 items-center">
           <p className="text-xl font-semibold text-dark">Methods Available</p>
@@ -280,12 +227,16 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
               )}
             </div>
           </div>
-          <div className="mt-8  border-lightdark border-solid border rounded-xl w-full items-center">
+          {/* <div className="mt-8  border-lightdark border-solid border rounded-xl w-full items-center"> */}
+          {/* making cart sticky so users can see as they scroll */}
+          <div className="mt-8 border-lightdark border-solid border rounded-xl w-full items-center sticky top-24">
             <div className="px-8 py-2 border-b border-lightdark border-solid border-1">
               <p className="font-semibold text-dark">Current Cart</p>
             </div>
             <div className="px-8 py-2">
-              <p className="text-dark">Restaurant: Sam`s On Main</p>
+              {currentRest !== "" && (
+                <p className="text-dark">Restaurant: {currentRest}</p>
+              )}
               <div className="px-2 py-2">
                 <div className="justify-between flex flex-row pb-2">
                   <p className=" underline underline-offset-2 decoration-dark decoration-1">
@@ -295,10 +246,22 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                     Price
                   </p>
                 </div>
-                <div className="justify-between flex flex-row pb-1">
-                  <p className="text-dark">Burger</p>
-                  <p className="text-dark">$12.98</p>
-                </div>
+                {cart.map((item: any) => (
+                  <div className="justify-between flex flex-row pb-1">
+                    <div
+                      onClick={() => dispatch(deleteItem(item.id))}
+                      className="absolute left-4 pt-0 mt-0 text-base w-5 h-5 text-zinc-600 hover:bg-[#74767c] hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
+                    >
+                      <MdClose />
+                    </div>
+                    <p className="text-dark">
+                      {item.item.length > 30
+                        ? item.item.substring(0, 30) + "..."
+                        : item.item}
+                    </p>
+                    <p className="text-dark">${item.price}</p>
+                  </div>
+                ))}
                 {/* <div className="justify-between flex flex-row pb-1 pt-8"> */}
                 <Link
                   href="/cart"
@@ -319,8 +282,20 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           isOpen={modalOpen}
           closeModal={handleCloseModal}
           item={selectedMenuItem}
+          rest={restaurant.name}
         />
       )}
+      <Toaster
+        reverseOrder={false}
+        position="top-center"
+        toastOptions={{
+          style: {
+            borderRadius: "8px",
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
     </div>
   );
 };

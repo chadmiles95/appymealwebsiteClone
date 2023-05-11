@@ -1,13 +1,9 @@
 export interface Product {
-  _id: number;
-  title: string;
-  description: string;
-  oldPrice: number;
+  item: string;
+  id: string;
   price: number;
-  brand: string;
-  image: string;
-  isNew: boolean;
-  category: string;
+  modifiers: any[];
+  quantity: number;
 }
 [];
 
@@ -51,28 +47,19 @@ export interface Restaurant {
 const Restaurants: Restaurant[] = [];
 
 export interface Item {
-  _id: number;
-  title: string;
-  description: string;
-  oldPrice: number;
+  item: string;
+  id: string;
   price: number;
-  brand: string;
-  image: string;
-  isNew: boolean;
-  category: string;
+  modifiers: any[];
+  quantity: number;
 }
 [];
 
 export interface StoreProduct {
-  _id: number;
-  title: string;
-  description: string;
-  oldPrice: number;
+  item: string;
+  id: string;
   price: number;
-  brand: string;
-  image: string;
-  isNew: boolean;
-  category: string;
+  modifiers: any[];
   quantity: number;
 }
 

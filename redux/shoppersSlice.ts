@@ -6,6 +6,7 @@ interface ShopperState {
   restaurants: typeof Restaurants[];
   userInfo: null | UserInfo;
   currentTime: Date;
+  currentRestaurant: string;
   militaryTime: string;
   lastVisitedPage: string;
 }
@@ -15,6 +16,7 @@ const initialState: ShopperState = {
   restaurants: [],
   userInfo: null,
   currentTime: new Date(),
+  currentRestaurant: "",
   militaryTime: "0000",
   lastVisitedPage: "",
 };
@@ -25,7 +27,7 @@ export const shopperslice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const item = state.productData.find(
-        (item: StoreProduct) => item._id === action.payload._id
+        (item: StoreProduct) => item.id === action.payload.id
       );
 
       if (item) {
@@ -36,7 +38,7 @@ export const shopperslice = createSlice({
     },
     plusQuantity: (state, action) => {
       const item = state.productData.find(
-        (item: StoreProduct) => item._id === action.payload._id
+        (item: StoreProduct) => item.id === action.payload._id
       );
       if (item) {
         item.quantity++;
@@ -44,7 +46,7 @@ export const shopperslice = createSlice({
     },
     minusQuantity: (state, action) => {
       const item = state.productData.find(
-        (item: StoreProduct) => item._id === action.payload._id
+        (item: StoreProduct) => item.id === action.payload._id
       );
       if (item?.quantity === 1) {
         item.quantity = 1;
@@ -54,7 +56,7 @@ export const shopperslice = createSlice({
     },
     deleteItem: (state, action) => {
       state.productData = state.productData.filter(
-        (item) => item._id !== action.payload
+        (item) => item.id !== action.payload
       );
     },
     resetCart: (state) => {
@@ -79,6 +81,14 @@ export const shopperslice = createSlice({
     setLastVisitedPage: (state, action) => {
       state.lastVisitedPage = action.payload;
     },
+    checkCurrentRestaurant: (state, action) => {
+      if (state.currentRestaurant !== action.payload.rest) {
+        state.currentRestaurant = action.payload.rest;
+        state.productData = [];
+      } else {
+        null;
+      }
+    },
   },
 });
 
@@ -94,5 +104,6 @@ export const {
   setRestaurants,
   addRestaurant,
   setLastVisitedPage,
+  checkCurrentRestaurant,
 } = shopperslice.actions;
 export default shopperslice.reducer;
