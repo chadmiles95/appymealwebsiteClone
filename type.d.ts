@@ -58,6 +58,7 @@ export interface Item {
 export interface StoreProduct {
   item: string;
   id: string;
+  description?: string;
   price: number;
   modifiers: any[];
   quantity: number;

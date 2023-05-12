@@ -143,7 +143,7 @@ const CartPageComponent = () => {
                           {item.title}
                         </h2>
                         <p className="text-sm text-zinc-500">
-                          {item.description.substring(0, 120)}...
+                          {item.description?.substring(0, 120)}...
                         </p>
                         <p className="text-sm text-zinc-500">
                           price: ${item.price}
