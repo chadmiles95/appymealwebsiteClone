@@ -54,6 +54,15 @@ export const shopperslice = createSlice({
         item!.quantity--;
       }
     },
+    updateItem: (state, action) => {
+      const itemIndex = state.productData.findIndex(
+        (item: StoreProduct) => item.id === action.payload._id
+      );
+      state.productData[itemIndex] = {
+        ...state.productData[itemIndex],
+        ...action.payload,
+      }
+    },
     deleteItem: (state, action) => {
       state.productData = state.productData.filter(
         (item) => item.id !== action.payload

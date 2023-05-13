@@ -4,12 +4,14 @@ import { GoPlus } from "react-icons/go";
 import { useSelector } from "react-redux";
 import useUpdateTime from "../redux/useUpdateTime";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const RestaurantCard = ({ restaurant }: any) => {
   const [currentlyOpen, setCurrentlyOpen] = useState(false);
   const currentTime = useSelector((state: any) => state.shopper.currentTime);
   const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
   const updateTime = useUpdateTime();
+  const router = useRouter();
 
   console.log("militaryTime", militaryTime);
   console.log("currentTime", currentTime);
@@ -53,6 +55,9 @@ const RestaurantCard = ({ restaurant }: any) => {
     <div
       key={restaurant.name}
       className="border-[1px] w-full h-full border-gray-200 mb-2 group shadow-md rounded-xl"
+      onClick={() => {
+        router.push(`restaurants/${restaurant.name}`)
+      }}
     >
       <div className="w-full h-64 overflow-hidden rounded-xl">
         <Image

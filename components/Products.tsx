@@ -93,7 +93,7 @@ const Products = ({ productData }: any) => {
                 {item.title.substring(0, 25)}
               </p>
               <p className="text-base text-zinc-500">
-                {item.description.substring(0, 80)}...
+                {item.description?.substring(0, 80)}...
               </p>
               <div className="flex gap-2 items-center text-sm mt-2">
                 <div className="flex text-sm gap-1">
