@@ -235,44 +235,62 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
             </div>
             <div className="px-8 py-2">
               {currentRest !== "" && (
-                <p className="text-dark">Restaurant: {currentRest}</p>
+                <div className="flex justify-between">
+                  <p className="text-dark">Restaurant</p>
+                  <p className="text-dark">{currentRest}</p>
+                </div>
               )}
+              {/* change */}
+
               <div className="px-2 py-2">
-                <div className="justify-between flex flex-row pb-2">
-                  <p className=" underline underline-offset-2 decoration-dark decoration-1">
+                <div className="grid grid-cols-3 gap-4 items-center">
+                  <p className="underline underline-offset-2 decoration-dark decoration-1">
                     Items
                   </p>
-                  <p className="underline underline-offset-2 decoration-dark decoration-1">
+                  <p className="underline underline-offset-2 decoration-dark decoration-1 text-center">
+                    Quantity
+                  </p>
+                  <p className="underline underline-offset-2 decoration-dark decoration-1 text-right">
                     Price
                   </p>
                 </div>
                 {cart.map((item: any) => (
-                  <div className="justify-between flex flex-row pb-1">
-                    <div
-                      onClick={() => dispatch(deleteItem(item.id))}
-                      className="absolute left-4 pt-0 mt-0 text-base w-5 h-5 text-zinc-600 hover:bg-[#74767c] hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
-                    >
-                      <MdClose />
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-3 gap-4 items-center pb-2"
+                  >
+                    <div className="relative w-full pr-2">
+                      <div
+                        onClick={() => dispatch(deleteItem(item.id))}
+                        className="absolute -left-8  text-base w-5 h-5 text-zinc-600 hover:bg-[#74767c] hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
+                      >
+                        <MdClose />
+                      </div>
+                      <p className="text-dark whitespace-nowrap ">
+                        {item.item.length > 13
+                          ? item.item.substring(0, 13) + ".."
+                          : item.item}
+                      </p>
                     </div>
-                    <p className="text-dark">
-                      {item.item.length > 30
-                        ? item.item.substring(0, 30) + "..."
-                        : item.item}
+                    <p className="text-dark text-center">{item.quantity}</p>
+                    <p className="text-dark text-right">
+                      $
+                      {new Intl.NumberFormat("en-US", {
+                        style: "decimal",
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(item.price * item.quantity)}
                     </p>
-                    <p className="text-dark">${item.price}</p>
                   </div>
                 ))}
-                {/* <div className="justify-between flex flex-row pb-1 pt-8"> */}
-                <Link
-                  href="/cart"
-                  className="justify-between flex flex-row pb-1 pt-8"
-                >
-                  <button className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300">
+                <Link href="/cart" className="col-start-1 col-span-3 mt-4">
+                  <button className="bg-primary hover:bg-muted w-full mt-4 text-white h-10 rounded-full font-semibold duration-300">
                     Checkout
                   </button>
                 </Link>
-                {/* </div> */}
               </div>
+
+              {/* change */}
             </div>
           </div>
         </div>
@@ -299,3 +317,56 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
     </div>
   );
 };
+
+// <div className="px-2 py-2">
+// <div className="justify-between flex flex-row pb-2">
+//   <p className=" underline underline-offset-2 decoration-dark decoration-1">
+//     Items
+//   </p>
+//   <p className="underline underline-offset-2 decoration-dark decoration-1">
+//     Quantity
+//   </p>
+//   <p className="underline underline-offset-2 decoration-dark decoration-1">
+//     Price
+//   </p>
+// </div>
+// {cart.map((item: any) => (
+//   <div
+//     key={item.id}
+//     className="justify-between flex flex-row pb-1"
+//   >
+//     <div
+//       onClick={() => dispatch(deleteItem(item.id))}
+//       className="absolute left-4 pt-0 mt-0 text-base w-5 h-5 text-zinc-600 hover:bg-[#74767c] hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
+//     >
+//       <MdClose />
+//     </div>
+//     <div className="w-16">
+//       <p className="text-dark">
+//         {item.item.length > 16
+//           ? item.item.substring(0, 16) + "..."
+//           : item.item}
+//       </p>
+//     </div>
+//     <p className="text-dark">{item.quantity}</p>
+//     <p className="text-dark">
+//       $
+//       {new Intl.NumberFormat("en-US", {
+//         style: "decimal",
+//         minimumFractionDigits: 2,
+//         maximumFractionDigits: 2,
+//       }).format(item.price * item.quantity)}
+//     </p>
+//   </div>
+// ))}
+// {/* <div className="justify-between flex flex-row pb-1 pt-8"> */}
+// <Link
+//   href="/cart"
+//   className="justify-between flex flex-row pb-1 pt-8"
+// >
+//   <button className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300">
+//     Checkout
+//   </button>
+// </Link>
+// {/* </div> */}
+// </div>

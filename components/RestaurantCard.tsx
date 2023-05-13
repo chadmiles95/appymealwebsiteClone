@@ -13,9 +13,6 @@ const RestaurantCard = ({ restaurant }: any) => {
   const updateTime = useUpdateTime();
   const router = useRouter();
 
-  console.log("militaryTime", militaryTime);
-  console.log("currentTime", currentTime);
-
   useEffect(() => {
     updateTime();
   }, []);
@@ -54,9 +51,9 @@ const RestaurantCard = ({ restaurant }: any) => {
   return (
     <div
       key={restaurant.name}
-      className="border-[1px] w-full h-full border-gray-200 mb-2 group shadow-md rounded-xl"
+      className="border-[1px] w-full h-full border-gray-200 mb-2 group shadow-md rounded-xl cursor-pointer"
       onClick={() => {
-        router.push(`restaurants/${restaurant.name}`)
+        router.push(`restaurants/${restaurant.name}`);
       }}
     >
       <div className="w-full h-64 overflow-hidden rounded-xl">

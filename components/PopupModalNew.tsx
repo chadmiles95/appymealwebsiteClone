@@ -373,9 +373,14 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         {item.firstOptionName && (
           <>
             <div className="w-3/4">
-              <h3 className="text-lg text-dark mb-2">
-                Choose: {item.firstOptionName}
-              </h3>
+              <div className="w-2/3 justify-between flex flex-row">
+                <h3 className="text-lg text-dark mb-2">
+                  Choose: {item.firstOptionName}{" "}
+                </h3>
+                <p className=" text-dark mt-2">
+                  {item?.firstOptionRequired ? "  *Selection Required" : ""}
+                </p>
+              </div>
               <div className="py-4 px-2 grid grid-cols-2 gap-4 mt-2">
                 {item.firstOptions.map((option, index) => (
                   <div
@@ -406,9 +411,14 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         {item.secondOptionName && (
           <>
             <div className="w-3/4">
-              <h3 className="text-lg text-dark mb-2">
-                Choose: {item.secondOptionName}
-              </h3>
+              <div className="w-2/3 justify-between flex flex-row">
+                <h3 className="text-lg text-dark mb-2">
+                  Choose: {item.secondOptionName}{" "}
+                </h3>
+                <p className=" text-dark mt-2">
+                  {item?.secondOptionRequired ? "  *Selection Required" : ""}
+                </p>
+              </div>
               <div className="py-4 px-2 grid grid-cols-2 gap-4 mt-2">
                 {item.secondOptions.map((option, index) => (
                   <div key={index} className="flex items-center mb-2">
@@ -436,7 +446,12 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         {item.sides.length > 0 && (
           <>
             <div className="w-3/4">
-              <h3 className="text-lg text-dark mb-4">Choose: side item</h3>
+              <div className="w-2/3 justify-between flex flex-row">
+                <h3 className="text-lg text-dark mb-4">Choose: side item</h3>
+                <p className=" text-dark mt-2">
+                  {item?.sidesRequired ? "  *Selection Required" : ""}
+                </p>
+              </div>
               <div className="py-4 px-2 grid grid-cols-2 gap-4 mt-2">
                 {item.sides.map((side, index) => (
                   <div key={index} className="flex mb-2">
