@@ -51,7 +51,7 @@ const RestaurantCard = ({ restaurant }: any) => {
   return (
     <div
       key={restaurant.name}
-      className="border-[1px] w-full h-full border-gray-200 mb-2 group shadow-md rounded-xl cursor-pointer"
+      className="border-[1px] min-w-[335px] max-w-[335px] min-h-[390px] max-h-[390px] border-gray-200 mb-2 group shadow-md rounded-xl cursor-pointer"
       onClick={() => {
         router.push(`restaurants/${restaurant.name}`);
       }}
@@ -66,13 +66,13 @@ const RestaurantCard = ({ restaurant }: any) => {
         />
       </div>
       {/* Description */}
-      <div className="px-2 py-0 flex flex-col  justify-center">
+      <div className="px-2 py-0 flex flex-col justify-between">
         <div className="flex justify-between pt-3 pb-2">
           <div>
             <p className="text-lg font-semibold">
               {restaurant.name.substring(0, 25)}
             </p>
-            <p className="pt-0 mt-0">{restaurant.address}</p>
+            <p className="pt-0 mt-0">{restaurant.address.substring(0, 30)}</p>
             <p className="pt-0 mt-0">
               {restaurant.city}, {restaurant.state}
             </p>
@@ -96,46 +96,30 @@ const RestaurantCard = ({ restaurant }: any) => {
               Menu
             </button>
           </Link>
-          {/* <Link
-                    href={{
-                      pathname: `restaurants/${restaurant.name}`,
-                      query: {
-                        name: restaurant.name,
-                        description: restaurant.desc,
-                        photo: restaurant.photo,
-                      },
-                    }}
-                    as={`restaurants/${restaurant.name}`}
-                  >
-                    <button className="w-24 h-9 bg-white border-[1px] border-black text-black   rounded-full flex items-center justify-center gap-1 hover:bg-secondary hover:text-white duration-300">
-                      Details
-                    </button>
-                  </Link> */}
         </div>
-        <div className="w-full flex flex-row gap-2 justify-between">
-          <div className="flex flex-row gap-2">
-            <div className="flex bg-primary w-16 h-auto justify-center items-center rounded-xl">
-              <p className="text-white">Pickup</p>
-            </div>
-
-            {restaurant.enableDelivery && (
-              <div className="flex bg-primary w-20 h-auto justify-center items-center rounded-xl">
-                <p className="text-white">Delivery</p>
-              </div>
-            )}
+      </div>
+      <div className=" w-full flex flex-row gap-2 justify-between px-2">
+        <div className="flex flex-row gap-2">
+          <div className="flex bg-primary w-16 h-auto justify-center items-center rounded-xl">
+            <p className="text-white">Pickup</p>
           </div>
-          {currentlyOpen && (
-            <div className="flex bg-primary w-16 h-auto justify-center items-center rounded-xl">
-              <p className="text-white">OPEN</p>
+
+          {restaurant.enableDelivery && (
+            <div className="flex bg-primary w-20 h-auto justify-center items-center rounded-xl">
+              <p className="text-white">Delivery</p>
             </div>
           )}
-          {!currentlyOpen && (
-            <div className="flex bg-white w-20 h-auto justify-center items-center rounded-xl">
-              <p className="text-dark">CLOSED</p>
-            </div>
-          )}
-          {/* <p>CLOSED</p> */}
         </div>
+        {currentlyOpen && (
+          <div className="flex bg-primary w-16 h-auto justify-center items-center rounded-xl">
+            <p className="text-white">OPEN</p>
+          </div>
+        )}
+        {!currentlyOpen && (
+          <div className="flex bg-white w-20 h-auto justify-center items-center rounded-xl">
+            <p className="text-dark">CLOSED</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -27,6 +27,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemProps>();
   const [currentlyOpen, setCurrentlyOpen] = useState<boolean>(false);
+  const [totalAmt, setTotalAmt] = useState(0);
 
   //   GET LAST PAGE URL FOR BACK BUTTON
   const lastURL = useSelector((state: any) => state.shopper.lastVisitedPage);
@@ -86,12 +87,22 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
     }
   };
 
+  useEffect(() => {
+    let price = 0;
+    cart.map((item: any) => {
+      price += item.price * item.quantity;
+      return price;
+    });
+    let usePrice = parseFloat(price.toFixed(2));
+    setTotalAmt(usePrice);
+  }, [cart]);
+
   //   console.log(restaurant.menus.burgers[0]);
 
   return (
     <div className="w-full h-full flex-1">
-      <div className="w-full lg:h-10 bg-white justify-center items-center flex flex-row flex-wrap lg:flex-nowrap">
-        <div className="w-full justify-start px-10 basis-full lg:flx-basis-1/4 py-2 lg:py-0">
+      <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap lg:sticky top-20 z-10">
+        <div className="w-full justify-start px-10 basis-full lg:flx-basis-1/4 py-2 lg:py-0 ">
           <p
             onClick={() => {
               handleBackButtonClick();
@@ -101,25 +112,32 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
             Back
           </p>
         </div>
-        <p className="font-semibold px-8 text-dark basis-full lg:flx-basis-1/4 py-2 lg:py-0">
-          Rewards & Discounts On App:
-        </p>
-        <Link
-          href="https://apps.apple.com/us/app/appymeal/id6443683011"
-          className="basis-full lg:flx-basis-1/4 py-2 lg:py-0"
-        >
-          <p className="font-semibold px-8 hover:text-lightdark duration-200 cursor-pointer text-dark">
-            Download iOS Now
-          </p>
-        </Link>
-        <Link
-          href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US"
-          className="basis-full lg:flx-basis-1/4 py-2 lg:py-0"
-        >
-          <p className="font-semibold px-8 hover:text-lightdark duration-200 cursor-pointer text-dark">
-            Download Android Now
-          </p>
-        </Link>
+
+        <div className="flex flex-col whitespace-nowrap items-center justify-center w-1/2 px-4">
+          <div>
+            <p className="font-semibold px-2 text-dark basis-full flx-basis-1/4 py-0 text-md">
+              For Rewards & Discounts Download App
+            </p>
+          </div>
+          <div className="flex flex-row">
+            <Link
+              href="https://apps.apple.com/us/app/appymeal/id6443683011"
+              className="basis-full flx-basis-1/4  py-0"
+            >
+              <p className="font-semibold px-2 hover:text-lightdark duration-200 cursor-pointer text-dark">
+                Download iOS
+              </p>
+            </Link>
+            <Link
+              href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US"
+              className="basis-full flx-basis-1/4  py-0"
+            >
+              <p className="font-semibold px-2 hover:text-lightdark duration-200 cursor-pointer text-dark">
+                Download Android
+              </p>
+            </Link>
+          </div>
+        </div>
       </div>
       {/* TOP NAVBAR FOR RESTAURANTS */}
       <div className="bg-smoke w-full h-40  items-center flex pg-4 gap-2  px-4 lg:px-16 justify-between">
@@ -186,14 +204,21 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                       onClick={() => handleMenuItemClick(item)}
                       className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300"
                     >
-                      <div className="h-1/4">
+                      <div className="h-1/4 flex-nowrap overflow-hidden">
                         <p className="text-dark">{item.name}</p>
                       </div>
-                      <div className="h-2/4 py-1">
-                        <p className="text-dark text-sm">
-                          {item.desc.length > 90
-                            ? item.desc.substring(0, 90) + "..."
-                            : item.desc}
+                      <div className="h-2/4 py-1 overflow-hidden text-dark text-sm">
+                        <p
+                          className="overflow-hidden -webkit-line-clamp-2"
+                          style={{
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            lineHeight: "1.7",
+                            padding: "0",
+                            margin: "0",
+                          }}
+                        >
+                          {item.desc}
                         </p>
                       </div>
                       <div className="h-1/4">
@@ -212,7 +237,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
               </div>
             ))}
         </div>
-        <div className="basis-full lg:basis-1/3 lg:flex-1 flex-auto flex flex-col mx-auto px-4 lg:px-16 items-center">
+        <div className=" lgl:w-1/3 lg:w-2/5 sm:w-full md:w-3/4 mdl:w-1/2 flex flex-col mx-auto sm:px-4 md:px-2 lg:px-2 lgl:px-2 items-center">
           <p className="text-xl font-semibold text-dark">Methods Available</p>
           <div className="w-full flex flex-row gap-2 justify-center items-center mt-4">
             <div className="flex flex-row gap-8">
@@ -227,22 +252,37 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
               )}
             </div>
           </div>
-          {/* <div className="mt-8  border-lightdark border-solid border rounded-xl w-full items-center"> */}
-          {/* making cart sticky so users can see as they scroll */}
-          <div className="mt-8 border-lightdark border-solid border rounded-xl w-full items-center sticky top-24">
-            <div className="px-8 py-2 border-b border-lightdark border-solid border-1">
+
+          {/* cart starts here - making cart sticky so users can see as they scroll */}
+          <div className="mt-8 min-w-full border-lightdark border-solid border rounded-xl w-full items-center sticky top-36">
+            <div className="px-8 py-4 border-b border-lightdark border-solid border-1 flex flex-row justify-between">
               <p className="font-semibold text-dark">Current Cart</p>
+              <p className="font-semibold text-dark lg:mr-2">
+                Total: $
+                {new Intl.NumberFormat("en-US", {
+                  style: "decimal",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).format(totalAmt)}
+              </p>
             </div>
-            <div className="px-8 py-2">
+            <div className="px-8 py-2 whitespace-nowrap">
               {currentRest !== "" && (
-                <div className="flex justify-between">
-                  <p className="text-dark">Restaurant</p>
-                  <p className="text-dark">{currentRest}</p>
+                <div
+                  className="flex"
+                  onClick={() => {
+                    router.push(`restaurants/${restaurant.name}`);
+                  }}
+                >
+                  <p className="font-semibold px-2 hover:text-lightdark duration-200 cursor-pointer text-dark">
+                    {" "}
+                    {currentRest?.length > 28
+                      ? currentRest.substring(0, 28) + ".."
+                      : currentRest}
+                  </p>
                 </div>
               )}
-              {/* change */}
-
-              <div className="px-2 py-2">
+              <div className="px-2 py-2 overflow-y-auto max-h-[50vh]">
                 <div className="grid grid-cols-3 gap-4 items-center">
                   <p className="underline underline-offset-2 decoration-dark decoration-1">
                     Items
@@ -254,43 +294,57 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                     Price
                   </p>
                 </div>
-                {cart.map((item: any) => (
-                  <div
-                    key={item.id}
-                    className="grid grid-cols-3 gap-4 items-center pb-2"
-                  >
-                    <div className="relative w-full pr-2">
-                      <div
-                        onClick={() => dispatch(deleteItem(item.id))}
-                        className="absolute -left-8  text-base w-5 h-5 text-zinc-600 hover:bg-[#74767c] hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
-                      >
-                        <MdClose />
+                {cart.map((item: any, index: number) => (
+                  <div key={index} className="col-span-3 relative">
+                    <div className="grid grid-cols-3 gap-0 items-center pb-2 relative">
+                      <div className="relative w-full flex flex-row">
+                        <div
+                          onClick={() => dispatch(deleteItem(item.id))}
+                          className="mr-1 text-base w-5 h-5 text-zinc-600 hover:bg-[#74767c] hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
+                        >
+                          <MdClose />
+                        </div>
+                        <div className="flex flex-wrap whitespace-normal">
+                          <p className="text-dark text-sm">{item.item}</p>
+                        </div>
                       </div>
-                      <p className="text-dark whitespace-nowrap ">
-                        {item.item.length > 13
-                          ? item.item.substring(0, 13) + ".."
-                          : item.item}
+                      <p className="text-dark text-center">{item.quantity}</p>
+                      <p className="text-dark text-right">
+                        $
+                        {new Intl.NumberFormat("en-US", {
+                          style: "decimal",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }).format(item.price * item.quantity)}
                       </p>
                     </div>
-                    <p className="text-dark text-center">{item.quantity}</p>
-                    <p className="text-dark text-right">
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        style: "decimal",
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(item.price * item.quantity)}
-                    </p>
+                    {item.modifiers &&
+                      item.modifiers.some(
+                        (modifier: any) => modifier !== null
+                      ) && (
+                        <div className="overflow-x-auto relative top-0 left-0 px-2 py-0 space-x-1 flex flex-row max-w-full mb-2">
+                          {item.modifiers.map((option: any, index: number) => {
+                            if (option !== null) {
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center justify-center bg-primary rounded-full px-2 h-6 min-w-max"
+                                >
+                                  <p className="text-white text-sm">{option}</p>
+                                </div>
+                              );
+                            }
+                          })}
+                        </div>
+                      )}
                   </div>
                 ))}
-                <Link href="/cart" className="col-start-1 col-span-3 mt-4">
-                  <button className="bg-primary hover:bg-muted w-full mt-4 text-white h-10 rounded-full font-semibold duration-300">
-                    Checkout
-                  </button>
-                </Link>
               </div>
-
-              {/* change */}
+              <Link href="/cart" className="col-start-1 col-span-3 mt-4">
+                <button className="bg-primary hover:bg-muted w-full mt-4 text-white h-10 rounded-full font-semibold duration-300">
+                  Continue To Cart
+                </button>
+              </Link>
             </div>
           </div>
         </div>

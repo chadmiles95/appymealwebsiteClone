@@ -45,8 +45,8 @@ const CartPageComponent = () => {
     let savings = 0;
     let amt = 0;
     productData.map((item: StoreProduct) => {
-      oldPrice += item.oldPrice * item.quantity;
-      savings += item.oldPrice - item.price;
+      oldPrice += item.price * item.quantity;
+      savings += item.price - item.price;
       amt += item.price * item.quantity;
       return;
     });
@@ -73,6 +73,13 @@ const CartPageComponent = () => {
       alert(result?.error.message);
     }
   };
+
+  function allAreNull(arr: any[]) {
+    if (!arr.length) {
+      return false;
+    }
+    return true;
+  }
 
   return (
     <div className="w-full py-10">
@@ -127,33 +134,63 @@ const CartPageComponent = () => {
               <div>
                 {productData.map((item: StoreProduct) => (
                   <div
-                    key={item._id}
+                    key={item.id}
                     className="flex items-center justify-between gap-4 border-b-[1px] border-b-zinc-200 pb-4"
                   >
                     <div className="w-3/4 flex items-center gap-2">
-                      <Image
+                      {/* <Image
                         width={500}
                         height={500}
                         className="w-32"
                         src={item.image}
                         alt="productImg"
-                      />
+                      /> */}
                       <div>
-                        <h2 className="text-base text-zinc-900">
-                          {item.title}
-                        </h2>
+                        <h2 className="text-base text-zinc-900">{item.item}</h2>
+                        {/* <p className="text-sm text-zinc-500">
+                          {item.desc?.substring(0, 120)}...
+                        </p> */}
+                        {/* OUTPUT MODIFIERS HERE */}
+
+                        <div>
+                          {item.modifiers &&
+                            item.modifiers.some(
+                              (modifier) => modifier !== null
+                            ) && (
+                              <div className="flex  px-2 py-2 space-x-2">
+                                {item.modifiers.map((option, index) => {
+                                  if (option !== null) {
+                                    return (
+                                      <div
+                                        key={index}
+                                        className="flex items-center justify-center bg-primary rounded-full px-2 py-1"
+                                      >
+                                        <p className="text-white text-sm">
+                                          {option}
+                                        </p>
+                                      </div>
+                                    );
+                                  }
+                                })}
+                              </div>
+                            )}
+                        </div>
+
+                        {/* OUTPUT MODIFIERS HERE */}
                         <p className="text-sm text-zinc-500">
-                          {item.description?.substring(0, 120)}...
+                          Price: $
+                          {new Intl.NumberFormat("en-US", {
+                            style: "decimal",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(item.price)}
                         </p>
-                        <p className="text-sm text-zinc-500">
-                          price: ${item.price}
-                        </p>
-                        <p className="text-sm text-zinc-500 flex items-center gap-1">
+                        {/* <p className="text-sm text-zinc-500 flex items-center gap-1">
                           <span className="bg-blue rounded-full text-white text-xs w-4 flex items-center justify-center">
                             <TbReload className="rotate-180" />
                           </span>
                           Free 30-day returns
-                        </p>
+                        </p> */}
                         {/* buttons */}
                         <div className="mt-2 flex items-center gap-6">
                           <button

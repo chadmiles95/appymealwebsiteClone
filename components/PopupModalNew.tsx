@@ -285,19 +285,30 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         <p className="text-sm text-dark mb-2">{item.desc}</p>
         {item.allergies && allergyArray.length > 0 && (
           <>
-            <h3 className="text-sm text-dark mb-2">Allergens</h3>
-            <ul className="list-disc pl-5">
-              {item.allergies.map((items, index) => {
-                const [key, value] = Object.entries(items)[0];
-                if (value === true) {
-                  return (
-                    <li key={index} className="text-dark">
-                      {key.slice(0, key.length - 7)}
-                    </li>
-                  );
-                }
-              })}
-            </ul>
+            <div className="flex flex-row h-8  mt-2">
+              <div className="w-full  flex items-center justify-center">
+                <h3 className="text-sm text-dark mb-2 mr-4">Allergens: </h3>
+              </div>
+              <div className="flex">
+                <div className="flex  px-2 py-0 space-x-2">
+                  {item.allergies.map((items, index) => {
+                    const [key, value] = Object.entries(items)[0];
+                    if (value === true) {
+                      return (
+                        <div
+                          key={index}
+                          className="flex items-center justify-center bg-primary rounded-full px-2 py-1 h-6 space-x-2"
+                        >
+                          <p className="text-white text-sm">
+                            {key.slice(0, key.length - 7)}
+                          </p>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+              </div>
+            </div>
           </>
         )}
         {item.showRawWarning && (
@@ -312,14 +323,23 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         )}
         {item.ingredients && (
           <>
-            <h3 className="text-sm text-dark mb-2">Ingredients</h3>
-            <ul className="list-disc pl-5">
-              {item.ingredients.map((ingredient, index) => (
-                <li key={index} className="text-dark">
-                  {ingredient}
-                </li>
-              ))}
-            </ul>
+            <div className="flex flex-row h-8  mt-2">
+              <div className="w-full  flex items-center justify-center">
+                <h3 className="text-sm text-dark mb-2 mr-4">Ingredients: </h3>
+              </div>
+              <div className="flex">
+                <div className="flex  px-2 py-0 space-x-2">
+                  {item.ingredients.map((ingredient, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-center bg-primary rounded-full px-2 py-1 h-6 space-x-2"
+                    >
+                      <p className="text-white text-sm">{ingredient}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </>
         )}
 
@@ -372,25 +392,20 @@ export const PopupModalNew: React.FC<ModalProps> = ({
 
         {item.firstOptionName && (
           <>
-            <div className="w-3/4">
+            <div className="w-3/4 mt-2">
               <div className="w-2/3 justify-between flex flex-row">
                 <h3 className="text-lg text-dark mb-2">
                   Choose: {item.firstOptionName}{" "}
                 </h3>
-                <p className=" text-dark mt-2">
+                <p className=" text-dark mt-0">
                   {item?.firstOptionRequired ? "  *Selection Required" : ""}
                 </p>
               </div>
               <div className="py-4 px-2 grid grid-cols-2 gap-4 mt-2">
                 {item.firstOptions.map((option, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center mb-2 ${
-                      index % 2 === 0 ? "justify-start" : "justify-end"
-                    }`}
-                  >
+                  <div key={index} className="flex items-center mb-2">
                     <input
-                      type="radio"
+                      type={item.firstOptionMultiple ? "checkbox" : "radio"}
                       id={`firstOption-${index}`}
                       name="firstOption"
                       value={option.name}
@@ -410,7 +425,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         )}
         {item.secondOptionName && (
           <>
-            <div className="w-3/4">
+            <div className="w-3/4  mt-2">
               <div className="w-2/3 justify-between flex flex-row">
                 <h3 className="text-lg text-dark mb-2">
                   Choose: {item.secondOptionName}{" "}
@@ -423,7 +438,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
                 {item.secondOptions.map((option, index) => (
                   <div key={index} className="flex items-center mb-2">
                     <input
-                      type="radio"
+                      type={item.secondOptionMultiple ? "checkbox" : "radio"}
                       id={`secondOption-${index}`}
                       name="secondOption"
                       value={option.name}
@@ -445,7 +460,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         )}
         {item.sides.length > 0 && (
           <>
-            <div className="w-3/4">
+            <div className="w-3/4  mt-2">
               <div className="w-2/3 justify-between flex flex-row">
                 <h3 className="text-lg text-dark mb-4">Choose: side item</h3>
                 <p className=" text-dark mt-2">

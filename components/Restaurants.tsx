@@ -53,7 +53,7 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
       <div className="justify-center items-center w-1/3 mt-8">
         <SearchBar />
       </div>
-      <div className="py-6 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-2">
+      <div className="py-6 px-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2 items-start justify-items-center">
         {restaurantData.map((restaurant: Restaurant) => {
           return (
             <RestaurantCard key={restaurant.name} restaurant={restaurant} />
