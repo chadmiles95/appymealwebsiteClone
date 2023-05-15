@@ -20,7 +20,7 @@ const cart = () => {
 
   return (
     <div className="w-full flex-1 flex flex-col">
-      <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap lg:sticky top-20 z-10">
+      <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap top-20 z-10">
         <div className="w-full justify-start px-10 basis-full lg:flx-basis-1/4 py-2 lg:py-0 ">
           <p
             onClick={() => {

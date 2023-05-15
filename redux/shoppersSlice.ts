@@ -3,7 +3,7 @@ import { StoreProduct, UserInfo, Restaurants } from "../type";
 
 interface ShopperState {
   productData: StoreProduct[];
-  restaurants: typeof Restaurants[];
+  restaurants: (typeof Restaurants)[];
   userInfo: null | UserInfo;
   currentTime: Date;
   currentRestaurant: string;
@@ -38,7 +38,7 @@ export const shopperslice = createSlice({
     },
     plusQuantity: (state, action) => {
       const item = state.productData.find(
-        (item: StoreProduct) => item.id === action.payload._id
+        (item: StoreProduct) => item.id === action.payload.id
       );
       if (item) {
         item.quantity++;
@@ -46,7 +46,7 @@ export const shopperslice = createSlice({
     },
     minusQuantity: (state, action) => {
       const item = state.productData.find(
-        (item: StoreProduct) => item.id === action.payload._id
+        (item: StoreProduct) => item.id === action.payload.id
       );
       if (item?.quantity === 1) {
         item.quantity = 1;
@@ -61,7 +61,7 @@ export const shopperslice = createSlice({
       state.productData[itemIndex] = {
         ...state.productData[itemIndex],
         ...action.payload,
-      }
+      };
     },
     deleteItem: (state, action) => {
       state.productData = state.productData.filter(
