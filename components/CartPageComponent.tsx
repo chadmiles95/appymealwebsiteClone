@@ -10,7 +10,7 @@ import {
 } from "../public/assets/images";
 import { TbReload } from "react-icons/tb";
 import { HiMinusSmall } from "react-icons/hi2";
-import { MdOutlineAdd } from "react-icons/md";
+import { MdClose, MdOutlineAdd } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import { StoreProduct } from "../type";
@@ -25,6 +25,7 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -32,15 +33,16 @@ const CartPageComponent = () => {
   const stripePromise = loadStripe(process.env.stripe_public_key);
   const productData = useSelector((state: any) => state.shopper.productData);
   const userInfo = useSelector((state: any) => state.shopper.userInfo);
-  const [warningMsg, setWarningMsg] = useState(false);
+  const cart = useSelector((state: any) => state.shopper.productData);
+  const [downloadAppMsg, setDownloadAppMsg] = useState(true);
 
   const [totalOldPrice, setTotalOldPrice] = useState(0);
   const [totalSavings, setTotalSavings] = useState(0);
   const [totalAmt, setTotalAmt] = useState(0);
 
-  useEffect(() => {
-    setWarningMsg(true);
+  const [isPickup, setIsPickup] = useState(true);
 
+  useEffect(() => {
     let oldPrice = 0;
     let savings = 0;
     let amt = 0;
@@ -80,6 +82,9 @@ const CartPageComponent = () => {
     }
     return true;
   }
+  const handleClick = () => {
+    setIsPickup(!isPickup);
+  };
 
   return (
     <div className="w-full py-10">
@@ -94,28 +99,27 @@ const CartPageComponent = () => {
           {/* pickup details */}
           <div>
             <div className="text-xl font-bold flex items-center gap-2 mb-2">
-              <Image className="w-10" src={phoneImg} alt="phoneImg" />
-              <p>Pickup and delivery options</p>
+              <p>Choose Pickup or Delivery </p>
             </div>
-            <div className="w-full grid grid-cols-3 gap-4 text-xs">
-              <div className="w-full border border-zinc-400 rounded-md flex flex-col items-center justify-center p-2">
-                <Image className="w-10" src={ship1Img} alt="shippingImg" />
-                <p>Shipping</p>
-                <p>Tomorrow</p>
-                <p>Free</p>
-              </div>
-              <div className="w-full border border-zinc-400 rounded-md flex flex-col items-center justify-center p-2">
-                <Image className="w-10" src={ship2Img} alt="shippingImg" />
-                <p>Pickup</p>
-                <p>Tomorrow</p>
-                <p>Free</p>
-              </div>
-              <div className="w-full border border-zinc-400 rounded-md flex flex-col items-center justify-center p-2">
-                <Image className="w-10" src={ship3Img} alt="shippingImg" />
-                <p>Delivery</p>
-                <p>Tomorrow</p>
-              </div>
+            <div className="flex items-center justify-center w-full my-8">
+              <button
+                className={` w-44 transition-colors duration-300 ease-in-out py-2 px-4 rounded-l-full ${
+                  isPickup ? "bg-blue-500 text-gray" : "bg-gray-200 text-black"
+                }`}
+                onClick={handleClick}
+              >
+                Pickup
+              </button>
+              <button
+                className={` w-44 transition-colors duration-300 ease-in-out py-2 px-4 rounded-r-full ${
+                  isPickup ? "bg-gray-200 text-black" : "bg-blue-500 text-gray"
+                }`}
+                onClick={handleClick}
+              >
+                Delivery
+              </button>
             </div>
+
             {/* Cart Product */}
             <div className="w-full p-5 border-[1px] border-zinc-400 rounded-md flex flex-col gap-4">
               <p className="font-semibold text-sm text-zinc-500">
@@ -250,7 +254,7 @@ const CartPageComponent = () => {
                         <FormatPrice amount={item.price * item.quantity} />
                       </p>
                       <p className="text-sm line-through text-zinc-500">
-                        <FormatPrice amount={item.oldPrice * item.quantity} />
+                        <FormatPrice amount={item.price * item.quantity} />
                       </p>
                       <div className="flex items-center text-xs gap-2">
                         <p className="bg-green-200 text-[8px] uppercase px-2 py-[1px]">
@@ -259,7 +263,7 @@ const CartPageComponent = () => {
                         <p className="text-[#2a8703] font-semibold">
                           <FormatPrice
                             amount={
-                              item.oldPrice * item.quantity -
+                              item.price * item.quantity -
                               item.price * item.quantity
                             }
                           />
@@ -278,62 +282,100 @@ const CartPageComponent = () => {
             </div>
           </div>
         </div>
-        <div className="basis-full lg:basis-1/3 lg:flex-1 flex-auto m-4 p-4 lg:mt-28 h-[500px] border-[1px] border-zinc-400 rounded-md flex flex-col justify-center gap-4">
-          <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
-            {userInfo ? (
+        <div className="basis-full lg:basis-1/3 lg:flex-1  m-4 p-4 lg:mt-28 h-auto border-[1px] border-zinc-400 rounded-md flex flex-col  gap-4">
+          <div className="w-full flex flex-col  border-b-[1px] border-b-zinc-200 pb-4">
+            <div className="py-0 gap-2 flex flex-col ">
               <button
                 onClick={() => handleCheckout()}
-                className="bg-blue hover:bg-hoverBg w-full text-white h-10 rounded-full font-semibold duration-300"
+                className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300"
               >
                 Continue to checkout
               </button>
-            ) : (
-              <button className="bg-blue bg-opacity-50 w-full text-white h-10 rounded-full font-semibold duration-300 cursor-not-allowed">
-                Continue to checkout
-              </button>
-            )}
-            {!userInfo && (
-              <p className="text-sm text-center text-red-500 -mt-4 font-semibold">
-                Please sing in for checkout
-              </p>
-            )}
-            {warningMsg && (
-              <div className="bg-[#002d58] text-white p-2 rounded-lg flex items-center justify-between gap-4">
-                <Image className="w-8" src={warningImg} alt="warningImg" />
-                <p className="text-sm">
-                  Items in your cart have reduced prices. Check out now for
-                  extra savings!
-                </p>
-                <IoMdClose
-                  onClick={() => setWarningMsg(false)}
-                  className="text-3xl hover:text-red-400 cursor-pointer duration-200"
-                />
-              </div>
-            )}
-            <p className="text-sm text-center">
-              For the best shopping experience,{" "}
-              <span className="underline underline-offset-2 decoration-[1px]">
-                sign in
-              </span>
-            </p>
+
+              {downloadAppMsg && (
+                <div className="bg-primary text-white p-2 rounded-lg flex items-center justify-between gap-4 mb-6">
+                  <Image className="w-8" src={warningImg} alt="warningImg" />
+                  <p className="text-sm">
+                    You are missing out on {totalAmt.toFixed(0)} points by not
+                    ordering through the app!
+                  </p>
+                  <IoMdClose
+                    onClick={() => setDownloadAppMsg(false)}
+                    className="text-3xl hover:text-red-400 cursor-pointer duration-200"
+                  />
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Show cart here */}
+
+          <div className="mt-2 min-w-full w-full items-center ">
+            <div className="px-2 py-2 whitespace-nowrap">
+              <div className="px-0 py-2 overflow-y-auto max-h-[50vh]">
+                <div className="grid grid-cols-3 gap-4 items-center">
+                  <p className="underline underline-offset-2 decoration-dark decoration-1">
+                    Items
+                  </p>
+                  <p className="underline underline-offset-2 decoration-dark decoration-1 text-center">
+                    Quantity
+                  </p>
+                  <p className="underline underline-offset-2 decoration-dark decoration-1 text-right">
+                    Price
+                  </p>
+                </div>
+                {cart.map((item: any, index: number) => (
+                  <div key={index} className="col-span-3 relative">
+                    <div className="grid grid-cols-3 gap-0 items-center pb-2 relative">
+                      <div className="relative w-full flex flex-row">
+                        <div
+                          onClick={() => dispatch(deleteItem(item.id))}
+                          className="mr-1 text-base w-5 h-5 text-zinc-600 hover:bg-[#74767c] hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
+                        >
+                          <MdClose />
+                        </div>
+                        <div className="flex flex-wrap whitespace-normal">
+                          <p className="text-dark text-sm">{item.item}</p>
+                        </div>
+                      </div>
+                      <p className="text-dark text-center">{item.quantity}</p>
+                      <p className="text-dark text-right">
+                        $
+                        {new Intl.NumberFormat("en-US", {
+                          style: "decimal",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }).format(item.price * item.quantity)}
+                      </p>
+                    </div>
+                    {item.modifiers &&
+                      item.modifiers.some(
+                        (modifier: any) => modifier !== null
+                      ) && (
+                        <div className="overflow-x-auto relative top-0 left-0 px-2 py-0 space-x-1 flex flex-row max-w-full mb-2">
+                          {item.modifiers.map((option: any, index: number) => {
+                            if (option !== null) {
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center justify-center bg-primary rounded-full px-2 h-6 min-w-max"
+                                >
+                                  <p className="text-white text-sm">{option}</p>
+                                </div>
+                              );
+                            }
+                          })}
+                        </div>
+                      )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* checkout price*/}
           <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
             <div className="flex flex-col gap-1">
-              <div className="text-sm flex justify-between">
-                <p className="font-semibold">
-                  Subtotal: <span>({productData.length} items)</span>
-                </p>
-                <p className="line-through text-zinc-500 text-base">
-                  <FormatPrice amount={totalOldPrice} />
-                </p>
-              </div>
-              <div className="text-sm flex justify-between">
-                <p className="font-semibold">Savings</p>
-                <p className="text-[#2a8703] font-bold bg-green-100 py-1 px-[2px] rounded-lg flex">
-                  <FormatPrice amount={totalSavings} />
-                </p>
-              </div>
               <div className="text-sm flex justify-between">
                 <p className="font-semibold">Total Amount</p>
                 <p className="text-zinc-800 font-normal text-base">
@@ -345,7 +387,7 @@ const CartPageComponent = () => {
           <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
             <div className="flex flex-col gap-1">
               <div className="text-sm flex justify-between">
-                <p>Shipping</p>
+                <p>Delivery</p>
                 <p className="text-[#2a8703]">Free</p>
               </div>
               <div className="text-sm flex justify-between">

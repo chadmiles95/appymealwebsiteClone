@@ -340,8 +340,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                   </div>
                 ))}
               </div>
-              <Link href="/cart" className="col-start-1 col-span-3 mt-4">
-                <button className="bg-primary hover:bg-muted w-full mt-4 text-white h-10 rounded-full font-semibold duration-300">
+              <Link href="/cart" className="col-start-1 col-span-3 ">
+                <button className="bg-primary hover:bg-muted w-full mt-4 text-white h-10 rounded-full font-semibold duration-300 mb-2">
                   Continue To Cart
                 </button>
               </Link>
