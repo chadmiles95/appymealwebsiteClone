@@ -181,22 +181,6 @@ const CartPageComponent = () => {
                       <p className="font-semibold text-xl text-dark">
                         <FormatPrice amount={item.price * item.quantity} />
                       </p>
-                      {/* <p className="text-sm line-through text-zinc-500">
-                        <FormatPrice amount={item.price * item.quantity} />
-                      </p> */}
-                      {/* <div className="flex items-center text-xs gap-2">
-                        <p className="bg-green-200 text-[8px] uppercase px-2 py-[1px]">
-                          You save{" "}
-                        </p>
-                        <p className="text-[#2a8703] font-semibold">
-                          <FormatPrice
-                            amount={
-                              item.price * item.quantity -
-                              item.price * item.quantity
-                            }
-                          />
-                        </p>
-                      </div> */}
                     </div>
                   </div>
                 ))}
@@ -210,7 +194,7 @@ const CartPageComponent = () => {
             </div>
           </div>
         </div>
-        <div className="basis-full lg:basis-1/3 lg:flex-1  m-4 p-4 lg:mt-16 h-auto border-[1px] border-zinc-400 rounded-md flex flex-col  gap-4">
+        <div className="basis-full lg:basis-1/3 lg:flex-1 m-4 p-4 lg:mt-16 h-1/2 border-[1px] border-zinc-400 rounded-md flex flex-col  gap-4">
           <button
             onClick={() => handleCheckout()}
             className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300"
