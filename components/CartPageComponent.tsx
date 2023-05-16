@@ -94,8 +94,8 @@ const CartPageComponent = () => {
   return (
     <div className="w-full py-8">
       <div className="w-full flex flex-row flex-wrap lg:flex-nowrap gap-7">
-        <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col gap-5 m-4">
-          <h1 className="text-2xl font-bold text-black">
+        <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col gap-5 m-4 relative">
+          <h1 className="text-2xl font-bold text-black relative">
             Cart{" "}
             <span className="text-lightText font-normal">
               ({productData.length} items)
@@ -104,90 +104,80 @@ const CartPageComponent = () => {
           {/* pickup details */}
           <div>
             {/* Cart Product */}
-            <div className="w-full p-5 border-[1px] border-zinc-400 rounded-md flex flex-col gap-4">
+            <div className="w-full px-4 py-4 border-[1px] border-zinc-400 rounded-md flex flex-col gap-4 relative">
               <div>
                 {productData.map((item: StoreProduct) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between gap-4 border-b-[1px] border-b-zinc-200 pb-4"
+                    className="grid grid-cols-4 gap-4 border-b-[1px] border-b-zinc-200 pb-4 pt-4"
                   >
-                    <div className="w-3/4 flex items-center gap-2">
-                      {/* <Image
-                        width={500}
-                        height={500}
-                        className="w-32"
-                        src={item.image}
-                        alt="productImg"
-                      /> */}
-                      <div>
-                        <h2 className="text-base text-dark">{item.item}</h2>
+                    <div className="col-span-3">
+                      <h2 className="text-base text-dark">{item.item}</h2>
 
-                        {/* OUTPUT MODIFIERS HERE */}
+                      {/* OUTPUT MODIFIERS HERE */}
 
-                        <div>
-                          {item.modifiers &&
-                            item.modifiers.some(
-                              (modifier) => modifier !== null
-                            ) && (
-                              <div className="flex  px-2 py-2 space-x-2">
-                                {item.modifiers.map((option, index) => {
-                                  if (option !== null) {
-                                    return (
-                                      <div
-                                        key={index}
-                                        className="flex items-center justify-center bg-primary rounded-full px-2 py-1 whitespace-nowrap"
-                                      >
-                                        <p className="text-white text-sm">
-                                          {option}
-                                        </p>
-                                      </div>
-                                    );
-                                  }
-                                })}
-                              </div>
-                            )}
-                        </div>
-
-                        {/* OUTPUT MODIFIERS HERE */}
-
-                        <div className="mt-2 flex items-center gap-6">
-                          <button
-                            onClick={() => dispatch(deleteItem(item.id))}
-                            className="text-sm underline underline-offset-2 decoration-[1px] text-dark hover:no-underline hover:text-lightdark duration-300"
-                          >
-                            Remove
-                          </button>
-                          <div className="w-28 h-9 border border-zinc-400 rounded-full text-base font-semibold text-black flex items-center justify-between px-3">
-                            <button
-                              onClick={() =>
-                                dispatch(
-                                  minusQuantity({
-                                    id: item.id,
-                                  })
-                                )
+                      {item.modifiers &&
+                        item.modifiers.some(
+                          (modifier) => modifier !== null
+                        ) && (
+                          <div className="overflow-x-auto relative top-0 left-0 px-2 py-2 space-x-1 flex flex-row max-w-full mb-2">
+                            {item.modifiers.map((option, index) => {
+                              if (option !== null) {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="flex items-center justify-center bg-primary rounded-full px-2 h-6 min-w-max whitespace-nowrap"
+                                  >
+                                    <p className="text-white text-sm">
+                                      {option}
+                                    </p>
+                                  </div>
+                                );
                               }
-                              className="text-base w-5 h-5 text-dark hover:bg-dark hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
-                            >
-                              <HiMinusSmall />
-                            </button>
-                            <span>{item.quantity}</span>
-                            <button
-                              onClick={() =>
-                                dispatch(
-                                  plusQuantity({
-                                    id: item.id,
-                                  })
-                                )
-                              }
-                              className="text-base w-5 h-5 text-dark hover:bg-dark hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
-                            >
-                              <MdOutlineAdd />{" "}
-                            </button>
+                            })}
                           </div>
+                        )}
+
+                      {/* OUTPUT MODIFIERS HERE */}
+
+                      <div className="mt-2 flex items-center gap-6">
+                        <button
+                          onClick={() => dispatch(deleteItem(item.id))}
+                          className="text-sm underline underline-offset-2 decoration-[1px] text-dark hover:no-underline hover:text-lightdark duration-300"
+                        >
+                          Remove
+                        </button>
+                        <div className="w-28 h-9 border border-zinc-400 rounded-full text-base font-semibold text-black flex items-center justify-between px-3">
+                          <button
+                            onClick={() =>
+                              dispatch(
+                                minusQuantity({
+                                  id: item.id,
+                                })
+                              )
+                            }
+                            className="text-base w-5 h-5 text-dark hover:bg-dark hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
+                          >
+                            <HiMinusSmall />
+                          </button>
+                          <span>{item.quantity}</span>
+                          <button
+                            onClick={() =>
+                              dispatch(
+                                plusQuantity({
+                                  id: item.id,
+                                })
+                              )
+                            }
+                            className="text-base w-5 h-5 text-dark hover:bg-dark hover:text-white rounded-full flex items-center justify-center cursor-pointer duration-200"
+                          >
+                            <MdOutlineAdd />{" "}
+                          </button>
                         </div>
                       </div>
                     </div>
-                    <div className="w-1/4 text-right flex flex-col items-end gap-1">
+
+                    <div className="w-full text-right flex flex-col items-end gap-1 justify-center">
                       <p className="font-semibold text-xl text-dark">
                         <FormatPrice amount={item.price * item.quantity} />
                       </p>
