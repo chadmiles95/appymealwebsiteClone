@@ -283,7 +283,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                 </div>
               )}
               <div className="px-2 py-2 overflow-y-auto max-h-[50vh]">
-                <div className="grid grid-cols-3 gap-4 items-center">
+                <div className="grid grid-cols-3 gap-4 items-center mb-4">
                   <p className="underline underline-offset-2 decoration-dark decoration-1">
                     Items
                   </p>
@@ -328,7 +328,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                               return (
                                 <div
                                   key={index}
-                                  className="flex items-center justify-center bg-primary rounded-full px-2 h-6 min-w-max"
+                                  className="flex items-center justify-center bg-primary rounded-full px-2 h-6 min-w-max whitespace-nowrap"
                                 >
                                   <p className="text-white text-sm">{option}</p>
                                 </div>
