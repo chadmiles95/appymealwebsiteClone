@@ -45,7 +45,7 @@ const Navbar = () => {
   }, [productData]);
 
   return (
-    <div className="w-full bg-smoke text-white sticky top-0 z-50">
+    <div className="w-full bg-smoke text-white sticky top-0 z-8 ">
       <div className="w-full border-b-[1px] border-b-dark">
         <div className="max-w-container h-20 mx-auto px-4 flex items-center justify-between gap-2">
           {/* LOGO */}

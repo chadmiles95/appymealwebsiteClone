@@ -197,7 +197,7 @@ const CartPageComponent = () => {
         <div className="basis-full lg:basis-1/3 lg:flex-1 m-4 p-4 lg:mt-16 h-1/2 border-[1px] border-zinc-400 rounded-md flex flex-col  gap-4">
           <button
             onClick={() => handleCheckout()}
-            className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300"
+            className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300 mt-2"
           >
             Place {!isPickup ? "Pickup" : "Delivery"} Order | $
             {totalAmt.toFixed(2)}
@@ -248,7 +248,7 @@ const CartPageComponent = () => {
           </div>
           <div className="flex items-center justify-between w-full my-2">
             <button
-              className={`w-1/4 h-16 transition-colors duration-300 ease-in-out py-2 px-4 mr-4 rounded-xl border border-gray-300 text-center ${
+              className={`w-1/4 h-16 transition-colors duration-300 ease-in-out py-2 px-4 mr-2 rounded-xl border border-gray-300 text-center ${
                 selectedTip === 0
                   ? "bg-dark text-white hover:bg-gray-300"
                   : "bg-white text-gray"
@@ -258,7 +258,7 @@ const CartPageComponent = () => {
               0%
             </button>
             <button
-              className={`w-1/4 h-16 transition-colors duration-300 ease-in-out py-2 px-4 mr-4 rounded-xl border border-gray-300 text-center ${
+              className={`w-1/4 h-16 transition-colors duration-300 ease-in-out py-2 px-4 mr-2 rounded-xl border border-gray-300 text-center ${
                 selectedTip === 10
                   ? "bg-dark text-white hover:bg-gray-300"
                   : "bg-white text-gray"
@@ -268,7 +268,7 @@ const CartPageComponent = () => {
               10%
             </button>
             <button
-              className={`w-1/4 h-16 transition-colors duration-300 ease-in-out py-2 px-4 mr-4 rounded-xl border border-gray-300 text-center ${
+              className={`w-1/4 h-16 transition-colors duration-300 ease-in-out py-2 px-4 mr-2 rounded-xl border border-gray-300 text-center ${
                 selectedTip == 15
                   ? "bg-dark text-white hover:bg-gray-300"
                   : "bg-white text-gray"

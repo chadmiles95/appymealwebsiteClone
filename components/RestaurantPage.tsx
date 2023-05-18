@@ -97,11 +97,37 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
     setTotalAmt(usePrice);
   }, [cart]);
 
+  const formatTime = (time: string) => {
+    const startTime = time.substring(0, 2) + ":" + time.substring(2, 4);
+    const endTime = time.substring(5, 7) + ":" + time.substring(7, 9);
+
+    console.log(startTime, "startTime");
+    console.log(endTime, "endTime");
+
+    const formattedStartTime = new Date(
+      "1970-01-01T" + startTime + ":00Z"
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    const formattedEndTime = new Date(
+      "1970-01-01T" + endTime + ":00Z"
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    return formattedStartTime + " - " + formattedEndTime;
+  };
+
   //   console.log(restaurant.menus.burgers[0]);
 
   return (
     <div className="w-full h-full flex-1">
-      <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap lg:sticky top-20 z-10">
+      <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap lg:sticky top-20 z-5">
         <div className="w-full justify-start px-10 basis-full lg:flx-basis-1/4 py-2 lg:py-0 ">
           <p
             onClick={() => {
@@ -161,7 +187,38 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           <p className="text-dark">
             {restaurant.address} {restaurant.city}, {restaurant.state}
           </p>
-          <p className="text-dark">Hours - 11:00 AM - 8:00 PM</p>
+          <p className="text-dark">
+            {restaurant.hours === "closed" ? "" : "Hours - "}
+            {restaurant.hours === "closed"
+              ? "Hours - closed today"
+              : restaurant.hours.slice(0, 2) === "12"
+              ? `12:${restaurant.hours.slice(2, 4)}pm`
+              : restaurant.hours.slice(0, 4) < 1200
+              ? restaurant.hours.slice(0, 2) === "00"
+                ? `12:${restaurant.hours.slice(2, 4)}am`
+                : `${restaurant.hours.slice(0, 2)}:${restaurant.hours.slice(
+                    2,
+                    4
+                  )}am`
+              : `${
+                  parseFloat(restaurant.hours.slice(0, 2)) % 12
+                }:${restaurant.hours.slice(2, 4)} pm`}
+            {restaurant.hours === "closed" ? "" : "-"}
+            {restaurant.hours === "closed"
+              ? ""
+              : restaurant.hours.slice(5, 7) === "12"
+              ? `12:${restaurant.hours.slice(7, 9)}pm`
+              : restaurant.hours.slice(5, 9) < 1200
+              ? restaurant.hours.slice(5, 7) === "00"
+                ? `12:${restaurant.hours.slice(7, 9)}am`
+                : `${restaurant.hours.slice(5, 7)}:${restaurant.hours.slice(
+                    7,
+                    9
+                  )}am`
+              : `${
+                  parseFloat(restaurant.hours.slice(5, 7)) % 12
+                }:${restaurant.hours.slice(7, 9)}pm`}{" "}
+          </p>
           <p className="text-dark">Status - Open</p>
         </div>
       </div>
@@ -351,10 +408,13 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
       </div>
       {selectedMenuItem && (
         <PopupModalNew
+          style={{ zIndex: 999 }}
           isOpen={modalOpen}
           closeModal={handleCloseModal}
           item={selectedMenuItem}
           rest={restaurant.name}
+          image={restaurant.image}
+          address={restaurant.address}
         />
       )}
       <Toaster

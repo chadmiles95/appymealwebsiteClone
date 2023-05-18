@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { addToCart, checkCurrentRestaurant } from "redux/shoppersSlice";
 import toast, { Toaster } from "react-hot-toast";
+import ReactDOM from "react-dom";
 
 interface Option {
   name: string;
@@ -41,7 +42,7 @@ interface ModalProps {
   rest: string;
 }
 
-const customStyles = {
+const customStyles: ReactModal.Styles = {
   content: {
     top: "50%",
     left: "50%",
@@ -49,9 +50,12 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "75%",
+    width: "60%",
+    borderRadius: 20,
     maxHeight: "75%",
     overflowY: "auto",
+    zIndex: 1000, // make this higher than Navbar z-index
+    position: "relative",
   },
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.75)",
@@ -76,6 +80,8 @@ export const PopupModalNew: React.FC<ModalProps> = ({
   const [quantity, setQuantity] = useState(1);
   const [allergyArray, setAllergyArray] = useState<Array<string>>([]);
   const [valueTemp, setValueTemp] = useState<string | null>(null);
+  const [modalWidth, setModalWidth] = useState("60%");
+
   const [getTemps, setGetTemps] = useState([
     { label: "rare", value: "rare" },
     { label: "medium-rare", value: "medium-rare" },
@@ -89,8 +95,15 @@ export const PopupModalNew: React.FC<ModalProps> = ({
   );
 
   useEffect(() => {
-    setItemPrice(item.price + firstOptionPrice + secondOptionPrice + sidePrice);
-  }, [secondOptionPrice, sidePrice, firstOptionPrice, item.price]);
+    setItemPrice(
+      parseFloat(
+        (
+          (item.price + firstOptionPrice + secondOptionPrice + sidePrice) *
+          quantity
+        ).toFixed(2)
+      )
+    );
+  }, [secondOptionPrice, sidePrice, firstOptionPrice, item.price, quantity]);
 
   const setFirstOption = (price: string, name: string) => {
     return new Promise((resolve, reject) => {
@@ -270,7 +283,36 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     setAllergyArray(tempArray);
   }, []);
 
-  return (
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 925) {
+        // lg and larger
+        setModalWidth("70%");
+      } else {
+        // md and smaller
+        setModalWidth("85%");
+      }
+    };
+
+    handleResize(); // handle resize when component mounts
+    window.addEventListener("resize", handleResize); // add event listener
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // clean up event listener on unmount
+    };
+  }, []);
+
+  customStyles.content = { ...customStyles.content, width: modalWidth };
+
+  const modalRoot = document.getElementById("modal-root");
+
+  if (!modalRoot) {
+    return null;
+  }
+
+  // handle screen changes to adjust modal width
+
+  return ReactDOM.createPortal(
     <ReactModal
       isOpen={isOpen}
       onRequestClose={closeModal}
@@ -278,11 +320,13 @@ export const PopupModalNew: React.FC<ModalProps> = ({
       contentLabel="Add to Cart"
       ariaHideApp={false}
     >
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center ">
         <h2 className="text-xl font-semibold text-center text-dark mb-4">
           {item.name}
         </h2>
-        <p className="text-sm text-dark mb-2">{item.desc}</p>
+        <div className="w-3/4  flex items-center justify-center">
+          <p className="text-sm text-dark mb-2 ">{item.desc}</p>
+        </div>
         {item.allergies && allergyArray.length > 0 && (
           <>
             <div className="flex flex-row h-8  mt-2">
@@ -393,8 +437,8 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         {item.firstOptionName && (
           <>
             <div className="w-3/4 mt-2">
-              <div className="w-2/3 justify-between flex flex-row">
-                <h3 className="text-lg text-dark mb-2">
+              <div className="w-2/3 sm:w-full lg:w-2/3 justify-between flex flex-row items-center ">
+                <h3 className="text-lg text-dark mb-2 ">
                   Choose: {item.firstOptionName}{" "}
                 </h3>
                 <p className=" text-dark mt-0">
@@ -426,11 +470,11 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         {item.secondOptionName && (
           <>
             <div className="w-3/4  mt-2">
-              <div className="w-2/3 justify-between flex flex-row">
-                <h3 className="text-lg text-dark mb-2">
+              <div className="w-2/3 sm:w-full lg:w-2/3 justify-between flex flex-row items-center ">
+                <h3 className="text-lg text-dark ">
                   Choose: {item.secondOptionName}{" "}
                 </h3>
-                <p className=" text-dark mt-2">
+                <p className=" text-dark ">
                   {item?.secondOptionRequired ? "  *Selection Required" : ""}
                 </p>
               </div>
@@ -461,9 +505,9 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         {item.sides.length > 0 && (
           <>
             <div className="w-3/4  mt-2">
-              <div className="w-2/3 justify-between flex flex-row">
-                <h3 className="text-lg text-dark mb-4">Choose: side item</h3>
-                <p className=" text-dark mt-2">
+              <div className="w-2/3 sm:w-full lg:w-2/3 justify-between flex flex-row items-center ">
+                <h3 className="text-lg text-dark ">Choose: side item</h3>
+                <p className=" text-dark ">
                   {item?.sidesRequired ? "  *Selection Required" : ""}
                 </p>
               </div>
@@ -507,10 +551,16 @@ export const PopupModalNew: React.FC<ModalProps> = ({
           className="bg-primary text-white py-2 px-4 rounded-full mt-4 hover:bg-muted duration-300 shadow-md"
           onClick={finishItem}
         >
-          Add To Cart
+          Add To Cart -{" "}
+          {itemPrice.toLocaleString("en-us", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+          })}
         </button>
       </div>
-    </ReactModal>
+    </ReactModal>,
+    modalRoot
   );
 };
 
