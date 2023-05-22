@@ -10,6 +10,8 @@ import { PopupModalNew } from "./PopupModalNew";
 import { Toaster } from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import { deleteItem } from "redux/shoppersSlice";
+import HourDisplay from "./HoursDisplay";
+import OpenStatus from "./OpenStatus";
 
 interface MenuItemProps {
   name: string;
@@ -83,7 +85,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
       router.push(lastURL);
     } else {
       // If there's no last visited page, navigate to a default page or handle this case as needed
-      router.push("/");
+      router.push("/restaurants");
     }
   };
 
@@ -187,39 +189,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           <p className="text-dark">
             {restaurant.address} {restaurant.city}, {restaurant.state}
           </p>
-          <p className="text-dark">
-            {restaurant.hours === "closed" ? "" : "Hours - "}
-            {restaurant.hours === "closed"
-              ? "Hours - closed today"
-              : restaurant.hours.slice(0, 2) === "12"
-              ? `12:${restaurant.hours.slice(2, 4)}pm`
-              : restaurant.hours.slice(0, 4) < 1200
-              ? restaurant.hours.slice(0, 2) === "00"
-                ? `12:${restaurant.hours.slice(2, 4)}am`
-                : `${restaurant.hours.slice(0, 2)}:${restaurant.hours.slice(
-                    2,
-                    4
-                  )}am`
-              : `${
-                  parseFloat(restaurant.hours.slice(0, 2)) % 12
-                }:${restaurant.hours.slice(2, 4)} pm`}
-            {restaurant.hours === "closed" ? "" : "-"}
-            {restaurant.hours === "closed"
-              ? ""
-              : restaurant.hours.slice(5, 7) === "12"
-              ? `12:${restaurant.hours.slice(7, 9)}pm`
-              : restaurant.hours.slice(5, 9) < 1200
-              ? restaurant.hours.slice(5, 7) === "00"
-                ? `12:${restaurant.hours.slice(7, 9)}am`
-                : `${restaurant.hours.slice(5, 7)}:${restaurant.hours.slice(
-                    7,
-                    9
-                  )}am`
-              : `${
-                  parseFloat(restaurant.hours.slice(5, 7)) % 12
-                }:${restaurant.hours.slice(7, 9)}pm`}{" "}
-          </p>
-          <p className="text-dark">Status - Open</p>
+          <HourDisplay hours={restaurant.hours} />
+          <OpenStatus restaurant={restaurant} militaryTime={militaryTime} />
         </div>
       </div>
       <div className="w-full h-full flex flex-row flex-wrap lg:flex-nowrap  py-12 ">
@@ -324,7 +295,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
               </p>
             </div>
             <div className="px-8 py-2 whitespace-nowrap">
-              {currentRest !== "" && (
+              {currentRest?.name !== "" && (
                 <div
                   className="flex"
                   onClick={() => {
@@ -333,9 +304,9 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                 >
                   <p className="font-semibold px-2 hover:text-lightdark duration-200 cursor-pointer text-dark">
                     {" "}
-                    {currentRest?.length > 28
-                      ? currentRest.substring(0, 28) + ".."
-                      : currentRest}
+                    {currentRest?.name?.length > 28
+                      ? currentRest?.name.substring(0, 28) + ".."
+                      : currentRest?.name}
                   </p>
                 </div>
               )}
@@ -412,9 +383,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           isOpen={modalOpen}
           closeModal={handleCloseModal}
           item={selectedMenuItem}
-          rest={restaurant.name}
-          image={restaurant.image}
-          address={restaurant.address}
+          rest={restaurant}
         />
       )}
       <Toaster

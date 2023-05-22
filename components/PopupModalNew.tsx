@@ -39,7 +39,7 @@ interface ModalProps {
   isOpen: boolean;
   closeModal: () => void;
   item: Item;
-  rest: string;
+  rest: any;
 }
 
 const customStyles: ReactModal.Styles = {
@@ -217,8 +217,8 @@ export const PopupModalNew: React.FC<ModalProps> = ({
 
     // check if we need to update restaurant
 
-    console.log("currentRest", currentRest);
-    console.log("rest", rest);
+    // console.log("currentRest", currentRest);
+    // console.log("rest", rest);
 
     dispatch(checkCurrentRestaurant({ rest: rest }));
 

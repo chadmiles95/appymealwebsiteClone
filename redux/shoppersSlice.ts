@@ -6,11 +6,7 @@ interface ShopperState {
   restaurants: (typeof Restaurants)[];
   userInfo: null | UserInfo;
   currentTime: Date;
-  currentRestaurant: {
-    rest: string;
-    image: string;
-    address: string;
-  };
+  currentRestaurant: any;
   militaryTime: string;
   lastVisitedPage: string;
 }
@@ -20,11 +16,7 @@ const initialState: ShopperState = {
   restaurants: [],
   userInfo: null,
   currentTime: new Date(),
-  currentRestaurant: {
-    rest: "",
-    image: "",
-    address: "",
-  },
+  currentRestaurant: {},
   militaryTime: "0000",
   lastVisitedPage: "",
 };
@@ -99,10 +91,8 @@ export const shopperslice = createSlice({
       state.lastVisitedPage = action.payload;
     },
     checkCurrentRestaurant: (state, action) => {
-      if (state.currentRestaurant !== action.payload.rest) {
-        state.currentRestaurant.rest = action.payload.rest;
-        state.currentRestaurant.image = action.payload.image; // Set image
-        state.currentRestaurant.address = action.payload.address; // Set address
+      if (state.currentRestaurant?.name !== action.payload.rest.name) {
+        state.currentRestaurant = action.payload.rest;
         state.productData = [];
       } else {
         null;

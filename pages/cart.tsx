@@ -4,9 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import HourDisplay from "@/components/HoursDisplay";
+import OpenStatus from "@/components/OpenStatus";
 
 const cart = () => {
   const lastURL = useSelector((state: any) => state.shopper.lastVisitedPage);
+  const rest = useSelector((state: any) => state.shopper.currentRestaurant);
+  const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
   const router = useRouter();
 
   const handleBackButtonClick = () => {
@@ -14,13 +18,13 @@ const cart = () => {
       router.push(lastURL);
     } else {
       // If there's no last visited page, navigate to a default page or handle this case as needed
-      router.push("/");
+      router.push("/restaurants");
     }
   };
 
   return (
-    <div className="w-full flex-1 flex flex-col">
-      <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap top-20 z-10">
+    <div className="w-full h-full flex-1">
+      <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap top-20 z-2">
         <div className="w-full justify-start px-10 basis-full lg:flx-basis-1/4 py-2 lg:py-0 ">
           <p
             onClick={() => {
@@ -32,7 +36,7 @@ const cart = () => {
           </p>
         </div>
 
-        <div className="flex flex-col whitespace-nowrap items-center justify-center w-1/2 px-4">
+        <div className="flex flex-col whitespace-nowrap items-center justify-center px-4 lg:px-8">
           <div>
             <p className="font-semibold px-2 text-dark basis-full flx-basis-1/4 py-0 text-md">
               For Rewards & Discounts Download App
@@ -58,30 +62,38 @@ const cart = () => {
           </div>
         </div>
       </div>
-      <div className="bg-smoke w-full h-40  items-center flex pg-4 gap-2  px-4 lg:px-16 justify-between">
+      <div className="bg-smoke w-full h-40  items-center flex pg-4 gap-2  px-8 lg:px-16 justify-between">
         <div className="flex items-center">
           <div className="justify-start">
             <Image
-              src={
-                "https://firebasestorage.googleapis.com/v0/b/mealstogo-dabbc.appspot.com/o/Sam%E2%80%99s%20On%20Main-restaurant.jpg?alt=media&token=03721753-480a-4dcd-87f8-ccbdc1947e08"
-              }
+              src={rest.photo}
               width={125}
               height={125}
               alt="restaurantLogo"
-              className="object-cover rounded-xl"
+              className="object-cover rounded-xl cursor-pointer"
+              onClick={() => {
+                router.push(`restaurants/${rest.name}`);
+              }}
             />
           </div>
           <div className="justify-start pl-8 flex flex-col">
             <p className="text-xl font-semibold text-dark">Ordering From:</p>
-            <p className="text-xl font-semibold text-dark">Sam's On Main</p>
+            <p
+              className="font-semibold text-xl  hover:text-lightdark duration-200 cursor-pointer text-dark"
+              onClick={() => {
+                router.push(`restaurants/${rest.name}`);
+              }}
+            >
+              {rest.name}
+            </p>
           </div>
         </div>
         <div className="flex flex-col justify-start items-start">
           <p className="text-dark">
-            2135 Loganville Hwy, Suite 420 Grayson, GA
+            {rest.address}, {rest.city}, {rest.state}
           </p>
-          <p className="text-dark">Hours - 11:00 AM - 8:00 PM</p>
-          <p className="text-dark">Status - Open</p>
+          <HourDisplay hours={rest.hours} />
+          <OpenStatus restaurant={rest} militaryTime={militaryTime} />
         </div>
       </div>
       <div className="max-w-contentContainer mx-auto flex-1 w-full">

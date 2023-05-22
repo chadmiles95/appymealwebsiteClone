@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import {
   ship1Img,
@@ -26,6 +26,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { TextInput } from "react-native-gesture-handler";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -41,8 +42,39 @@ const CartPageComponent = () => {
   const [totalAmt, setTotalAmt] = useState(0);
   const [selectedTip, setSelectedTip] = useState(15);
   const [tip, setTip] = useState(0);
+  const [deliveryAddress, setDeliveryAddress] = useState("");
 
   const [isPickup, setIsPickup] = useState(true);
+
+  // delivery address stuff
+
+  const deliveryAddressRef = useRef();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && typeof window.google !== "undefined") {
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        deliveryAddressRef.current
+      );
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        const zip = place.address_components.find((ac) =>
+          ac.types.includes("postal_code")
+        ).short_name;
+        const state = place.address_components.find((ac) =>
+          ac.types.includes("administrative_area_level_1")
+        ).short_name;
+
+        let tempAddress = `${place.address_components[0].long_name} ${place.address_components[1].short_name} ${place.address_components[2].short_name}, ${state} ${zip}`;
+
+        setDeliveryAddress(tempAddress);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("deliveryAddress", deliveryAddress);
+  }, [deliveryAddress]);
 
   useEffect(() => {
     let amt = 0;
@@ -91,10 +123,52 @@ const CartPageComponent = () => {
     setSelectedTip(input);
   };
 
+  //location function for delivery
+
+  // const getCurrentManualLocation = async () => {
+  //   try {
+  //     return await Geocoder.from(streetAddress + city)
+  //       .then((json) => {
+  //         setZip(json.results[0].address_components[6].short_name);
+  //         setState(json.results[0].address_components[4].short_name);
+
+  //         let tempAddress = `${json.results[0].address_components[0].long_name} ${json.results[0].address_components[1].short_name} ${json.results[0].address_components[2].short_name}, ${json.results[0].address_components[4].short_name} ${json.results[0].address_components[6].short_name}`;
+
+  //         setDeliveryAddress(
+  //           `${json.results[0].address_components[0].long_name} ${json.results[0].address_components[1].short_name} ${json.results[0].address_components[2].short_name}, ${json.results[0].address_components[4].short_name} ${json.results[0].address_components[6].short_name}`
+  //         );
+  //         return tempAddress;
+  //       })
+  //       .catch((error) => {
+  //         // console.log(error);
+  //       });
+  //   } catch (e) {}
+  // };
+
+  // const getCurrentManualLocation = async (address) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.NEXT_PUBLIC_GOOGLE_KEY}`
+  //     );
+
+  //     const results = response.data.results[0];
+  //     const zip = results.address_components[6].short_name;
+  //     const state = results.address_components[4].short_name;
+
+  //     let tempAddress = `${results.address_components[0].long_name} ${results.address_components[1].short_name} ${results.address_components[2].short_name}, ${state} ${zip}`;
+
+  //     setDeliveryAddress(tempAddress);
+
+  //     return tempAddress;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   return (
-    <div className="w-full py-8">
+    <div className="w-full py-8 h-full">
       <div className="w-full flex flex-row flex-wrap lg:flex-nowrap gap-7">
-        <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col gap-5 m-4 relative">
+        <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col gap-5 m-4 relative z-0">
           <h1 className="text-2xl font-bold text-black relative">
             Cart{" "}
             <span className="text-lightText font-normal">
@@ -194,7 +268,7 @@ const CartPageComponent = () => {
             </div>
           </div>
         </div>
-        <div className="basis-full lg:basis-1/3 lg:flex-1 m-4 p-4 lg:mt-16 h-1/2 border-[1px] border-zinc-400 rounded-md flex flex-col  gap-4">
+        <div className="basis-full lg:basis-1/3 lg:flex-1 m-4 p-4 lg:mt-16 h-1/2 border-[1px] border-zinc-400 rounded-md flex flex-col gap-4">
           <button
             onClick={() => handleCheckout()}
             className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300 mt-2"
@@ -289,7 +363,7 @@ const CartPageComponent = () => {
             </button>
           </div>
 
-          {/* checkout price*/}
+          {/* tip price*/}
           <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
             <div className="flex flex-col gap-1">
               <div className="text-sm flex justify-between">
@@ -300,12 +374,52 @@ const CartPageComponent = () => {
               </div>
             </div>
           </div>
+          {/* Delivery information goes here */}
+
+          {isPickup === true && (
+            <div>
+              <div className="text-sm font-bold flex items-center gap-2 mb-4">
+                <p className="text-dark">Enter Delivery Address </p>
+              </div>
+              <div className="flex items-center justify-between w-full my-2">
+                <div className="h-12 w-full flex flex-1 relative">
+                  {/* <input
+                    className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
+  shadow-md"
+                    type="text"
+                    placeholder="EX: 123 Appy St, Grayson, GA 30017"
+                  /> */}
+                  <input
+                    ref={deliveryAddressRef}
+                    type="text"
+                    placeholder="EX: 123 Appy St, Grayson, GA 30017"
+                    className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
+  shadow-md"
+                  />
+                </div>
+              </div>
+
+              <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4 pt-4">
+                <div className="flex flex-col gap-1">
+                  <div className="text-sm flex justify-between">
+                    <p className="font-semibold text-dark">Delivery Fee</p>
+                    <p className="text-dark font-normal text-base">
+                      <FormatPrice amount={tip} />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* rest of cart infomration with pricing */}
           <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
             <div className="flex flex-col gap-1">
-              <div className="text-sm flex justify-between">
-                <p className="text-dark">Delivery</p>
-                <p className="text-dark">Free</p>
-              </div>
+              {/* {isPickup === true && (
+                <div className="text-sm flex justify-between">
+                  <p className="text-dark">Delivery</p>
+                  <p className="text-dark">Please Enter Address</p>
+                </div>
+              )} */}
               <div className="text-sm flex justify-between">
                 <p className="font-semibold text-dark">Taxes</p>
                 <p className="text-dark">Calculated at checkout</p>
