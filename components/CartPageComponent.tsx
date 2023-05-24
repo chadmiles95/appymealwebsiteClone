@@ -27,6 +27,8 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { TextInput } from "react-native-gesture-handler";
+import { getDeliveryQuote } from "../services/delivery";
+import Spinner from "./Spinner";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -35,6 +37,7 @@ const CartPageComponent = () => {
   const productData = useSelector((state: any) => state.shopper.productData);
   const userInfo = useSelector((state: any) => state.shopper.userInfo);
   const cart = useSelector((state: any) => state.shopper.productData);
+  const rest = useSelector((state: any) => state.shopper.currentRestaurant);
   const [downloadAppMsg, setDownloadAppMsg] = useState(true);
 
   const [totalOldPrice, setTotalOldPrice] = useState(0);
@@ -43,12 +46,18 @@ const CartPageComponent = () => {
   const [selectedTip, setSelectedTip] = useState(15);
   const [tip, setTip] = useState(0);
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [deliveryQuote, setDeliveryQuote] = useState(0);
+  const [deliveryAccepted, setDeliveryAccepted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isPickup, setIsPickup] = useState(true);
 
   // delivery address stuff
 
   const deliveryAddressRef = useRef();
+
+  // console.log("process.env.stripe_public_key", process.env.stripe_public_key);
+  // console.log("stripePromise", stripePromise);
 
   useEffect(() => {
     if (typeof window !== "undefined" && typeof window.google !== "undefined") {
@@ -68,13 +77,57 @@ const CartPageComponent = () => {
         let tempAddress = `${place.address_components[0].long_name} ${place.address_components[1].short_name} ${place.address_components[2].short_name}, ${state} ${zip}`;
 
         setDeliveryAddress(tempAddress);
+        setIsLoading(true);
+        let randID = `testID: ${Math.random() * 10000}`;
+        let restAddress = `${rest.address} ${rest.city}, ${rest.state} ${rest.zip}`;
+        // //  trying to get Doordash delivery need to add checks right before this if they are inhouse
+        // // if(rest.deliveryType.type === "DoorDash" && rest.enableDelivery === true){}
+
+        try {
+          getDeliveryQuote(randID, tempAddress, restAddress).then(
+            (result: any) => {
+              if (result.hasOwnProperty("data")) {
+                console.log("result.data.data.fee", result.data.data.fee);
+                console.log("DELIVERT FEE", result.data.data.fee);
+                setDeliveryQuote(result.data.data.fee);
+                setDeliveryAccepted(true);
+                setIsLoading(false);
+              } else {
+                setDeliveryQuote(0);
+                setIsLoading(false);
+                setDeliveryAccepted(false);
+                if (result !== null) {
+                  if (
+                    result?.message ===
+                    "Allowed distance between addresses exceeded"
+                  ) {
+                    alert("Address is outside delivery range!");
+                    setDeliveryQuote(0);
+                    setDeliveryAccepted(false);
+                  } else {
+                    alert("Invalid delivery address!");
+                    setDeliveryQuote(0);
+                    setDeliveryAccepted(false);
+                  }
+                } else {
+                  alert("Invalid delivery address!");
+                  setDeliveryQuote(0);
+                  setDeliveryAccepted(false);
+                }
+              }
+            }
+          );
+        } catch (error) {
+          setDeliveryQuote(0);
+          setDeliveryAccepted(false);
+          setIsLoading(false);
+          alert(
+            "Issue getting delivery quote. Please try again or try new address."
+          );
+        }
       });
     }
-  }, []);
-
-  useEffect(() => {
-    console.log("deliveryAddress", deliveryAddress);
-  }, [deliveryAddress]);
+  }, [isPickup]);
 
   useEffect(() => {
     let amt = 0;
@@ -84,28 +137,65 @@ const CartPageComponent = () => {
       return;
     });
 
-    let amtWithTip = parseFloat((amt * (1 + selectedTip / 100)).toFixed(2));
+    let amtWithTip = parseFloat(
+      (
+        amt * (1 + selectedTip / 100) +
+        parseFloat((deliveryQuote / 100).toFixed(2))
+      ).toFixed(2)
+    );
     let tipAmt = parseFloat((amt * (selectedTip / 100)).toFixed(2));
 
     setTip(tipAmt);
     setTotalAmt(amtWithTip);
-  }, [productData, selectedTip]);
+  }, [productData, selectedTip, deliveryQuote]);
+
+  // const handleCheckout = async () => {
+  //   const stripe = await stripePromise;
+  //   const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
+
+  //   console.log("stripe", stripe);
+  //   console.log("stipreAmt", stipreAmt);
+  //   console.log("session?.user?.email", session?.user?.email);
+
+  //   // create a checkout session
+  //   const checkoutSession = await axios.post("api/create-checkout-session", {
+  //     items: productData,
+  //     email: session?.user?.email,
+  //   });
+  //   // redirect user to stripe checkout
+  //   const result: any = await stripe?.redirectToCheckout({
+  //     sessionId: checkoutSession.data.id,
+  //   });
+  //   if (result?.error) {
+  //     alert(result?.error.message);
+  //   }
+  // };
 
   const handleCheckout = async () => {
     const stripe = await stripePromise;
     const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
 
-    // create a checkout session
-    const checkoutSession = await axios.post("api/create-checkout-session", {
-      items: productData,
-      email: session?.user?.email,
-    });
-    // redirect user to stripe checkout
-    const result: any = await stripe?.redirectToCheckout({
-      sessionId: checkoutSession.data.id,
-    });
-    if (result?.error) {
-      alert(result?.error.message);
+    // console.log("stripe", stripe);
+    // console.log("stipreAmt", stipreAmt);
+    // console.log("session?.user?.email", session?.user?.email);
+
+    try {
+      // create a checkout session
+      const checkoutSession = await axios.post("api/create-checkout-session", {
+        items: productData,
+        email: session?.user?.email,
+      });
+
+      // console.log("checkoutSession", checkoutSession);
+      // redirect user to stripe checkout
+      const result: any = await stripe?.redirectToCheckout({
+        sessionId: checkoutSession.data.id,
+      });
+      if (result?.error) {
+        alert(result?.error.message);
+      }
+    } catch (err) {
+      console.error("Error during checkout: ", err);
     }
   };
 
@@ -115,55 +205,18 @@ const CartPageComponent = () => {
     }
     return true;
   }
-  const handleClick = () => {
-    setIsPickup(!isPickup);
+  const handleClickPickup = () => {
+    setIsPickup(true);
+    setDeliveryQuote(0);
+  };
+
+  const handleClickDelivery = () => {
+    setIsPickup(false);
   };
 
   const handleTipChange = (input: any) => {
     setSelectedTip(input);
   };
-
-  //location function for delivery
-
-  // const getCurrentManualLocation = async () => {
-  //   try {
-  //     return await Geocoder.from(streetAddress + city)
-  //       .then((json) => {
-  //         setZip(json.results[0].address_components[6].short_name);
-  //         setState(json.results[0].address_components[4].short_name);
-
-  //         let tempAddress = `${json.results[0].address_components[0].long_name} ${json.results[0].address_components[1].short_name} ${json.results[0].address_components[2].short_name}, ${json.results[0].address_components[4].short_name} ${json.results[0].address_components[6].short_name}`;
-
-  //         setDeliveryAddress(
-  //           `${json.results[0].address_components[0].long_name} ${json.results[0].address_components[1].short_name} ${json.results[0].address_components[2].short_name}, ${json.results[0].address_components[4].short_name} ${json.results[0].address_components[6].short_name}`
-  //         );
-  //         return tempAddress;
-  //       })
-  //       .catch((error) => {
-  //         // console.log(error);
-  //       });
-  //   } catch (e) {}
-  // };
-
-  // const getCurrentManualLocation = async (address) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.NEXT_PUBLIC_GOOGLE_KEY}`
-  //     );
-
-  //     const results = response.data.results[0];
-  //     const zip = results.address_components[6].short_name;
-  //     const state = results.address_components[4].short_name;
-
-  //     let tempAddress = `${results.address_components[0].long_name} ${results.address_components[1].short_name} ${results.address_components[2].short_name}, ${state} ${zip}`;
-
-  //     setDeliveryAddress(tempAddress);
-
-  //     return tempAddress;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   return (
     <div className="w-full py-8 h-full">
@@ -273,7 +326,7 @@ const CartPageComponent = () => {
             onClick={() => handleCheckout()}
             className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300 mt-2"
           >
-            Place {!isPickup ? "Pickup" : "Delivery"} Order | $
+            Place {isPickup ? "Pickup" : "Delivery"} Order | $
             {totalAmt.toFixed(2)}
           </button>
           <div className="w-full flex flex-col  border-b-[1px] border-b-zinc-200 pb-4">
@@ -302,17 +355,21 @@ const CartPageComponent = () => {
           <div className="flex items-center justify-center w-full my-2">
             <button
               className={` w-1/2 transition-colors duration-300 ease-in-out py-2 px-4 rounded-l-full ${
-                isPickup ? "bg-blue-500 text-gray" : "bg-dark text-white"
+                !isPickup ? "bg-blue-500 text-gray" : "bg-dark text-white"
               }`}
-              onClick={handleClick}
+              onClick={handleClickPickup}
             >
               Pickup
             </button>
             <button
               className={` w-1/2 transition-colors duration-300 ease-in-out py-2 px-4 rounded-r-full ${
-                isPickup ? "bg-dark text-white" : "bg-blue-500 text-gray"
+                !isPickup ? "bg-dark text-white" : "bg-blue-500 text-gray"
               }`}
-              onClick={handleClick}
+              onClick={() => {
+                rest.enableDelivery === true
+                  ? handleClickDelivery()
+                  : alert("Delivery Not available");
+              }}
             >
               Delivery
             </button>
@@ -376,7 +433,7 @@ const CartPageComponent = () => {
           </div>
           {/* Delivery information goes here */}
 
-          {isPickup === true && (
+          {isPickup === false && (
             <div>
               <div className="text-sm font-bold flex items-center gap-2 mb-4">
                 <p className="text-dark">Enter Delivery Address </p>
@@ -402,10 +459,14 @@ const CartPageComponent = () => {
               <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4 pt-4">
                 <div className="flex flex-col gap-1">
                   <div className="text-sm flex justify-between">
-                    <p className="font-semibold text-dark">Delivery Fee</p>
-                    <p className="text-dark font-normal text-base">
-                      <FormatPrice amount={tip} />
-                    </p>
+                    <p className="font-semibold text-dark">Delivery Quote</p>
+                    {isLoading ? (
+                      <Spinner />
+                    ) : (
+                      <p className="text-dark font-normal text-base">
+                        <FormatPrice amount={deliveryQuote / 100} />
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
