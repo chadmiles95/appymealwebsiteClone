@@ -45,6 +45,7 @@ const CartPageComponent = () => {
   const [totalAmt, setTotalAmt] = useState(0);
   const [selectedTip, setSelectedTip] = useState(15);
   const [tip, setTip] = useState(0);
+  const [taxAmt, setTaxAmt] = useState(0);
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryQuote, setDeliveryQuote] = useState(0);
   const [deliveryAccepted, setDeliveryAccepted] = useState(false);
@@ -52,8 +53,10 @@ const CartPageComponent = () => {
 
   const [isPickup, setIsPickup] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [tempUserEmail, setTempUserEmail] = useState<string | null>(null);
 
   // delivery address stuff
+  console.log("rest?.taxRate", rest?.taxRate);
 
   const deliveryAddressRef = useRef();
 
@@ -135,10 +138,17 @@ const CartPageComponent = () => {
       return;
     });
 
+    //add in tax
+
+    setTaxAmt(rest?.taxRate ? amt * (rest?.taxRate / 100) : 0);
+
+    let tempTaxAmt = rest?.taxRate ? amt * (rest?.taxRate / 100) : 0;
+
     let amtWithTip = parseFloat(
       (
         amt * (1 + selectedTip / 100) +
-        parseFloat((deliveryQuote / 100).toFixed(2))
+        parseFloat((deliveryQuote / 100).toFixed(2)) +
+        tempTaxAmt
       ).toFixed(2)
     );
     let tipAmt = parseFloat((amt * (selectedTip / 100)).toFixed(2));
@@ -174,14 +184,18 @@ const CartPageComponent = () => {
     const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
 
     // console.log("stripe", stripe);
-    // console.log("stipreAmt", stipreAmt);
-    console.log("session?.user?.email", session?.user?.email);
 
     try {
       // create a checkout session
+
+      let useEmail = session?.user?.email
+        ? session?.user?.email
+        : tempUserEmail;
+
       const checkoutSession = await axios.post("api/create-checkout-session", {
         items: productData,
         email: session?.user?.email,
+        finalAmt: stipreAmt,
       });
 
       // console.log("checkoutSession", checkoutSession);
@@ -326,7 +340,9 @@ const CartPageComponent = () => {
                 !isPickup &&
                 (deliveryAccepted === false || phoneNumber?.length !== 10)
               ) {
-                alert("Please fill in delivery address and full phone number!");
+                alert("Please fill in delivery address, full phone number");
+              } else if (!session?.user?.email && tempUserEmail === null) {
+                alert("Please fill in email");
               } else {
                 handleCheckout();
               }
@@ -441,20 +457,24 @@ const CartPageComponent = () => {
 
           {/* enter email */}
           {/* MIGHT NOT NEED SINCE CUSTOMER HAS TO ENTER ON STRIPE ANYWAYS ~ TRY AND GET ON RESPONSE OBJECT */}
-          {/* <div className="text-sm font-bold flex items-center gap-0 mb-0">
-            <p className="text-dark">Enter Email</p>
-          </div>
-          <div className="flex items-center justify-between w-full mb-2">
-            <div className="h-12 w-full flex flex-1 relative">
-              <input
-                ref={deliveryAddressRef}
-                type="text"
-                placeholder="EX: foodlover@gmail.com"
-                className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
+          {!session?.user?.email && (
+            <>
+              <div className="text-sm font-bold flex items-center gap-2 mt-0">
+                <p className="text-dark">Enter Email</p>
+              </div>
+              <div className="flex items-center justify-between w-full mb-2">
+                <div className="h-12 w-full flex flex-1 relative">
+                  <input
+                    onChange={(val: any) => setTempUserEmail(val.target.value)}
+                    type="text"
+                    placeholder="EX: LocalFoodie@gmail.com"
+                    className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
   shadow-md"
-              />
-            </div>
-          </div> */}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Delivery information goes here */}
 
@@ -510,15 +530,11 @@ const CartPageComponent = () => {
           {/* rest of cart infomration with pricing */}
           <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
             <div className="flex flex-col gap-1">
-              {/* {isPickup === true && (
-                <div className="text-sm flex justify-between">
-                  <p className="text-dark">Delivery</p>
-                  <p className="text-dark">Please Enter Address</p>
-                </div>
-              )} */}
               <div className="text-sm flex justify-between">
                 <p className="font-semibold text-dark">Taxes</p>
-                <p className="text-dark">Calculated at checkout</p>
+                <p className="text-dark font-normal text-base">
+                  <FormatPrice amount={taxAmt} />
+                </p>
               </div>
             </div>
           </div>
