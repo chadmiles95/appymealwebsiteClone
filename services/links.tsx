@@ -8,6 +8,6 @@ const localHost =
   "https://7f3d-2600-1700-5bd1-c0-98df-c7a3-868b-2876.ngrok.io/mealstogo-dabbc/us-central1";
 
 // export const isDevelopment = process.env.NODE_ENV === "development";
-export const isDevelopment = process.env.NODE_ENV === "testhost";
+export const isDevelopment = process.env.NODE_ENV === "test";
 
 export const host = isDevelopment ? localHost : liveHost;

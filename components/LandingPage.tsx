@@ -4,6 +4,8 @@ import { home_bg } from "../public/assets/images/index";
 import { Spacer } from "./Spacer";
 import Link from "next/link";
 
+export const orderOnlyText = 'Order Online';
+
 const LandingPage = () => {
   return (
     <div className="w-full grid lg:grid-cols-2 h-full bg-[#F1EDEE] font-titleFont flex-1 flex border-b-[1px]">
@@ -13,7 +15,7 @@ const LandingPage = () => {
           <Spacer size="small" />
           <Link href="/restaurants">
             <button className="w-72 h-9 bg-white border-[0px] border-dark text-dark   rounded-full flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 shadow-md">
-              Order Online
+              {orderOnlyText}
             </button>
           </Link>
           <Spacer size="small" />
