@@ -105,7 +105,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     );
   }, [secondOptionPrice, sidePrice, firstOptionPrice, item.price, quantity]);
 
-  const setFirstOption = (price: string, name: string) => {
+  const setFirstOption = (price: string, name: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       let tempPrice = 0;
 
@@ -136,7 +136,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     });
   };
 
-  const setSecondOption = (price: string, name: string) => {
+  const setSecondOption = (price: string, name: string): Promise<void> => {
     // console.log(price, name);
     // console.log("FOC", firstOptionChoice);
     return new Promise((resolve, reject) => {
@@ -176,7 +176,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     });
   };
 
-  const setSideOption = (price: string, name: string) => {
+  const setSideOption = (price: string, name: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (parseFloat(price) === 0 || !price) {
         setSidePrice(0);
@@ -281,7 +281,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
       value === true ? tempArray.push(key) : null;
     });
     setAllergyArray(tempArray);
-  }, []);
+  }, [item.allergies]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -402,7 +402,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
                   placeholder="Temperature selection"
                   options={getTemps}
                   onChange={(selectedOption) => {
-                    setValueTemp(selectedOption.value);
+                    setValueTemp(selectedOption?.value || null);
                   }}
                   styles={{
                     container: (base) => ({

@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import HourDisplay from "@/components/HoursDisplay";
 import OpenStatus from "@/components/OpenStatus";
 
-const cart = () => {
+const Cart = () => {
   const lastURL = useSelector((state: any) => state.shopper.lastVisitedPage);
   const rest = useSelector((state: any) => state.shopper.currentRestaurant);
   const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
@@ -103,4 +103,4 @@ const cart = () => {
   );
 };
 
-export default cart;
+export default Cart;
