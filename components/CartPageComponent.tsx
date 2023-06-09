@@ -51,13 +51,11 @@ const CartPageComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [isPickup, setIsPickup] = useState(true);
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
 
   // delivery address stuff
 
   const deliveryAddressRef = useRef();
-
-  // console.log("process.env.stripe_public_key", process.env.stripe_public_key);
-  // console.log("stripePromise", stripePromise);
 
   useEffect(() => {
     if (typeof window !== "undefined" && typeof window.google !== "undefined") {
@@ -67,10 +65,10 @@ const CartPageComponent = () => {
 
       autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
-        const zip = place.address_components.find((ac) =>
+        const zip = place.address_components.find((ac: any) =>
           ac.types.includes("postal_code")
         ).short_name;
-        const state = place.address_components.find((ac) =>
+        const state = place.address_components.find((ac: any) =>
           ac.types.includes("administrative_area_level_1")
         ).short_name;
 
@@ -127,7 +125,7 @@ const CartPageComponent = () => {
         }
       });
     }
-  }, [isPickup]);
+  }, [isPickup, rest]);
 
   useEffect(() => {
     let amt = 0;
@@ -177,7 +175,7 @@ const CartPageComponent = () => {
 
     // console.log("stripe", stripe);
     // console.log("stipreAmt", stipreAmt);
-    // console.log("session?.user?.email", session?.user?.email);
+    console.log("session?.user?.email", session?.user?.email);
 
     try {
       // create a checkout session
@@ -323,7 +321,16 @@ const CartPageComponent = () => {
         </div>
         <div className="basis-full lg:basis-1/3 lg:flex-1 m-4 p-4 lg:mt-16 h-1/2 border-[1px] border-zinc-400 rounded-md flex flex-col gap-4">
           <button
-            onClick={() => handleCheckout()}
+            onClick={() => {
+              if (
+                !isPickup &&
+                (deliveryAccepted === false || phoneNumber?.length !== 10)
+              ) {
+                alert("Please fill in delivery address and full phone number!");
+              } else {
+                handleCheckout();
+              }
+            }}
             className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300 mt-2"
           >
             Place {isPickup ? "Pickup" : "Delivery"} Order | $
@@ -331,7 +338,7 @@ const CartPageComponent = () => {
           </button>
           <div className="w-full flex flex-col  border-b-[1px] border-b-zinc-200 pb-4">
             <div className="py-0 gap-2 flex flex-col ">
-              {!downloadAppMsg && (
+              {downloadAppMsg && (
                 <div className="bg-primary text-white p-2 rounded-lg flex items-center justify-between gap-4 mb-2">
                   <Image className="w-8" src={warningImg} alt="warningImg" />
                   <p className="text-sm">
@@ -431,6 +438,24 @@ const CartPageComponent = () => {
               </div>
             </div>
           </div>
+
+          {/* enter email */}
+          {/* MIGHT NOT NEED SINCE CUSTOMER HAS TO ENTER ON STRIPE ANYWAYS ~ TRY AND GET ON RESPONSE OBJECT */}
+          {/* <div className="text-sm font-bold flex items-center gap-0 mb-0">
+            <p className="text-dark">Enter Email</p>
+          </div>
+          <div className="flex items-center justify-between w-full mb-2">
+            <div className="h-12 w-full flex flex-1 relative">
+              <input
+                ref={deliveryAddressRef}
+                type="text"
+                placeholder="EX: foodlover@gmail.com"
+                className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
+  shadow-md"
+              />
+            </div>
+          </div> */}
+
           {/* Delivery information goes here */}
 
           {isPickup === false && (
@@ -440,12 +465,6 @@ const CartPageComponent = () => {
               </div>
               <div className="flex items-center justify-between w-full my-2">
                 <div className="h-12 w-full flex flex-1 relative">
-                  {/* <input
-                    className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
-  shadow-md"
-                    type="text"
-                    placeholder="EX: 123 Appy St, Grayson, GA 30017"
-                  /> */}
                   <input
                     ref={deliveryAddressRef}
                     type="text"
@@ -470,8 +489,24 @@ const CartPageComponent = () => {
                   </div>
                 </div>
               </div>
+              {/* add phone number if delivery is popped */}
+              <div className="text-sm font-bold flex items-center gap-2 mt-4">
+                <p className="text-dark">Enter Phone Number</p>
+              </div>
+              <div className="flex items-center justify-between w-full my-4">
+                <div className="h-12 w-full flex flex-1 relative">
+                  <input
+                    onChange={(val: any) => setPhoneNumber(val.target.value)}
+                    type="text"
+                    placeholder="EX: 7702224444"
+                    className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
+  shadow-md"
+                  />
+                </div>
+              </div>
             </div>
           )}
+
           {/* rest of cart infomration with pricing */}
           <div className="w-full flex flex-col gap-4 border-b-[1px] border-b-zinc-200 pb-4">
             <div className="flex flex-col gap-1">

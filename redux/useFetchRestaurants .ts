@@ -89,8 +89,9 @@ const useFetchRestaurants = () => {
                     }
                   });
                 }
-
-                tempRestaurants.push(data);
+                if (data.isShowing) {
+                  tempRestaurants.push(data);
+                }
               });
 
             // Sort the restaurants by open/closed and fanCount
