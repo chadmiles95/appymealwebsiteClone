@@ -15,7 +15,7 @@ const useUpdateTime = () => {
     const militaryTime =
       easternTime.getHours().toString().padStart(2, "0") +
       easternTime.getMinutes().toString().padStart(2, "0");
-    dispatch(updateCurrentTime({ currentTime: easternTime, militaryTime }));
+    dispatch(updateCurrentTime({ currentTime: easternTime.toString(), militaryTime }));
   };
 
   return updateTime;

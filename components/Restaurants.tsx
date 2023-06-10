@@ -13,18 +13,18 @@ import SearchBar from "./SearchBar";
 import { Spacer } from "./Spacer";
 import RestaurantCard from "./RestaurantCard";
 import useFetchRestaurants from "../redux/useFetchRestaurants ";
+import useUpdateTime from "../redux/useUpdateTime";
 
 type RestaurantsProps = {
   // If you have any props, you can define their types here
 };
-
-console.log("page trigs");
 
 const Restaurants: React.FC<RestaurantsProps> = () => {
   //custom hook to grab restaurants on render
   useFetchRestaurants();
 
   const restaurantData = useSelector((state: any) => state.shopper.restaurants);
+  const updateTime = useUpdateTime();
 
   const dispatch = useDispatch();
   // const [restaurantData, setRestaurantData] = useState<Restaurant[]>([]);
@@ -56,7 +56,7 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
       <div className="py-6 px-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2 items-start justify-items-center">
         {restaurantData.map((restaurant: Restaurant) => {
           return (
-            <RestaurantCard key={restaurant.name} restaurant={restaurant} />
+            <RestaurantCard key={restaurant.name} restaurant={restaurant} updateTime={updateTime} />
           );
         })}
       </div>
