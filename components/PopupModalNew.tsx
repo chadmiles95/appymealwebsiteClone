@@ -4,7 +4,11 @@ import { MdOutlineAdd } from "react-icons/md";
 import ReactModal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { addToCart, checkCurrentRestaurant } from "redux/shoppersSlice";
+import {
+  addToCart,
+  checkCurrentRestaurant,
+  updateCurrentMenu,
+} from "redux/shoppersSlice";
 import toast, { Toaster } from "react-hot-toast";
 import ReactDOM from "react-dom";
 
@@ -221,6 +225,7 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     // console.log("rest", rest);
 
     dispatch(checkCurrentRestaurant({ rest: rest }));
+    dispatch(updateCurrentMenu({ menuSelected: rest.menuSelected }));
 
     // generate random key for id and removing from cart
 

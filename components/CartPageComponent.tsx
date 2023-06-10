@@ -27,6 +27,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { getDeliveryQuote } from "../services/delivery";
 import Spinner from "./Spinner";
+import UseUpdateRestaurantByName from "redux/useUpdateRestaurantByName";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -36,6 +37,9 @@ const CartPageComponent = () => {
   const userInfo = useSelector((state: any) => state.shopper.userInfo);
   const cart = useSelector((state: any) => state.shopper.productData);
   const rest = useSelector((state: any) => state.shopper.currentRestaurant);
+  const currentTime = useSelector((state: any) => state.shopper.currentTime);
+  const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
+  const menuSelected = useSelector((state: any) => state.shopper.menuSelected);
   const [downloadAppMsg, setDownloadAppMsg] = useState(true);
 
   const [totalOldPrice, setTotalOldPrice] = useState(0);
@@ -52,6 +56,7 @@ const CartPageComponent = () => {
   const [isPickup, setIsPickup] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [tempUserEmail, setTempUserEmail] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
 
   // delivery address stuff
   console.log("rest?.taxRate", rest?.taxRate);
@@ -174,33 +179,40 @@ const CartPageComponent = () => {
     setTotalAmt(amtWithTip);
   }, [productData, selectedTip, deliveryQuote, rest?.taxRate]);
 
-  // const handleCheckout = async () => {
-  //   const stripe = await stripePromise;
-  //   const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
-
-  //   console.log("stripe", stripe);
-  //   console.log("stipreAmt", stipreAmt);
-  //   console.log("session?.user?.email", session?.user?.email);
-
-  //   // create a checkout session
-  //   const checkoutSession = await axios.post("api/create-checkout-session", {
-  //     items: productData,
-  //     email: session?.user?.email,
-  //   });
-  //   // redirect user to stripe checkout
-  //   const result: any = await stripe?.redirectToCheckout({
-  //     sessionId: checkoutSession.data.id,
-  //   });
-  //   if (result?.error) {
-  //     alert(result?.error.message);
-  //   }
-  // };
-
   const handleCheckout = async () => {
+    //check restaurant
+
+    let updatedRest;
+    try {
+      updatedRest = await UseUpdateRestaurantByName(rest.name);
+    } catch (err) {
+      console.log("err", err);
+      alert("Error checking restaurant. Please try again.");
+      return; // Exit the function
+    }
+    console.log("updatedRest", updatedRest);
+
+    if (!updatedRest) {
+      alert("Issues contacting restaurant. Please try again.");
+      return; // Exit the function
+    }
+
+    let passChecks;
+    try {
+      passChecks = await checkoutChecks(updatedRest);
+    } catch (err) {
+      alert("Error in checkout. Please try again.");
+      return; // Exit the function
+    }
+
+    console.log("passChecks", passChecks);
+    if (!passChecks) {
+      alert("Checkout checks failed. Please try again.");
+      return; // Exit the function
+    }
+
     const stripe = await stripePromise;
     const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
-
-    // console.log("stripe", stripe);
 
     try {
       // create a checkout session
@@ -228,6 +240,99 @@ const CartPageComponent = () => {
     } catch (err) {
       console.error("Error during checkout: ", err);
     }
+  };
+
+  //REST CHECKS
+
+  const checkoutChecks = async (res: any) => {
+    return new Promise((resolve, reject) => {
+      if (res.menuSelected !== menuSelected) {
+        setIsLoading(false);
+        alert("Restaurant menu not available");
+        resolve(false);
+      }
+      // LAYER  - checking if menu is available for restaurant
+      else {
+        if (res.isOpen === false) {
+          setIsLoading(false);
+          alert("Restaurant is currently closed");
+          resolve(false);
+        }
+        // LAYER 2 - checking if rest is closed by open/closed boolean value
+        else {
+          let tempHour = parseFloat(currentTime.getUTCHours());
+          let tempMin = parseFloat(currentTime.getMinutes());
+
+          let tempTime;
+          tempMin.toString().length === 1
+            ? (tempTime = `${tempHour}0${tempMin}`)
+            : (tempTime = `${tempHour}${tempMin}`);
+
+          if (
+            parseFloat(res.hours.substr(5, 4)) <= parseFloat(tempTime) ||
+            parseFloat(tempTime) < parseFloat(res.hours.substr(0, 4)) ||
+            res.hours === "closed" ||
+            (res.menuHours !== "All Day" &&
+              (parseFloat(tempTime) < parseFloat(res.menuHours.substr(0, 4)) ||
+                parseFloat(tempTime) >= parseFloat(res.menuHours.substr(5, 4))))
+          ) {
+            // console.log(res.hours);
+
+            setIsLoading(false);
+            alert("Restaurant is currently closed");
+            resolve(false);
+          } else {
+            if (isPickup === false) {
+              if (
+                deliveryQuote === undefined ||
+                deliveryQuote === null ||
+                deliveryAddress.length === 0 ||
+                deliveryAccepted === false
+              ) {
+                setIsLoading(false);
+                alert("Please check delivery address");
+                resolve(false);
+              } else if (name?.length === 0 || phoneNumber?.length === 0) {
+                alert(
+                  "Please fill out name and phone number fields on the information tab."
+                );
+                setIsLoading(false);
+                resolve(false);
+              } else if (totalAmt > 30000) {
+                setIsLoading(false);
+
+                alert("Order over $300. Please call restaurant");
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            }
+
+            // LAYER 4 - checking if it was a delivery that it has all the necessary stuff
+            else {
+              if (name?.length === 0 || phoneNumber?.length === 0) {
+                alert(
+                  "Please fill out name and phone number fields on the information tab."
+                );
+                setIsLoading(false);
+                resolve(false);
+              }
+              // LAYER 5 - checking if total is over 300
+              else if (totalAmt > 30000) {
+                setIsLoading(false);
+
+                alert("Order over $300. Please call restaurant");
+                resolve(false);
+              }
+              // LAYER 5 - checking if cart total is under $300 - manual limit set to prevent crazy big fake orders or slamming restaurants with a big order - REMOVING DO NOT NEED
+              else {
+                resolve(true);
+              }
+            }
+          }
+        }
+      }
+    });
   };
 
   function allAreNull(arr: any[]) {
@@ -493,12 +598,42 @@ const CartPageComponent = () => {
               </div>
             </>
           )}
+          {/* enter name */}
+          <div className="text-sm font-bold flex items-center gap-2 mt-0">
+            <p className="text-dark">Enter Name</p>
+          </div>
+          <div className="flex items-center justify-between w-full mb-2">
+            <div className="h-12 w-full flex flex-1 relative">
+              <input
+                onChange={(val: any) => setName(val.target.value)}
+                type="text"
+                placeholder="EX: Zach"
+                className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
+  shadow-md"
+              />
+            </div>
+          </div>
 
           {/* Delivery information goes here */}
 
           {isPickup === false && (
             <div>
-              <div className="text-sm font-bold flex items-center gap-2 mb-4">
+              {/* add phone number if delivery is popped */}
+              <div className="text-sm font-bold flex items-center gap-2 mt-0">
+                <p className="text-dark">Enter Phone Number</p>
+              </div>
+              <div className="flex items-center justify-between w-full my-4 ">
+                <div className="h-12 w-full flex flex-1 relative">
+                  <input
+                    onChange={(val: any) => setPhoneNumber(val.target.value)}
+                    type="text"
+                    placeholder="EX: 7702224444"
+                    className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
+  shadow-md"
+                  />
+                </div>
+              </div>
+              <div className="text-sm font-bold flex items-center gap-2 mb-4 mt-6">
                 <p className="text-dark">Enter Delivery Address </p>
               </div>
               <div className="flex items-center justify-between w-full my-2">
@@ -525,21 +660,6 @@ const CartPageComponent = () => {
                       </p>
                     )}
                   </div>
-                </div>
-              </div>
-              {/* add phone number if delivery is popped */}
-              <div className="text-sm font-bold flex items-center gap-2 mt-4">
-                <p className="text-dark">Enter Phone Number</p>
-              </div>
-              <div className="flex items-center justify-between w-full my-4">
-                <div className="h-12 w-full flex flex-1 relative">
-                  <input
-                    onChange={(val: any) => setPhoneNumber(val.target.value)}
-                    type="text"
-                    placeholder="EX: 7702224444"
-                    className="h-full w-full rounded-full px-4 text-dark text-base outline-none border-[1px] border-transparent focus-visible:border-dark duraction-200
-  shadow-md"
-                  />
                 </div>
               </div>
             </div>
