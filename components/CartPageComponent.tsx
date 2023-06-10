@@ -212,7 +212,9 @@ const CartPageComponent = () => {
       const checkoutSession = await axios.post("api/create-checkout-session", {
         items: productData,
         email: session?.user?.email,
-        finalAmt: stipreAmt,
+        tip: tip,
+        tax: taxAmt,
+        deliveryFee: deliveryQuote,
       });
 
       // console.log("checkoutSession", checkoutSession);
