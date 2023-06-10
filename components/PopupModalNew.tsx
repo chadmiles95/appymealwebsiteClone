@@ -238,7 +238,14 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         addToCart({
           item: item.name,
           id: tempKey,
-          price: itemPrice,
+          price: parseFloat(
+            (
+              item.price +
+              firstOptionPrice +
+              secondOptionPrice +
+              sidePrice
+            ).toFixed(2)
+          ),
           modifiers: [
             ...uniqueFirstOptionChoices,
             ...uniqueSecondOptionChoices,
@@ -255,7 +262,14 @@ export const PopupModalNew: React.FC<ModalProps> = ({
         addToCart({
           item: item.name,
           id: tempKey,
-          price: itemPrice,
+          price: parseFloat(
+            (
+              item.price +
+              firstOptionPrice +
+              secondOptionPrice +
+              sidePrice
+            ).toFixed(2)
+          ),
           modifiers: [],
           quantity: quantity,
         })

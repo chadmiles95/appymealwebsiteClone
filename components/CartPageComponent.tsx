@@ -31,7 +31,7 @@ import Spinner from "./Spinner";
 const CartPageComponent = () => {
   const { data: session } = useSession();
   const dispatch = useDispatch();
-  const stripePromise = loadStripe(process.env.stripe_public_key || '');
+  const stripePromise = loadStripe(process.env.stripe_public_key || "");
   const productData = useSelector((state: any) => state.shopper.productData);
   const userInfo = useSelector((state: any) => state.shopper.userInfo);
   const cart = useSelector((state: any) => state.shopper.productData);
@@ -59,71 +59,88 @@ const CartPageComponent = () => {
   const deliveryAddressRef = useRef();
 
   useEffect(() => {
-    if (typeof window !== "undefined" && typeof window?.google !== "undefined") {
-      const autocomplete = window?.google?.maps?.places?.Autocomplete && new window.google.maps.places.Autocomplete(
-        deliveryAddressRef.current
-      );
+    if (
+      typeof window !== "undefined" &&
+      typeof window?.google !== "undefined"
+    ) {
+      const autocomplete =
+        window?.google?.maps?.places?.Autocomplete &&
+        new window.google.maps.places.Autocomplete(deliveryAddressRef.current);
 
       if (autocomplete) {
         autocomplete.addListener("place_changed", () => {
           const place = autocomplete.getPlace();
           const zip = place.address_components.find((ac: any) =>
             ac.types.includes("postal_code")
-          ).short_name;
+          )?.short_name;
           const state = place.address_components.find((ac: any) =>
             ac.types.includes("administrative_area_level_1")
-          ).short_name;
-  
-          let tempAddress = `${place.address_components[0].long_name} ${place.address_components[1].short_name} ${place.address_components[2].short_name}, ${state} ${zip}`;
-  
-          setDeliveryAddress(tempAddress);
-          setIsLoading(true);
-          let randID = `testID: ${Math.random() * 10000}`;
-          let restAddress = `${rest.address} ${rest.city}, ${rest.state} ${rest.zip}`;
-          // //  trying to get Doordash delivery need to add checks right before this if they are inhouse
-          // // if(rest.deliveryType.type === "DoorDash" && rest.enableDelivery === true){}
-  
-          try {
-            getDeliveryQuote(randID, tempAddress, restAddress).then(
-              (result: any) => {
-                if (result.hasOwnProperty("data")) {
-                  console.log("result.data.data.fee", result.data.data.fee);
-                  console.log("DELIVERT FEE", result.data.data.fee);
-                  setDeliveryQuote(result.data.data.fee);
-                  setDeliveryAccepted(true);
-                  setIsLoading(false);
-                } else {
-                  setDeliveryQuote(0);
-                  setIsLoading(false);
-                  setDeliveryAccepted(false);
-                  if (result !== null) {
-                    if (
-                      result?.message ===
-                      "Allowed distance between addresses exceeded"
-                    ) {
-                      alert("Address is outside delivery range!");
-                      setDeliveryQuote(0);
-                      setDeliveryAccepted(false);
+          )?.short_name;
+
+          if (
+            !zip ||
+            !state ||
+            !place.address_components[0]?.long_name ||
+            !place.address_components[1]?.short_name ||
+            !place.address_components[2]?.short_name
+          ) {
+            setDeliveryQuote(0);
+            setIsLoading(false);
+            setDeliveryAccepted(false);
+            alert("Address not accepted!");
+            return;
+          } else {
+            let tempAddress = `${place.address_components[0].long_name} ${place.address_components[1].short_name} ${place.address_components[2].short_name}, ${state} ${zip}`;
+
+            setDeliveryAddress(tempAddress);
+            setIsLoading(true);
+            let randID = `testID: ${Math.random() * 10000}`;
+            let restAddress = `${rest.address} ${rest.city}, ${rest.state} ${rest.zip}`;
+            // //  trying to get Doordash delivery need to add checks right before this if they are inhouse
+            // // if(rest.deliveryType.type === "DoorDash" && rest.enableDelivery === true){}
+
+            try {
+              getDeliveryQuote(randID, tempAddress, restAddress).then(
+                (result: any) => {
+                  if (result.hasOwnProperty("data")) {
+                    console.log("result.data.data.fee", result.data.data.fee);
+                    console.log("DELIVERT FEE", result.data.data.fee);
+                    setDeliveryQuote(result.data.data.fee);
+                    setDeliveryAccepted(true);
+                    setIsLoading(false);
+                  } else {
+                    setDeliveryQuote(0);
+                    setIsLoading(false);
+                    setDeliveryAccepted(false);
+                    if (result !== null) {
+                      if (
+                        result?.message ===
+                        "Allowed distance between addresses exceeded"
+                      ) {
+                        alert("Address is outside delivery range!");
+                        setDeliveryQuote(0);
+                        setDeliveryAccepted(false);
+                      } else {
+                        alert("Invalid delivery address!");
+                        setDeliveryQuote(0);
+                        setDeliveryAccepted(false);
+                      }
                     } else {
                       alert("Invalid delivery address!");
                       setDeliveryQuote(0);
                       setDeliveryAccepted(false);
                     }
-                  } else {
-                    alert("Invalid delivery address!");
-                    setDeliveryQuote(0);
-                    setDeliveryAccepted(false);
                   }
                 }
-              }
-            );
-          } catch (error) {
-            setDeliveryQuote(0);
-            setDeliveryAccepted(false);
-            setIsLoading(false);
-            alert(
-              "Issue getting delivery quote. Please try again or try new address."
-            );
+              );
+            } catch (error) {
+              setDeliveryQuote(0);
+              setDeliveryAccepted(false);
+              setIsLoading(false);
+              alert(
+                "Issue getting delivery quote. Please try again or try new address."
+              );
+            }
           }
         });
       }
@@ -336,13 +353,12 @@ const CartPageComponent = () => {
         <div className="basis-full lg:basis-1/3 lg:flex-1 m-4 p-4 lg:mt-16 h-1/2 border-[1px] border-zinc-400 rounded-md flex flex-col gap-4">
           <button
             onClick={() => {
-              if (
-                !isPickup &&
-                (deliveryAccepted === false || phoneNumber?.length !== 10)
-              ) {
-                alert("Please fill in delivery address, full phone number");
+              if (!isPickup && deliveryAccepted === false) {
+                alert("Please check delivery address");
               } else if (!session?.user?.email && tempUserEmail === null) {
                 alert("Please fill in email");
+              } else if (!isPickup && phoneNumber?.length !== 10) {
+                alert("Please fix phone number");
               } else {
                 handleCheckout();
               }

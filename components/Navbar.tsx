@@ -100,15 +100,15 @@ const Navbar = () => {
           <Link href="/cart">
             <div className="flex flex-col justify-center items-center gap-2 h-14 px-5 rounded-full bg-transparent hover:bg-lightdark duration-300 relative">
               <BsCart2 className="text-2xl text-dark" />
-              <p className="text-[10px] -mt-2 text-dark">
+              {/* <p className="text-[10px] -mt-2 text-dark">
                 $
                 {new Intl.NumberFormat("en-US", {
                   style: "decimal",
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 }).format(totalAmt)}
-              </p>
-              <span className="absolute w-4 h-4 bg-dark text-white top-0 right-4 rounded-full flex items-center justify-center font-bodyFont text-xs">
+              </p> */}
+              <span className="absolute w-4 h-4 bg-dark text-white top-2.5 right-4 rounded-full flex items-center justify-center font-bodyFont text-xs">
                 {productData.length > 0 ? productData.length : 0}
               </span>
             </div>
