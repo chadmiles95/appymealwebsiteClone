@@ -1,6 +1,6 @@
 const stripe = require("stripe")(process.env.stripe_secret_key);
 
-export default async (req, res) => {
+const createCheckoutSession = async (req, res) => {
   const { items, email, finalAmt } = req.body;
 
   const modifiedItems = items.map((item) => ({
@@ -29,3 +29,5 @@ export default async (req, res) => {
     id: session.id,
   });
 };
+
+export default createCheckoutSession;

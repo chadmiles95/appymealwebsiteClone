@@ -18,7 +18,7 @@ const ProductDetails = () => {
     setIsLoading(true);
     setProduct(router.query);
     setIsLoading(false);
-  }, []);
+  }, [router.query]);
 
   const _id = Number(product._id);
 
@@ -26,7 +26,7 @@ const ProductDetails = () => {
     <div className="w-full bg-w flex flex-col flex-1">
       <div className="max-w-contentContainer mx-auto flex w-full flex flex-row flex-wrap lg:flex-nowrap items-center py-4">
         <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto h-full items-center justify-center overflow-hidden relative p-2">
-          <img
+          <Image
             src={product.image}
             alt="product image"
             className="w-[80%] transform-origin-top-left cursor-move duration-500"

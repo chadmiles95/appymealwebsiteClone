@@ -15,7 +15,7 @@ const RestaurantCard = ({ restaurant }: any) => {
 
   useEffect(() => {
     updateTime();
-  }, []);
+  }, [updateTime]);
 
   useEffect(() => {
     if (
