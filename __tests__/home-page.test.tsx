@@ -1,19 +1,16 @@
 import { render, screen } from '@testing-library/react'
 import Home from '@/pages/index'
 import { ThemeProvider } from '@/infastructure/ThemeProvider';
+import { orderOnlyText } from '@/components/LandingPage';
 
 describe('Home', () => {
-  it('renders a heading', () => {
-    const mockProductDate = {
-      _id: 123,
-      title: 'abc',
-      description: 'abc',
-      oldPrice: 123,
-      price: 123,
-      brand: 'abc',
-      image: 'abc',
-      isNew: true,
-      category: 'abc',
+  it('renders a heading and buttons', async () => {
+    const mockProductData = {
+      item: 'Hamburger',
+      id: 'Hamburger-123',
+      price: 9.99,
+      modifiers: ['quarter pounder', null, null],
+      quantity: 3
     };
     const mockRestaurantData = {
       id: 'abc',
@@ -52,11 +49,15 @@ describe('Home', () => {
     };
     render(
       <ThemeProvider>
-        <Home productData={mockProductDate} restaurantData={mockRestaurantData} />
+        <Home productData={mockProductData} restaurantData={mockRestaurantData} />
       </ThemeProvider>
     );
 
-    // Placeholder test
-    expect(true).toBe(true)
-  })
-})
+    const orderElements = screen.getAllByText(RegExp(orderOnlyText, 'i'));
+    expect(orderElements.length).toBe(2);
+
+    const orderButton = orderElements[1];
+    // Note: To test further routing, we would need to render the entire app in the test.
+    // Instead, I think it's better to test each page in a separate test
+  });
+});

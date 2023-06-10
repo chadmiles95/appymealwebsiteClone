@@ -61,7 +61,7 @@ const CartPageComponent = () => {
   // delivery address stuff
   console.log("rest?.taxRate", rest?.taxRate);
 
-  const deliveryAddressRef = useRef();
+  const deliveryAddressRef = useRef(null);
 
   useEffect(() => {
     if (
@@ -347,7 +347,9 @@ const CartPageComponent = () => {
   };
 
   const handleClickDelivery = () => {
-    setIsPickup(false);
+    rest.enableDelivery === true
+        ? setIsPickup(false)
+        : alert("Delivery Not available");
   };
 
   const handleTipChange = (input: any) => {
@@ -511,11 +513,7 @@ const CartPageComponent = () => {
               className={` w-1/2 transition-colors duration-300 ease-in-out py-2 px-4 rounded-r-full ${
                 !isPickup ? "bg-dark text-white" : "bg-blue-500 text-gray"
               }`}
-              onClick={() => {
-                rest.enableDelivery === true
-                  ? handleClickDelivery()
-                  : alert("Delivery Not available");
-              }}
+              onClick={handleClickDelivery}
             >
               Delivery
             </button>

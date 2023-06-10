@@ -5,7 +5,7 @@ interface ShopperState {
   productData: StoreProduct[];
   restaurants: (typeof Restaurants)[];
   userInfo: null | UserInfo;
-  currentTime: Date;
+  currentTime: string;
   currentRestaurant: any;
   menuSelected: any;
   militaryTime: string;
@@ -16,7 +16,7 @@ const initialState: ShopperState = {
   productData: [],
   restaurants: [],
   userInfo: null,
-  currentTime: new Date(),
+  currentTime: new Date().toString(),
   currentRestaurant: {},
   menuSelected: "",
   militaryTime: "0000",

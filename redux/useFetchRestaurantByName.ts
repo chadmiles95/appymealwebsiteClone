@@ -51,7 +51,7 @@ const useFetchRestaurantByName = (name: string | string[] | undefined) => {
 
             // Add your logic to manipulate the single restaurant object here
             const menus = restaurant.hours[tempDay]?.menus;
-            let data = { ...restaurant, menuStatus: false };
+            let data: Partial<Restaurant> = { ...restaurant, menuStatus: false };
 
             if (menus) {
               const menuEntries = Object.entries(menus);
@@ -59,11 +59,9 @@ const useFetchRestaurantByName = (name: string | string[] | undefined) => {
 
               menuEntries.forEach(([key, value], i) => {
                 if (
-                  (parseFloat(tempTime) >
-                    parseFloat((value as string).substring(0, 4)) &&
-                    parseFloat(tempTime) <
-                      parseFloat((value as string).substring(5, 9))) ||
-                  value === "All Day"
+                  value === "All Day" ||
+                  (parseFloat(tempTime) > parseFloat((value as string).substring(0, 4)) &&
+                    parseFloat(tempTime) < parseFloat((value as string).substring(5, 9)))
                 ) {
                   data = {
                     ...data,

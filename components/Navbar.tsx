@@ -15,7 +15,6 @@ import { colors } from "../infastructure/theme/colors";
 const Navbar = () => {
   const { data: session } = useSession();
   const dispatch = useDispatch();
-  console.log(session);
   const productData = useSelector((state: any) => state.shopper.productData);
   const userInfo = useSelector((state: any) => state.shopper.userInfo);
   const [totalAmt, setTotalAmt] = useState(0);

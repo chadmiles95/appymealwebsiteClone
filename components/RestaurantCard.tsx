@@ -2,15 +2,13 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { useSelector } from "react-redux";
-import useUpdateTime from "../redux/useUpdateTime";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const RestaurantCard = ({ restaurant }: any) => {
+const RestaurantCard = ({ restaurant, updateTime }: any) => {
   const [currentlyOpen, setCurrentlyOpen] = useState(false);
   const currentTime = useSelector((state: any) => state.shopper.currentTime);
   const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
-  const updateTime = useUpdateTime();
   const router = useRouter();
 
   useEffect(() => {
