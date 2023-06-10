@@ -13,7 +13,8 @@ const RestaurantCard = ({ restaurant, updateTime }: any) => {
 
   useEffect(() => {
     updateTime();
-  }, [updateTime]);
+    //can't add to depen array - infinite loop
+  }, []);
 
   useEffect(() => {
     if (
