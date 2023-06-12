@@ -468,6 +468,8 @@ const CartPageComponent = () => {
                 alert("Please fill in email");
               } else if (!isPickup && phoneNumber?.length !== 10) {
                 alert("Please fix phone number");
+              } else if (!productData?.length) {
+                alert("Cart is empty");
               } else {
                 handleCheckout();
               }
