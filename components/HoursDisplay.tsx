@@ -9,7 +9,10 @@ const HourDisplay: React.FC<HourDisplayProps> = ({ hours }) => {
     return <p className="text-dark">Hours - Closed Today</p>;
   }
 
-  const formatHours = (time: string) => {
+  const formatHours = (time?: string) => {
+    if (!time) {
+      return '';
+    }
     if (time.slice(0, 2) === "12") return `12:${time.slice(2, 4)} pm`;
     if (parseInt(time.slice(0, 4)) < 1200) {
       if (time.slice(0, 2) === "00") return `12:${time.slice(2, 4)} am`;
@@ -20,8 +23,8 @@ const HourDisplay: React.FC<HourDisplayProps> = ({ hours }) => {
 
   return (
     <p className="text-dark">
-      Hours - {formatHours(hours.slice(0, 4))} -{" "}
-      {formatHours(hours.slice(5, 9))}
+      Hours - {formatHours(hours?.slice(0, 4))} -{" "}
+      {formatHours(hours?.slice(5, 9))}
     </p>
   );
 };
