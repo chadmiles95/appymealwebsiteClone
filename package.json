@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:dev": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:updateSnapshot": "jest --updateSnapshot",
     "test:ci": "jest --ci",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docker:build": "docker build -t appy-meal-web .",
+    "docker:run": "docker run -d -p 3000:3000 appy-meal-web"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.4",
