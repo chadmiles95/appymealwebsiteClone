@@ -162,7 +162,9 @@ const CartPageComponent = () => {
 
     //add in tax
 
-    setTaxAmt(rest?.taxRate ? amt * (rest?.taxRate / 100) : 0);
+    setTaxAmt(
+      rest?.taxRate ? parseFloat((amt * (rest?.taxRate / 100)).toFixed(2)) : 0
+    );
 
     let tempTaxAmt = rest?.taxRate ? amt * (rest?.taxRate / 100) : 0;
 
@@ -202,44 +204,53 @@ const CartPageComponent = () => {
       passChecks = await checkoutChecks(updatedRest);
     } catch (err) {
       console.log("err", err);
-      alert("Error in checkout. Please try again.");
+      // alert("Error in checkout. Please try again.");
       return; // Exit the function
     }
 
     console.log("passChecks", passChecks);
     if (!passChecks) {
-      alert("Checkout checks failed. Please try again.");
+      // alert("Checkout checks failed. Please try again.");
       return; // Exit the function
-    }
+    } else {
+      const stripe = await stripePromise;
+      const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
 
-    const stripe = await stripePromise;
-    const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
+      try {
+        // create a checkout session
 
-    try {
-      // create a checkout session
+        let useEmail = session?.user?.email
+          ? session?.user?.email
+          : tempUserEmail;
 
-      let useEmail = session?.user?.email
-        ? session?.user?.email
-        : tempUserEmail;
+        console.log("tip", tip);
+        console.log("tax", taxAmt);
 
-      const checkoutSession = await axios.post("api/create-checkout-session", {
-        items: productData,
-        email: session?.user?.email,
-        tip: tip,
-        tax: taxAmt,
-        deliveryFee: deliveryQuote,
-      });
+        const checkoutSession = await axios.post(
+          "api/create-checkout-session",
+          {
+            items: productData,
+            email: session?.user?.email,
+            tip: tip,
+            tax: taxAmt,
+            deliveryFee: deliveryQuote,
+          }
+        );
 
-      // console.log("checkoutSession", checkoutSession);
-      // redirect user to stripe checkout
-      const result: any = await stripe?.redirectToCheckout({
-        sessionId: checkoutSession.data.id,
-      });
-      if (result?.error) {
-        alert(result?.error.message);
+        // console.log("checkoutSession", checkoutSession);
+        // redirect user to stripe checkout
+        const result: any = await stripe?.redirectToCheckout({
+          sessionId: checkoutSession.data.id,
+        });
+        if (result?.error) {
+          alert(result?.error.message);
+        } else {
+          console.log("checkoutSession.data", checkoutSession.data);
+          //push data for order.
+        }
+      } catch (err) {
+        console.error("Error during checkout: ", err);
       }
-    } catch (err) {
-      console.error("Error during checkout: ", err);
     }
   };
 
@@ -261,7 +272,7 @@ const CartPageComponent = () => {
         }
         // LAYER 2 - checking if rest is closed by open/closed boolean value
         else {
-          console.log("currentTime", currentTime);
+          // console.log("currentTime", currentTime);
 
           let dateObject = new Date(currentTime);
           let tempHour = parseFloat(dateObject.getUTCHours().toString());
