@@ -27,7 +27,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { getDeliveryQuote } from "../services/delivery";
 import Spinner from "./Spinner";
-import UseUpdateRestaurantByName from "redux/useUpdateRestaurantByName";
+import { UseUpdateRestaurantByName } from "redux/useUpdateRestaurantByName";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -201,6 +201,7 @@ const CartPageComponent = () => {
     try {
       passChecks = await checkoutChecks(updatedRest);
     } catch (err) {
+      console.log("err", err);
       alert("Error in checkout. Please try again.");
       return; // Exit the function
     }
@@ -260,8 +261,11 @@ const CartPageComponent = () => {
         }
         // LAYER 2 - checking if rest is closed by open/closed boolean value
         else {
-          let tempHour = parseFloat(currentTime.getUTCHours());
-          let tempMin = parseFloat(currentTime.getMinutes());
+          console.log("currentTime", currentTime);
+
+          let dateObject = new Date(currentTime);
+          let tempHour = parseFloat(dateObject.getUTCHours().toString());
+          let tempMin = parseFloat(dateObject.getMinutes().toString());
 
           let tempTime;
           tempMin.toString().length === 1
@@ -348,8 +352,8 @@ const CartPageComponent = () => {
 
   const handleClickDelivery = () => {
     rest.enableDelivery === true
-        ? setIsPickup(false)
-        : alert("Delivery Not available");
+      ? setIsPickup(false)
+      : alert("Delivery Not available");
   };
 
   const handleTipChange = (input: any) => {
