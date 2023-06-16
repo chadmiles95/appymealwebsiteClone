@@ -13,12 +13,12 @@ const nextConfig = {
   env: {
     stripe_public_key: process.env.STRIPE_PUBLIC_KEY,
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
-    FIREBASE_API_KEY: process.env.API_KEY,
-    FIREBASE_AUTH_DOMAIN: process.env.AUTH_DOMAIN,
-    FIREBASE_PROJECT_ID: process.env.PROJECT_ID,
-    FIREBASE_STORAGE_BUCKET: process.env.STORAGE_BUCKET,
-    FIREBASE_MESSAGING_SENDER_ID: process.env.MESSAGING_SENDER_ID,
-    FIREBASE_APP_ID: process.env.APP_ID,
+    FIREBASE_API_KEY: process.env.FRBSE_API_KEY,
+    FIREBASE_AUTH_DOMAIN: process.env.FRBSE_AUTH_DOMAIN,
+    FIREBASE_PROJECT_ID: process.env.FRBSE_PROJECT_ID,
+    FIREBASE_STORAGE_BUCKET: process.env.FRBSE_STORAGE_BUCKET,
+    FIREBASE_MESSAGING_SENDER_ID: process.env.FRBSE_MESSAGING_SENDER_ID,
+    FIREBASE_APP_ID: process.env.FRBSE_APP_ID,
   },
   typescript: {
     ignoreBuildErrors: true,
