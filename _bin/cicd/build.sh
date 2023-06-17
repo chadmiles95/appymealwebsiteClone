@@ -8,11 +8,11 @@ source ./_bin/lib/has_diff_changes.sh
 CURRENT_BRANCH=${CICD_BRANCH:-$CIRCLE_BRANCH}
 echo "Current branch is $CURRENT_BRANCH"
 
-DESTINATION_BRANCH="main"
-echo "Destination branch is $TRAVIS_BRANCH"
+DESTINATION_BRANCH="master"
+echo "Destination branch is $DESTINATION_BRANCH"
 
-# Only build the docker images when the source branch is stage or main
-if [[ ("$CURRENT_BRANCH" != "stage") && ("$CURRENT_BRANCH" != "main") ]]; then
+# Only build the docker images when the source branch is stage or master
+if [[ ("$CURRENT_BRANCH" != "stage") && ("$CURRENT_BRANCH" != "master") ]]; then
   echo "Skipping post build stage."
   exit 0
 fi
