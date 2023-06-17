@@ -22,6 +22,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ARG FRBSE_API_KEY
+ARG FRBSE_AUTH_DOMAIN
+ARG FRBSE_PROJECT_ID
+ARG FRBSE_STORAGE_BUCKET
+ARG FRBSE_MESSAGING_SENDER_ID
+ARG STRIPE_PUBLIC_KEY
+ARG STRIPE_SECRET_KEY
+ENV FRBSE_API_KEY=$FRBSE_API_KEY FRBSE_AUTH_DOMAIN=$FRBSE_AUTH_DOMAIN FRBSE_PROJECT_ID=$FRBSE_PROJECT_ID FRBSE_STORAGE_BUCKET=$FRBSE_STORAGE_BUCKET FRBSE_MESSAGING_SENDER_ID=$FRBSE_MESSAGING_SENDER_ID STRIPE_PUBLIC_KEY=$STRIPE_PUBLIC_KEY STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
@@ -51,5 +60,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
+
 
 CMD ["node", "server.js"]
