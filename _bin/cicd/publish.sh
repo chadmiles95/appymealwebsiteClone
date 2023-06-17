@@ -53,6 +53,7 @@ cat > VERSIONS.txt <<EOF
 LAST_PUBLISHED_GIT_SHA=${GIT_SHA}
 EOF
 
+  # TODO: Change this to Zach Owen's user
   git config user.email "rili.main@gmail.com"
   git config user.name "Rili Admin"
   git add VERSIONS.txt

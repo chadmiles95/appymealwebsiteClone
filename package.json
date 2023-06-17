@@ -14,7 +14,7 @@
     "test:ci": "jest --ci",
     "prepare": "husky install",
     "docker:build": "docker build -t appymeal/web-frontend .",
-    "docker:run": "docker run -d -p 3000:3000 appy-meal-web"
+    "docker:run": "docker run -d -p 3000:3000 appymeal/web-frontend"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.4",
