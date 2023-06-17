@@ -1,5 +1,5 @@
 ARG NODE_VERSION=20.3.0
-FROM node:"${NODE_VERSION}-alpine" as base
+FROM "node:${NODE_VERSION}-alpine" as base
 
 # Install dependencies only when needed
 FROM base AS deps
