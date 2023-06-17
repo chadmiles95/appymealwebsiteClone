@@ -13,7 +13,7 @@
     "test:updateSnapshot": "jest --updateSnapshot",
     "test:ci": "jest --ci",
     "prepare": "husky install",
-    "docker:build": "docker build -t appy-meal-web .",
+    "docker:build": "docker build -t appymeal/web-frontend .",
     "docker:run": "docker run -d -p 3000:3000 appy-meal-web"
   },
   "dependencies": {
