@@ -8,11 +8,11 @@ source ./_bin/lib/has_diff_changes.sh
 CURRENT_BRANCH=${CICD_BRANCH:-$CIRCLE_BRANCH}
 echo "Current branch is $CURRENT_BRANCH"
 
-DESTINATION_BRANCH="main"
-echo "Destination branch is $TRAVIS_BRANCH"
+DESTINATION_BRANCH="master"
+echo "Destination branch is $DESTINATION_BRANCH"
 
-# Only build the docker images when the source branch is stage or main
-if [[ ("$CURRENT_BRANCH" != "stage") && ("$CURRENT_BRANCH" != "main") ]]; then
+# Only build the docker images when the source branch is stage or master
+if [[ ("$CURRENT_BRANCH" != "stage") && ("$CURRENT_BRANCH" != "master") ]]; then
   echo "Skipping post build stage."
   exit 0
 fi
@@ -39,7 +39,14 @@ should_build_web_app()
 # Docker Build
 if should_build_web_app; then
   docker build -t appymeal/web-frontend$SUFFIX:latest -t appymeal/web-frontend$SUFFIX:$GIT_SHA -f ./Dockerfile \
-    --build-arg NODE_VERSION=${NODE_VERSION} .
+    --build-arg NODE_VERSION=${NODE_VERSION} \
+    --build-arg FRBSE_API_KEY=${FRBSE_API_KEY} \
+    --build-arg FRBSE_AUTH_DOMAIN=${FRBSE_AUTH_DOMAIN} \
+    --build-arg FRBSE_PROJECT_ID=${FRBSE_PROJECT_ID} \
+    --build-arg FRBSE_STORAGE_BUCKET=${FRBSE_STORAGE_BUCKET} \
+    --build-arg FRBSE_MESSAGING_SENDER_ID=${FRBSE_MESSAGING_SENDER_ID} \
+    --build-arg STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY} \
+    --build-arg STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY} .
 fi
 
 echo "Docker build complete for all services with changes"

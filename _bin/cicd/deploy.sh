@@ -8,16 +8,16 @@ source ./_bin/lib/has_diff_changes.sh
 CURRENT_BRANCH=${CICD_BRANCH:-$CIRCLE_BRANCH}
 echo "Current branch is $CURRENT_BRANCH"
 
-DESTINATION_BRANCH="main"
-echo "Destination branch is $TRAVIS_BRANCH"
+DESTINATION_BRANCH="master"
+echo "Destination branch is $DESTINATION_BRANCH"
 
-# This should get us the SHA of the stage branch prior to main that last built and published docker images
+# This should get us the SHA of the stage branch prior to master that last built and published docker images
 export $(cat VERSIONS.txt)
 GIT_SHA="${LAST_PUBLISHED_GIT_SHA}"
 echo "LAST_PUBLISHED_GIT_SHA=${GIT_SHA}"
 
-# Only build the docker images when the source branch is stage or main
-if [[ ("$CURRENT_BRANCH" != "stage") && ("$CURRENT_BRANCH" != "main") ]]; then
+# Only build the docker images when the source branch is stage or master
+if [[ ("$CURRENT_BRANCH" != "stage") && ("$CURRENT_BRANCH" != "master") ]]; then
   echo "Skipping post build stage."
   exit 0
 fi
@@ -42,11 +42,11 @@ should_deploy_web_app()
 }
 
 # Kubectl Apply
-# NOTE: stage and main docker tags are essentially the same. The Docker container is interchangable and implements env variables injected by Kubernetes
+# NOTE: stage and master docker tags are essentially the same. The Docker container is interchangable and implements env variables injected by Kubernetes
 kubectl apply -f k8s/prod
 if should_deploy_web_app; then
   docker pull appymeal/web-frontend-stage:$GIT_SHA
-  if [[ "$CURRENT_BRANCH" == "main"  ]]; then
+  if [[ "$CURRENT_BRANCH" == "master"  ]]; then
     docker tag appymeal/web-frontend-stage:$GIT_SHA appymeal/web-frontend:$GIT_SHA
     docker tag appymeal/web-frontend-stage:$GIT_SHA appymeal/web-frontend:latest
     docker push appymeal/web-frontend:$GIT_SHA
@@ -63,8 +63,8 @@ echo "Resetting VERSIONS.txt"
 cat > VERSIONS.txt <<EOF
 EOF
 
-git config user.email "rili.main@gmail.com"
-git config user.name "Rili Admin"
+git config user.email "zachary_owen@aol.com"
+git config user.name "BlueRacoon"
 git add VERSIONS.txt
 git commit -m "[skip ci] Updated VERSIONS.txt"
-git push --set-upstream origin main --no-verify
+git push --set-upstream origin master --no-verify
