@@ -63,9 +63,8 @@ echo "Resetting VERSIONS.txt"
 cat > VERSIONS.txt <<EOF
 EOF
 
-# TODO: Change this to Zach Owen's user
-git config user.email "rili.main@gmail.com"
-git config user.name "Rili Admin"
+git config user.email "zachary_owen@aol.com"
+git config user.name "BlueRacoon"
 git add VERSIONS.txt
 git commit -m "[skip ci] Updated VERSIONS.txt"
 git push --set-upstream origin master --no-verify
