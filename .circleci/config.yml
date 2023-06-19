@@ -93,7 +93,7 @@ jobs:
           source ~/.bashrc
           echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
           gcloud --quiet config set project mealstogo-dabbc
-          gcloud --quiet config set compute/zone us-central1-a
+          gcloud --quiet config set compute/zone us-central1
           gcloud container clusters get-credentials production-cluster-1
       - add_ssh_keys:
           fingerprints:
