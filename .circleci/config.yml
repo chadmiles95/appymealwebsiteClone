@@ -93,7 +93,7 @@ jobs:
           source ~/.bashrc
           echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
           gcloud --quiet config set project mealstogo-dabbc
-          gcloud --quiet config set compute/zone us-central1-a
+          gcloud --quiet config set compute/zone us-central1
           gcloud container clusters get-credentials production-cluster-1
       - add_ssh_keys:
           fingerprints:
@@ -109,10 +109,19 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   build_and_test:
     jobs:
-      - install_dependencies
+      - install_dependencies:
+          filters:
+            branches:
+              ignore:
+                - master
       - test:
           requires:
           - install_dependencies
+          filters:
+            branches:
+              ignore:
+                - stage
+                - master
       - docker_build_publish_images:
           requires:
           - install_dependencies
