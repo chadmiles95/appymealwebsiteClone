@@ -23,6 +23,8 @@ export interface Restaurant {
   lng: number;
   accountType: string;
   menus: any;
+  webFee: number;
+  appFee: number;
   isOpen: boolean;
   isShowing: boolean;
   createdAt: string;
@@ -33,6 +35,7 @@ export interface Restaurant {
   fanCount: number;
   images: any[];
   fans: any[];
+  taxRate: number;
   enableFans: boolean;
   enableDelivery: boolean;
   enablePrinting: boolean;

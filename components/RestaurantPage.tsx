@@ -12,6 +12,9 @@ import { MdClose } from "react-icons/md";
 import { deleteItem } from "redux/shoppersSlice";
 import HourDisplay from "./HoursDisplay";
 import OpenStatus from "./OpenStatus";
+import { FaCarSide } from "react-icons/fa";
+import { FaStore } from "react-icons/fa";
+import { colors } from "@/infastructure/theme/colors";
 
 interface MenuItemProps {
   name: string;
@@ -267,16 +270,18 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
         </div>
         <div className=" lgl:w-1/3 lg:w-2/5 sm:w-full md:w-3/4 mdl:w-1/2 flex flex-col mx-auto sm:px-4 md:px-2 lg:px-2 lgl:px-2 items-center">
           <p className="text-xl font-semibold text-dark">Methods Available</p>
-          <div className="w-full flex flex-row gap-2 justify-center items-center mt-4">
-            <div className="flex flex-row gap-8">
-              <div className="flex bg-primary w-36 h-auto justify-center items-center rounded-full py-1">
+          <div className="w-full flex flex-row gap-4 justify-center items-center mt-4">
+            <div className="flex flex-row gap-12">
+              <FaStore size={50} color={colors.brand.primary} />
+              {/* <div className="flex bg-primary w-36 h-auto justify-center items-center rounded-full py-1">
                 <p className="text-white text-xl">Pickup</p>
-              </div>
+              </div> */}
 
               {restaurant.enableDelivery && (
-                <div className="flex bg-primary w-36 h-auto justify-center items-center rounded-full py-1">
-                  <p className="text-white text-xl">Delivery</p>
-                </div>
+                <FaCarSide size={50} color={colors.brand.primary} />
+                // <div className="flex bg-primary w-36 h-auto justify-center items-center rounded-full py-1">
+                //   <p className="text-white text-xl">Delivery</p>
+                // </div>
               )}
             </div>
           </div>

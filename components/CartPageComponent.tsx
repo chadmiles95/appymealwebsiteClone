@@ -28,6 +28,7 @@ import { useSession } from "next-auth/react";
 import { getDeliveryQuote } from "../services/delivery";
 import Spinner from "./Spinner";
 import { UseUpdateRestaurantByName } from "redux/useUpdateRestaurantByName";
+import { getOrderNumber } from "services/ordernumber";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -45,6 +46,7 @@ const CartPageComponent = () => {
   const [totalOldPrice, setTotalOldPrice] = useState(0);
   const [totalSavings, setTotalSavings] = useState(0);
   const [totalAmt, setTotalAmt] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
   const [selectedTip, setSelectedTip] = useState(15);
   const [tip, setTip] = useState(0);
   const [taxAmt, setTaxAmt] = useState(0);
@@ -160,6 +162,8 @@ const CartPageComponent = () => {
       return;
     });
 
+    setCartTotal(amt);
+
     //add in tax
 
     setTaxAmt(
@@ -213,8 +217,133 @@ const CartPageComponent = () => {
       // alert("Checkout checks failed. Please try again.");
       return; // Exit the function
     } else {
-      const stripe = await stripePromise;
+      //start getting order logic and order number setup
+
+      let orderNumber = null;
+      orderNumber = await getOrderNumber();
+
+      let orderTempUserEmail = session?.user?.email
+        ? session?.user?.email?.toLowerCase()
+        : tempUserEmail?.toLowerCase();
+      let tempRestEmail = updatedRest?.email?.toLowerCase();
+
+      let recordTax = parseFloat((updatedRest?.taxRate - 1).toFixed(2));
+
+      let ddRestAddress = `${updatedRest.address} ${updatedRest.city}, ${updatedRest.state}, ${updatedRest.zip}`;
+
       const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
+
+      let appyFee = parseFloat(
+        (totalAmt * (updatedRest?.webFee / 100)).toFixed(2)
+      );
+
+      if (orderNumber === null) {
+        alert("Issues connecting to server. Please try again.");
+        setIsLoading(false);
+        return;
+      }
+
+      let recordTip = selectedTip === 0 ? 0 : selectedTip / 100;
+
+      let dasherTip = parseFloat(((tip / 2) * 100).toFixed(0));
+
+      let tempCalculatedTip = tip;
+
+      isPickup === false && updatedRest?.deliveryType?.type === "DoorDash"
+        ? (tempCalculatedTip = parseFloat((tip - dasherTip / 100).toFixed(2)))
+        : null;
+
+      // let tempEmail = user.email ? user.email : userEmail;
+
+      let doorDashInfo = {
+        external_delivery_id: parseFloat(orderNumber),
+        pickup_business_name: updatedRest.name,
+        pickup_address: ddRestAddress,
+        pickup_phone_number: updatedRest.phoneNumber,
+        dropoff_address: deliveryAddress,
+        dropoff_phone_number: phoneNumber,
+        locale: "en-US",
+        dropoff_contact_given_name: name,
+        order_value: stipreAmt,
+        currency: "USD",
+        order_contains: {
+          alcohol: false,
+        },
+        tip: dasherTip,
+        dasher_allowed_vehicles: ["car", "bicycle", "walking"],
+        dropoff_requires_signature: false,
+        customer: {
+          phone_number: `+1${phoneNumber}`,
+          business_name: "AppyMeal",
+          first_name: name,
+          last_name: "",
+          email: orderTempUserEmail,
+          should_send_notifications: true,
+          locale: "en-US",
+        },
+      };
+
+      let date = await getTodaysDate();
+      let fullD = await getCurrentFullTimeTest();
+      let currentTime = await getCurrentTime();
+
+      let expectedPickupTime = await getExpectedWaitTime(
+        updatedRest?.expectedWaitTime
+      );
+
+      //full order data
+
+      let order = {
+        cart: cart,
+        customer: name,
+        stripeTotal: totalAmt,
+        total: totalAmt,
+        restaurant: updatedRest?.name,
+        number: orderNumber,
+        createdAt: fullD,
+        cartTotal: cartTotal,
+        completedAt: fullD,
+        status: "new",
+        AMFee: appyFee,
+        tip: tip,
+        tax: taxAmt,
+        pickupChoice: isPickup ? "Pickup" : "Delivery",
+        pickupTime: "",
+        email: orderTempUserEmail,
+        restaurantEmail: tempRestEmail,
+        orderDate: date,
+        orderTime: currentTime,
+        readyTime: "",
+        preparingTime: "",
+        completedTime: "",
+        restLoc: updatedRest?.location,
+        restViewport: updatedRest?.viewport,
+        menuSelected: menuSelected,
+        refundData: [],
+        userPhoneNumber: phoneNumber,
+        restaurantPhoneNumber: updatedRest?.phoneNumber,
+        orderInfo: null, //stripe reponse goes here
+        paymentIntent: null, //stripe payment intent ID and split from secret phrase. logic is in app
+        taxPercent: parseFloat((updatedRest?.taxRate / 100).toFixed(2)),
+        tipPercent: selectedTip,
+        rewardPoints: 0,
+        discountTotal: 0,
+        newUserDiscount: null,
+        fanDiscount: null,
+        rewardDiscount: null,
+        deliveryAddress: deliveryAddress,
+        deliveryQuote: deliveryQuote,
+        deliveryType:
+          isPickup === true ? null : updatedRest?.deliveryType?.type,
+        trackRewardDiscount: null,
+        newRest: null,
+        doorDashInfo: doorDashInfo,
+        expectedPickupTime: expectedPickupTime,
+      };
+
+      // Start Checkout
+
+      const stripe = await stripePromise;
 
       try {
         // create a checkout session
@@ -222,9 +351,6 @@ const CartPageComponent = () => {
         let useEmail = session?.user?.email
           ? session?.user?.email
           : tempUserEmail;
-
-        console.log("tip", tip);
-        console.log("tax", taxAmt);
 
         const checkoutSession = await axios.post(
           "api/create-checkout-session",
@@ -234,6 +360,7 @@ const CartPageComponent = () => {
             tip: tip,
             tax: taxAmt,
             deliveryFee: deliveryQuote,
+            order: order,
           }
         );
 
@@ -251,6 +378,74 @@ const CartPageComponent = () => {
       } catch (err) {
         console.error("Error during checkout: ", err);
       }
+    }
+  };
+
+  //functions for checkout logic
+
+  const getTodaysDate = async () => {
+    var todayDate = new Date();
+    todayDate.setMinutes(
+      todayDate.getMinutes() - todayDate.getTimezoneOffset()
+    );
+    // console.log("todayDate~~~~~~~~~~~~~", todayDate);
+    let useDate = todayDate.toISOString().slice(0, 10);
+    return useDate;
+  };
+
+  const getCurrentFullTimeTest = async () => {
+    var todayDate = new Date();
+    await todayDate.setMinutes(
+      todayDate.getMinutes() - todayDate.getTimezoneOffset()
+    );
+    var easternTimeOffset = +5; // Eastern Time is 5 hours behind UTC time
+    todayDate.setHours(todayDate.getHours() + easternTimeOffset);
+    return todayDate;
+  };
+
+  const getCurrentTime = async () => {
+    var todayDate = new Date();
+    todayDate.setMinutes(
+      todayDate.getMinutes() - todayDate.getTimezoneOffset()
+    );
+    var hours = todayDate.getUTCHours();
+    var AmOrPm = hours >= 12 ? "pm" : "am";
+    var minutes = todayDate.getMinutes();
+    if (minutes < 10) {
+      var adjustedMinutes = `0${minutes}`;
+      var hoursFixed = hours > 12 ? hours % 12 : hours === 0 ? 12 : hours;
+      var finalTime = hoursFixed + ":" + adjustedMinutes + " " + AmOrPm;
+      // let useDate = todayDate.toISOString().slice(11, 16);
+      return finalTime;
+    } else {
+      var hoursFixed = hours > 12 ? hours % 12 : hours;
+      hoursFixed === 0 ? (hoursFixed = 12) : null;
+
+      var finalTime = hoursFixed + ":" + minutes + " " + AmOrPm;
+      return finalTime;
+    }
+  };
+
+  const getExpectedWaitTime = async (mins: any) => {
+    var todayDate = new Date();
+    todayDate.setMinutes(
+      todayDate.getMinutes() + parseInt(mins) - todayDate.getTimezoneOffset()
+    );
+    var hours = todayDate.getUTCHours();
+    var AmOrPm = hours >= 12 ? "pm" : "am";
+    var minutes = todayDate.getMinutes();
+    if (minutes < 10) {
+      var adjustedMinutes = `0${minutes}`;
+      var hoursFixed = hours > 12 ? hours % 12 : hours === 0 ? 12 : hours;
+      var finalTime = hoursFixed + ":" + adjustedMinutes + " " + AmOrPm;
+      // let useDate = todayDate.toISOString().slice(11, 16);
+      return finalTime;
+    } else {
+      var hoursFixed = hours > 12 ? hours % 12 : hours;
+      hoursFixed === 0 ? (hoursFixed = 12) : null;
+
+      var finalTime = hoursFixed + ":" + minutes + " " + AmOrPm;
+      return finalTime;
     }
   };
 
@@ -692,7 +887,7 @@ const CartPageComponent = () => {
             </div>
           </div>
           <div className="flex items-center justify-between ">
-            <p className="text-dark">Estimated total</p>
+            <p className="text-dark">Final Total</p>
             <p className="text-zinc-800 font-bold text-lg">
               <FormatPrice amount={totalAmt} />
             </p>
