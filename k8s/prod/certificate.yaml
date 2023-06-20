@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: appymeal-network-tls
+  namespace: default
+spec:
+  secretName: appymeal-network-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - 'appymeal.com'
+    - 'www.appymeal.com'
+  duration: 4320h # 180d
+  renewBefore: 720h # 30d

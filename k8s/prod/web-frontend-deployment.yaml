@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-frontend
+  name: web-frontend-deployment
   namespace: default
 spec:
   replicas: 1
