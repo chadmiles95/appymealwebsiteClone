@@ -31,8 +31,26 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deploy on Google Cloud
+CircleCI is configured to handle deployment automatically when merging `stage` to `master`.
+In order to deploy changes, a typically dev cycle workflow should look like this:
+```
+git checkout master
+git pull
+git ch -b zachs-feature-branch
+# makes some changes to the code
+git add .
+git commit -m "feat: added a new feature"
+git pull origin master
+# Resolve any merge conflicts
+git pull origin stage
+# Resolve any merge conflicts
+git push
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Then go to github and make a PR from your feature branch to stage
+# merge it immediately or after someone review if you'd like
+# Wait for circleci to finish the build successfully.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Make a PR from stage to master
+# Merge and wait for green build 
+```
