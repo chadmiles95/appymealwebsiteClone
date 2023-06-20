@@ -23,6 +23,8 @@ spec:
               - key: cloud.google.com/gke-preemptible
                 operator: DoesNotExist
             weight: 100
+      imagePullSecrets:
+        - name: reg-cred
       containers:
       - name: web
         image: appymeal/web-frontend:latest
@@ -38,11 +40,6 @@ spec:
               secretKeyRef:
                 name: google-client-id
                 key: GOOGLECLIENTID
-          - name: GOOGLE_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: google-client-secret
-                key: GOOGLECLIENTSECRET
           - name: GOOGLE_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
@@ -73,8 +70,6 @@ spec:
               secretKeyRef:
                 name: next-auth-secret
                 key: NEXTAUTHSECRET
-          - name: NEXT_PUBLIC_GOOGLE_MAPS_KEY
-            value: "your-public-google-maps-key"
           - name: HOST
             value: "https://appymeal.com/"
           - name: FRBSE_AUTH_DOMAIN
