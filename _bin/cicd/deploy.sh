@@ -52,7 +52,7 @@ if should_deploy_web_app; then
     docker push appymeal/web-frontend:$GIT_SHA
     docker push appymeal/web-frontend:latest
   fi
-  kubectl set image deployments/client-deployment web=appymeal/web-frontend$SUFFIX:$GIT_SHA
+  kubectl set image deployments/web-frontend-deployment web=appymeal/web-frontend$SUFFIX:$GIT_SHA
 else
   echo "Skipping client-web deployment (No Changes)"
 fi
