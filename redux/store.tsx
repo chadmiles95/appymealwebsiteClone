@@ -1,5 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
+// eslint-disable-next-line import/extensions, import/no-unresolved
+import { CurriedGetDefaultMiddleware } from '@reduxjs/toolkit/dist/getDefaultMiddleware';
 import shopperReducer from "./shoppersSlice";
 import {
   persistStore,
@@ -21,15 +23,26 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, shopperReducer);
 
+const getMiddleware = (getDefaultMiddleware: CurriedGetDefaultMiddleware<any>) => {
+  if (process.env.NODE_ENV === 'development') {
+      return getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
+      })
+      .concat(logger);
+  }
+
+  return getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  });
+};
+
 export const store = configureStore({
   reducer: { shopper: persistedReducer },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    })
-    .concat(logger),
+  middleware: getMiddleware,
   devTools: process.env.NODE_ENV === 'development',
 });
 
