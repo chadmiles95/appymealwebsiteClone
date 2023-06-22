@@ -73,6 +73,34 @@ jobs:
       - run:
           name: Publish Docker Images
           command: ./_bin/cicd/publish.sh
+  deploy:
+    docker:
+      - image: google/cloud-sdk
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    environment:
+      CICD_BRANCH: << pipeline.git.branch >>
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: |
+          echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USER" --password-stdin
+      - run: |
+          gke-gcloud-auth-plugin --version
+          echo "export USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> ~/.bashrc
+          source ~/.bashrc
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud --quiet config set project mealstogo-dabbc
+          gcloud --quiet config set compute/zone us-central1
+          gcloud container clusters get-credentials production-cluster-1
+      - add_ssh_keys:
+          fingerprints:
+            - "7a:7c:76:bd:7b:be:2a:cd:de:90:c4:16:78:e1:eb:f6"
+      - run:
+          name: Deploy To GKE
+          command: ./_bin/cicd/deploy.sh
 
 workflows:
   # Below is the definition of your workflow.
@@ -81,10 +109,19 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   build_and_test:
     jobs:
-      - install_dependencies
+      - install_dependencies:
+          filters:
+            branches:
+              ignore:
+                - master
       - test:
           requires:
           - install_dependencies
+          filters:
+            branches:
+              ignore:
+                - stage
+                - master
       - docker_build_publish_images:
           requires:
           - install_dependencies
@@ -92,3 +129,8 @@ workflows:
             branches:
               only:
                 - stage
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
