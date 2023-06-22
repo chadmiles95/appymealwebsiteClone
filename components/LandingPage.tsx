@@ -4,14 +4,14 @@ import { home_bg } from "../public/assets/images/index";
 import { Spacer } from "./Spacer";
 import Link from "next/link";
 
-export const orderOnlyText = 'Order Online';
+export const orderOnlyText = "Order Online";
 
 const LandingPage = () => {
   return (
     <div className="w-full grid lg:grid-cols-2 h-full bg-[#F1EDEE] font-titleFont flex-1 flex border-b-[1px]">
-      <div className="h-[750px] flex">
+      <div className="h-[550px] lg:h-[750px] flex">
         <div className="flex flex-col justify-center items-center w-full h-full gap-2">
-          <p className="font-semibold text-5xl">Order Online Now</p>
+          <p className="font-semibold text-3xl md:text-5xl">Order Online Now</p>
           <Spacer size="small" />
           <Link href="/restaurants">
             <button className="w-72 h-9 bg-white border-[0px] border-dark text-dark   rounded-full flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 shadow-md">
@@ -25,7 +25,7 @@ const LandingPage = () => {
           <Spacer size="small" />
           <Spacer size="small" />
 
-          <p className="font-semibold text-4xl text-dark">
+          <p className="font-semibold text-2xl md:text-4xl">
             Discounts & Rewards On App
           </p>
 
@@ -42,7 +42,7 @@ const LandingPage = () => {
           </Link>
         </div>
       </div>
-      <div className="flex relative">
+      <div className="flex relative hidden md:block">
         <Image
           className="w-full h-full object-cover"
           src={home_bg}

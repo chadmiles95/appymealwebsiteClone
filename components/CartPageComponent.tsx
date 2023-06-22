@@ -7,6 +7,7 @@ import {
   emptyCart,
   phoneImg,
   warningImg,
+  download,
 } from "../public/assets/images";
 import { TbReload } from "react-icons/tb";
 import { HiMinusSmall } from "react-icons/hi2";
@@ -59,6 +60,7 @@ const CartPageComponent = () => {
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [tempUserEmail, setTempUserEmail] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
+  const [isAlertVisible, setAlertVisible] = useState(false);
 
   // delivery address stuff
   console.log("rest?.taxRate", rest?.taxRate);
@@ -693,7 +695,12 @@ const CartPageComponent = () => {
             <div className="py-0 gap-2 flex flex-col ">
               {downloadAppMsg && (
                 <div className="bg-primary text-white p-2 rounded-lg flex items-center justify-between gap-4 mb-2">
-                  <Image className="w-8" src={warningImg} alt="warningImg" />
+                  <Image
+                    onClick={() => setAlertVisible(true)}
+                    className="w-12"
+                    src={download}
+                    alt="download"
+                  />
                   <p className="text-sm">
                     You are missing out on{" "}
                     <span className="font-semibold">{totalAmt.toFixed(0)}</span>{" "}
@@ -707,6 +714,37 @@ const CartPageComponent = () => {
               )}
             </div>
           </div>
+
+          {/* download links if prompted */}
+          {isAlertVisible && (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded shadow-lg text-center">
+                <h2 className="mb-4 text-lg font-semibold">
+                  Download AppyMeal For
+                </h2>
+                <div className="flex gap-4 justify-center">
+                  <a
+                    href="https://apps.apple.com/us/app/appymeal/id6443683011"
+                    className="px-4 py-2 text-white text-primary rounded shadow"
+                  >
+                    iOS
+                  </a>
+                  <a
+                    href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US&pli=1"
+                    className="px-4 py-2 text-white text-primary rounded shadow"
+                  >
+                    Android
+                  </a>
+                </div>
+                <button
+                  onClick={() => setAlertVisible(false)}
+                  className="mt-4 block mx-auto text-gray-700 hover:text-gray-900"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Show cart here */}
           <div className="text-sm font-bold flex items-center gap-2 mb-0">
