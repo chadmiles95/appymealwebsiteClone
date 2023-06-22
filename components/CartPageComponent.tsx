@@ -67,6 +67,8 @@ const CartPageComponent = () => {
 
   const deliveryAddressRef = useRef(null);
 
+  // doc changes to
+
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
