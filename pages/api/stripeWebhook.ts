@@ -41,7 +41,8 @@ export default async function handler(
         if (session?.metadata?.app === "nextjs") {
           //start adding in logic for order
 
-          const order: any = session?.metadata?.order;
+          // Parse the JSON string back into an object
+          const order: any = JSON.parse(session?.metadata?.order);
 
           const docRef = doc(db, "orders", order?.orderDate);
           await setDoc(
