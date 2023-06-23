@@ -41,7 +41,9 @@ const OpenStatus: React.FC<OpenStatusProps> = ({
   }, [restaurant, militaryTime]);
 
   return (
-    <p className="text-dark">Status - {currentlyOpen ? "Open" : "Closed"}</p>
+    <p className="text-sm md:text-lg text-dark">
+      Status - {currentlyOpen ? "Open" : "Closed"}
+    </p>
   );
 };
 

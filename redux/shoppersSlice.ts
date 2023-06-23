@@ -72,6 +72,7 @@ export const shopperslice = createSlice({
     },
     resetCart: (state) => {
       state.productData = [];
+      state.currentRestaurant = {};
     },
     addUser: (state, action) => {
       state.userInfo = action.payload;

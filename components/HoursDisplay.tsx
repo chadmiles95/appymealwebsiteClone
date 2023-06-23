@@ -6,12 +6,12 @@ interface HourDisplayProps {
 
 const HourDisplay: React.FC<HourDisplayProps> = ({ hours }) => {
   if (hours === "closed") {
-    return <p className="text-dark">Hours - Closed Today</p>;
+    return <p className="text-sm md:text-lg text-dark">Hours - Closed Today</p>;
   }
 
   const formatHours = (time?: string) => {
     if (!time) {
-      return '';
+      return "";
     }
     if (time.slice(0, 2) === "12") return `12:${time.slice(2, 4)} pm`;
     if (parseInt(time.slice(0, 4)) < 1200) {
@@ -22,7 +22,7 @@ const HourDisplay: React.FC<HourDisplayProps> = ({ hours }) => {
   };
 
   return (
-    <p className="text-dark">
+    <p className="text-sm md:text-lg text-dark">
       Hours - {formatHours(hours?.slice(0, 4))} -{" "}
       {formatHours(hours?.slice(5, 9))}
     </p>

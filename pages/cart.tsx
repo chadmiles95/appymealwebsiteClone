@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import HourDisplay from "@/components/HoursDisplay";
 import OpenStatus from "@/components/OpenStatus";
+import { CircleLogo } from "../public/assets/images/index";
 
 const Cart = () => {
   const lastURL = useSelector((state: any) => state.shopper.lastVisitedPage);
@@ -36,7 +37,7 @@ const Cart = () => {
           </p>
         </div>
 
-        <div className="flex flex-col whitespace-nowrap items-center justify-center px-4 lg:px-8">
+        <div className="hidden lg:flex flex-col whitespace-nowrap items-center justify-center px-4 lg:px-8">
           <div>
             <p className="font-semibold px-2 text-dark basis-full flx-basis-1/4 py-0 text-md">
               For Rewards & Discounts Download App
@@ -63,37 +64,72 @@ const Cart = () => {
         </div>
       </div>
       <div className="bg-smoke w-full h-40  items-center flex pg-4 gap-2  px-8 lg:px-16 justify-between">
-        <div className="flex items-center">
-          <div className="justify-start">
-            <Image
-              src={rest.photo}
-              width={125}
-              height={125}
-              alt="restaurantLogo"
-              className="object-cover rounded-xl cursor-pointer"
-              onClick={() => {
-                router.push(`restaurants/${rest.name}`);
-              }}
-            />
-          </div>
-          <div className="justify-start pl-8 flex flex-col">
-            <p className="text-xl font-semibold text-dark">Ordering From:</p>
-            <p
-              className="font-semibold text-xl  hover:text-lightdark duration-200 cursor-pointer text-dark"
-              onClick={() => {
-                router.push(`restaurants/${rest.name}`);
-              }}
-            >
-              {rest.name}
-            </p>
+        <div className="flex flex-col md:flex-row items-center">
+          {Object.keys(rest).length !== 0 && (
+            <div className="justify-start">
+              <Image
+                src={rest.photo}
+                width={125}
+                height={125}
+                alt="restaurantLogo"
+                className="object-cover rounded-xl cursor-pointer"
+                onClick={() => {
+                  router.push(`https://appymeal.com/restaurants/${rest.name}`);
+                }}
+              />
+            </div>
+          )}
+          {Object.keys(rest).length === 0 && (
+            <div className="justify-start">
+              <Image
+                src={CircleLogo}
+                width={125}
+                height={125}
+                alt="AppyMeal"
+                className="object-cover rounded-xl cursor-pointer"
+              />
+            </div>
+          )}
+          <div className="hidden md:flex md:flex-col justify-start pl-8">
+            {Object.keys(rest).length !== 0 && (
+              <>
+                {" "}
+                <p className="text-sm md:text-xl font-semibold text-dark">
+                  Ordering From:
+                </p>
+                <p
+                  className="font-semibold text-sm md:text-xl hover:text-lightdark duration-200 cursor-pointer text-dark"
+                  onClick={() => {
+                    router.push(`restaurants/${rest.name}`);
+                  }}
+                >
+                  {rest.name}
+                </p>
+              </>
+            )}
+            {Object.keys(rest).length === 0 && (
+              <>
+                {" "}
+                <p className="text-sm md:text-xl font-semibold text-dark">
+                  You have nothing in your cart
+                </p>
+              </>
+            )}
           </div>
         </div>
-        <div className="flex flex-col justify-start items-start">
-          <p className="text-dark">
-            {rest.address}, {rest.city}, {rest.state}
-          </p>
-          <HourDisplay hours={rest.hours} />
-          <OpenStatus restaurant={rest} militaryTime={militaryTime} />
+        <div className="flex flex-col justify-start items-start gap-1 md:gap-0 ml-2 md:ml-0">
+          {Object.keys(rest).length !== 0 && (
+            <>
+              <p className="text-dark text-sm md:text-lg">
+                {rest.address}, {rest.city}, {rest.state}
+              </p>
+              <HourDisplay hours={rest.hours} />
+              <OpenStatus restaurant={rest} militaryTime={militaryTime} />
+              <div className="md:hidden text-sm text-dark">
+                <p>{rest.name}</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className="max-w-contentContainer mx-auto flex-1 w-full">

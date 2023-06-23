@@ -144,7 +144,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           </p>
         </div>
 
-        <div className="flex flex-col whitespace-nowrap items-center justify-center w-1/2 px-4">
+        <div className="hidden lg:flex flex-col whitespace-nowrap items-center justify-center w-1/2 px-4">
           <div>
             <p className="font-semibold px-2 text-dark basis-full flx-basis-1/4 py-0 text-md">
               For Rewards & Discounts Download App
@@ -171,49 +171,63 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
         </div>
       </div>
       {/* TOP NAVBAR FOR RESTAURANTS */}
-      <div className="bg-smoke w-full h-40  items-center flex pg-4 gap-2  px-4 lg:px-16 justify-between">
-        <div className="flex items-center">
+      <div className="bg-smoke w-full h-40  items-center flex pg-4 gap-2  px-8 lg:px-16 justify-between">
+        <div className="flex flex-col md:flex-row items-center">
           <div className="justify-start">
             <Image
               src={restaurant.photo}
               width={125}
               height={125}
               alt="restaurantLogo"
-              className="object-cover rounded-xl"
+              className="object-cover rounded-xl cursor-pointer"
+              // onClick={() => {
+              //   router.push(`restaurants/${restaurant.name}`);
+              // }}
             />
           </div>
-          <div className="justify-start pl-8 ">
-            <p className="text-2xl font-semibold text-dark">
+          <div className="hidden md:flex md:flex-col justify-start pl-8">
+            <p className="text-sm md:text-xl font-semibold text-dark">
+              Ordering From:
+            </p>
+            <p
+              className="font-semibold text-sm md:text-xl hover:text-lightdark duration-200 cursor-pointer text-dark"
+              // onClick={() => {
+              //   router.push(`restaurants/${restaurant.name}`);
+              // }}
+            >
               {restaurant.name}
             </p>
           </div>
         </div>
-        <div className="flex flex-col justify-start items-start">
-          <p className="text-dark">
-            {restaurant.address} {restaurant.city}, {restaurant.state}
+        <div className="flex flex-col justify-start items-start gap-1 md:gap-0 ml-2 md:ml-0">
+          <p className="text-dark text-sm md:text-lg">
+            {restaurant.address}, {restaurant.city}, {restaurant.state}
           </p>
           <HourDisplay hours={restaurant.hours} />
           <OpenStatus restaurant={restaurant} militaryTime={militaryTime} />
+          <div className="md:hidden text-sm text-dark">
+            <p>{restaurant.name}</p>
+          </div>
         </div>
       </div>
       <div className="w-full h-full flex flex-row flex-wrap lg:flex-nowrap  py-12 ">
         <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col  px-4 lg:px-16">
           <p className="text-dark">{restaurant.desc}</p>
           {/* restaurant photos extra */}
-          <div className="mt-12 flex flex-row w-full flex-wrap xl:flex-nowrap">
+          <div className="mt-12 flex flex-row w-full overflow-x-scroll md:overflow-x-auto md:flex-wrap">
             {restaurant.images.map((image: string) => {
               return (
                 <div
                   key={image.substring(15)}
-                  className="basis-full flex justify-center my-2 md:basis-1/2 xl:basis-1/3 h-80 lg:h-60 overflow-hidden"
+                  className="flex-none md:flex-auto justify-center my-2 md:w-1/2 xl:w-1/3 h-80 lg:h-60 overflow-hidden"
                 >
                   <div className="rounded-xl overflow-hidden h-80 lg:h-60 mx-4">
                     <Image
                       src={image}
                       width={300}
-                      height={60}
+                      height={300} // Adjust this to the desired height
                       alt="restaurantLogo"
-                      className="rounded-xl object-cover h-full overflow-hidden  hover:scale-105 "
+                      className="rounded-xl object-cover h-full overflow-hidden hover:scale-105"
                     />
                   </div>
                 </div>
@@ -229,41 +243,57 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                   {category}
                 </p>
                 <div className="py-6 px-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {items.map((item: any) => (
-                    <div
-                      key={item.name}
-                      onClick={() => handleMenuItemClick(item)}
-                      className="flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 hover:bg-smoke cursor-pointer duration-300"
-                    >
-                      <div className="h-1/4 flex-nowrap overflow-hidden">
-                        <p className="text-dark">{item.name}</p>
-                      </div>
-                      <div className="h-2/4 py-1 overflow-hidden text-dark text-sm">
-                        <p
-                          className="overflow-hidden -webkit-line-clamp-2"
-                          style={{
-                            display: "-webkit-box",
-                            WebkitBoxOrient: "vertical",
-                            lineHeight: "1.7",
-                            padding: "0",
-                            margin: "0",
-                          }}
+                  {items.map(
+                    (item: any) =>
+                      item.isShowing && (
+                        <div
+                          key={item.name}
+                          onClick={
+                            item.isAvailable
+                              ? () => handleMenuItemClick(item)
+                              : undefined
+                          }
+                          className={`relative flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 ${
+                            item.isAvailable
+                              ? "hover:bg-smoke cursor-pointer duration-300"
+                              : "bg-gray-300 cursor-not-allowed"
+                          }`}
                         >
-                          {item.desc}
-                        </p>
-                      </div>
-                      <div className="h-1/4">
-                        <p className="text-dark">
-                          $
-                          {new Intl.NumberFormat("en-US", {
-                            style: "decimal",
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(item.price)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                          {!item.isAvailable && (
+                            <div className="absolute top-0 right-0 bg-primary text-white px-2 py-1 rounded-bl-lg">
+                              OUT
+                            </div>
+                          )}
+                          <div className="h-1/4 flex-nowrap overflow-hidden">
+                            <p className="text-dark">{item.name}</p>
+                          </div>
+                          <div className="h-2/4 py-1 overflow-hidden text-dark text-sm">
+                            <p
+                              className="overflow-hidden -webkit-line-clamp-2"
+                              style={{
+                                display: "-webkit-box",
+                                WebkitBoxOrient: "vertical",
+                                lineHeight: "1.7",
+                                padding: "0",
+                                margin: "0",
+                              }}
+                            >
+                              {item.desc}
+                            </p>
+                          </div>
+                          <div className="h-1/4">
+                            <p className="text-dark">
+                              $
+                              {new Intl.NumberFormat("en-US", {
+                                style: "decimal",
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }).format(item.price)}
+                            </p>
+                          </div>
+                        </div>
+                      )
+                  )}
                 </div>
               </div>
             ))}

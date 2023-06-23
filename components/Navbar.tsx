@@ -46,11 +46,11 @@ const Navbar = () => {
   return (
     <div className="w-full bg-smoke text-white sticky top-0 z-50">
       <div className="w-full border-b-[1px] border-b-dark">
-        <div className="max-w-container h-20 mx-auto px-4 flex items-center justify-between gap-2">
+        <div className="max-w-container h-20 mx-0 md:mx-auto px-0 md:px-4 flex items-center justify-between gap-2">
           {/* LOGO */}
           <Link href="/">
             <div className="navBarHover">
-              <Image src={CircleLogo} className="w-12" alt="logo" />
+              <Image src={CircleLogo} className="w-10 md:w-12" alt="logo" />
               <span className="">
                 <p className="font-semibold text-sm md:text-xl text-dark">
                   AppyMeal
@@ -58,10 +58,7 @@ const Navbar = () => {
               </span>
             </div>
           </Link>
-
-          {/* DEPARTMENTS */}
           <div></div>
-          {/* SERVICES */}
           <div>
             <div></div>
           </div>
@@ -73,13 +70,13 @@ const Navbar = () => {
               <Image
                 width={500}
                 height={500}
-                className="w-10 rounded-full object-cover color-dark"
+                className="w-6 md:w-10  rounded-full object-cover color-dark"
                 src={userInfo.image}
                 alt="userImage"
               />
               <div>
-                <p className="text-xs text-dark">Sign Out</p>
-                <h2 className="text-base font-semibold -mt-1 text-dark">
+                <p className="text-xs text-dark mb-1 md:mb-0">Sign Out</p>
+                <h2 className="text-base font-semibold -mt-1 text-dark text-sm md:text-l">
                   {userInfo.name}
                 </h2>
               </div>
@@ -99,14 +96,7 @@ const Navbar = () => {
           <Link href="/cart">
             <div className="flex flex-col justify-center items-center gap-2 h-14 px-5 rounded-full bg-transparent hover:bg-lightdark duration-300 relative">
               <BsCart2 className="text-2xl text-dark" />
-              {/* <p className="text-[10px] -mt-2 text-dark">
-                $
-                {new Intl.NumberFormat("en-US", {
-                  style: "decimal",
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }).format(totalAmt)}
-              </p> */}
+
               <span className="absolute w-4 h-4 bg-dark text-white top-2.5 right-4 rounded-full flex items-center justify-center font-bodyFont text-xs">
                 {productData.length > 0 ? productData.length : 0}
               </span>
