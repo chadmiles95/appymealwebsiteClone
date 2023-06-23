@@ -699,10 +699,11 @@ const CartPageComponent = () => {
                 <div className="bg-primary text-white p-2 rounded-lg flex items-center justify-between gap-4 mb-2">
                   <Image
                     onClick={() => setAlertVisible(true)}
-                    className="w-12"
+                    className="w-12 cursor-pointer"
                     src={download}
                     alt="download"
                   />
+
                   <p className="text-sm">
                     You are missing out on{" "}
                     <span className="font-semibold">{totalAmt.toFixed(0)}</span>{" "}
