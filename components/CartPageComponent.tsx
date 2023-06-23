@@ -67,7 +67,7 @@ const CartPageComponent = () => {
 
   const deliveryAddressRef = useRef(null);
 
-  // doc changes to prod
+  // doc changes to
 
   useEffect(() => {
     if (
@@ -727,13 +727,13 @@ const CartPageComponent = () => {
                 <div className="flex gap-4 justify-center">
                   <a
                     href="https://apps.apple.com/us/app/appymeal/id6443683011"
-                    className="px-4 py-2 text-white text-primary rounded shadow"
+                    className="px-4 py-2 text-primary rounded shadow"
                   >
                     iOS
                   </a>
                   <a
                     href="https://play.google.com/store/apps/details?id=com.zowen1.AppyMeal&hl=en_US&gl=US&pli=1"
-                    className="px-4 py-2 text-white text-primary rounded shadow"
+                    className="px-4 py-2  text-primary rounded shadow"
                   >
                     Android
                   </a>
