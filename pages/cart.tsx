@@ -8,6 +8,8 @@ import HourDisplay from "@/components/HoursDisplay";
 import OpenStatus from "@/components/OpenStatus";
 import { CircleLogo } from "../public/assets/images/index";
 
+//small change for deploying
+
 const Cart = () => {
   const lastURL = useSelector((state: any) => state.shopper.lastVisitedPage);
   const rest = useSelector((state: any) => state.shopper.currentRestaurant);
