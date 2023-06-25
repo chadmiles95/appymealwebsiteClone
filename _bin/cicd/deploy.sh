@@ -44,7 +44,7 @@ should_deploy_web_app()
 # Kubectl Apply
 kubectl apply -f k8s/prod
 
-# Short circuit if 
+# Short circuit if GIT_SHA is empty
 if [ -z "$GIT_SHA" ]; then
   echo "No new build SHA for deploy."
   echo "This might mean that the deploy was started before the stage publish job completed."
