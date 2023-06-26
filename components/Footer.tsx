@@ -23,13 +23,13 @@ const Footer = () => {
           <Link href="/">
             <li className="bottomFooterHover">Home</li>
           </Link>
-          <Link href="/about">
+          <Link href="https://appymeal.net/">
             <li className="bottomFooterHover">About</li>
           </Link>
-          <Link href="/about">
+          <Link href="https://appymeal.net/local-partners">
             <li className="bottomFooterHover">Partner</li>
           </Link>
-          <Link href="/addrestaurant">
+          <Link href="https://appymeal.net/local-restaurants">
             <li className="bottomFooterHover">Add Restaurant</li>
           </Link>
           <Link href="https://apps.apple.com/us/app/appymeal/id6443683011" target="_blank">

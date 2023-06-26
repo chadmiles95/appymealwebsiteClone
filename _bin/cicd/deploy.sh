@@ -42,8 +42,16 @@ should_deploy_web_app()
 }
 
 # Kubectl Apply
-# NOTE: stage and master docker tags are essentially the same. The Docker container is interchangable and implements env variables injected by Kubernetes
 kubectl apply -f k8s/prod
+
+# Short circuit if GIT_SHA is empty
+if [ -z "$GIT_SHA" ]; then
+  echo "No new build SHA for deploy."
+  echo "This might mean that the deploy was started before the stage publish job completed."
+  echo "Please wait for stage to finish before merging to master"
+  exit 0
+fi
+
 if should_deploy_web_app; then
   docker pull appymeal/web-frontend-stage:$GIT_SHA
   if [[ "$CURRENT_BRANCH" == "master"  ]]; then
