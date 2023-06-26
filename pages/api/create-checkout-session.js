@@ -56,21 +56,30 @@ const createCheckoutSession = async (req, res) => {
     });
   }
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    line_items: modifiedItems,
-    mode: "payment",
-    success_url: `${process.env.HOST}/checkoutsuccess`,
-    cancel_url: `${process.env.HOST}/cart`,
-    customer_email: email,
-    metadata: {
-      app: "nextjs", // specify the app name here
-      order: JSON.stringify(order),
-    },
-  });
+  const docRef = doc(db, "pendingOrders", email);
 
-  res.status(200).json({
-    id: session.id,
+  await setDoc(
+    docRef,
+    {
+      pendingOrder: order,
+    },
+    { merge: true }
+  ).then(async () => {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: modifiedItems,
+      mode: "payment",
+      success_url: `${process.env.HOST}/checkoutsuccess`,
+      cancel_url: `${process.env.HOST}/cart`,
+      customer_email: email,
+      metadata: {
+        app: "nextjs", // specify the app name here
+        email: JSON.stringify(email),
+      },
+    });
+    res.status(200).json({
+      id: session.id,
+    });
   });
 };
 
