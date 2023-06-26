@@ -58,6 +58,7 @@ export default async function handler(
               [pendingOrder.number]: {
                 ...pendingOrder,
                 orderInfo: session,
+                paymentIntent: session?.payment_intent,
               },
             },
             { merge: true }
