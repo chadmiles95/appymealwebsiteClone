@@ -1,7 +1,7 @@
 const stripe = require("stripe")(process.env.stripe_secret_key);
 
 const createCheckoutSession = async (req, res) => {
-  const { items, email, tip, tax, deliveryFee, order } = req.body;
+  const { items, email, tip, tax, deliveryFee } = req.body;
 
   const modifiedItems = items.map((item) => ({
     price_data: {
@@ -56,30 +56,20 @@ const createCheckoutSession = async (req, res) => {
     });
   }
 
-  const docRef = doc(db, "pendingOrders", email);
-
-  await setDoc(
-    docRef,
-    {
-      pendingOrder: order,
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: modifiedItems,
+    mode: "payment",
+    success_url: `${process.env.HOST}/checkoutsuccess`,
+    cancel_url: `${process.env.HOST}/cart`,
+    customer_email: email,
+    metadata: {
+      app: "nextjs", // specify the app name here
+      email: JSON.stringify(email),
     },
-    { merge: true }
-  ).then(async () => {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: modifiedItems,
-      mode: "payment",
-      success_url: `${process.env.HOST}/checkoutsuccess`,
-      cancel_url: `${process.env.HOST}/cart`,
-      customer_email: email,
-      metadata: {
-        app: "nextjs", // specify the app name here
-        email: JSON.stringify(email),
-      },
-    });
-    res.status(200).json({
-      id: session.id,
-    });
+  });
+  res.status(200).json({
+    id: session.id,
   });
 };
 

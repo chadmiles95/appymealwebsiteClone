@@ -30,6 +30,8 @@ import { getDeliveryQuote } from "../services/delivery";
 import Spinner from "./Spinner";
 import { UseUpdateRestaurantByName } from "redux/useUpdateRestaurantByName";
 import { getOrderNumber } from "services/ordernumber";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/pages/_app";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -354,7 +356,19 @@ const CartPageComponent = () => {
 
         let useEmail = session?.user?.email
           ? session?.user?.email
-          : tempUserEmail;
+          : orderTempUserEmail;
+
+        //PUSH PENDING ORDER HERE
+
+        const docRef = await doc(db, "pendingOrders", useEmail);
+
+        await setDoc(
+          docRef,
+          {
+            pendingOrder: order,
+          },
+          { merge: true }
+        );
 
         const checkoutSession = await axios.post(
           "api/create-checkout-session",
@@ -364,11 +378,9 @@ const CartPageComponent = () => {
             tip: tip,
             tax: taxAmt,
             deliveryFee: deliveryQuote,
-            order: order,
           }
         );
 
-        // console.log("checkoutSession", checkoutSession);
         // redirect user to stripe checkout
         const result: any = await stripe?.redirectToCheckout({
           sessionId: checkoutSession.data.id,
