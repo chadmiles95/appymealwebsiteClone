@@ -1,9 +1,10 @@
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection, addDoc, getDoc } from "firebase/firestore";
 import { db } from "../../pages/_app"; // import your Firestore instance
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import { sendOrderEmail } from "services/email";
 import { updateCount } from "services/ordernumber";
+import deletePendingOrder from "services/deletePendingOrder";
 
 // Initialize your stripe instance
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -39,25 +40,34 @@ export default async function handler(
       if (event.type === "checkout.session.completed") {
         const session = event.data.object as Stripe.Checkout.Session;
         if (session?.metadata?.app === "nextjs") {
-          //start adding in logic for order
+          // Retrieve the pending order from the "pendingOrders" collection using the email address
 
-          // Parse the JSON string back into an object
-          const order: any = JSON.parse(session?.metadata?.order);
+          let email = session?.customer_email
+            ? session?.customer_email
+            : JSON.parse(session?.metadata?.email);
 
-          const docRef = doc(db, "orders", order?.orderDate);
+          const pendingOrderRef = await doc(db, "pendingOrders", email);
+          const pendingOrderSnapshot = await getDoc(pendingOrderRef);
+          const pendingOrder = pendingOrderSnapshot.data()?.pendingOrder;
+
+          const docRef = await doc(db, "orders", pendingOrder.orderDate);
+
           await setDoc(
             docRef,
             {
-              [order?.number]: order,
+              [pendingOrder.number]: {
+                ...pendingOrder,
+                orderInfo: session,
+              },
             },
             { merge: true }
           ).then(async () => {
             try {
-              const userRef = doc(db, "users", order?.email);
+              const userRef = doc(db, "users", pendingOrder?.email);
               await setDoc(
                 userRef,
                 {
-                  [order?.number]: order,
+                  [pendingOrder?.number]: pendingOrder,
                 },
                 { merge: true }
               );
@@ -65,22 +75,26 @@ export default async function handler(
             try {
               //send order email
 
-              let finalAmt = parseFloat((order?.stripeTotal / 100).toFixed(2));
-              let cartSum = parseFloat((order?.cartSum / 100).toFixed(2));
-              let name = order?.customer;
-              let userEmail = order?.email;
-              let cart = order?.cartTotal;
-              let restName = order?.restaurant;
-              let calculatedTip = order?.tip;
-              let totalTax = order?.tax;
-              let appyFee = order?.AMFee;
-              let newCount = order?.number;
-              let restaurantPhoneNumber = order?.number;
-              let restAddress = order?.doorDashInfo?.pickup_address;
-              let restCity = order?.doorDashInfo?.pickup_address;
-              let restState = order?.doorDashInfo?.pickup_address;
-              let restZip = order?.doorDashInfo?.pickup_address;
-              let deliveryQuote = order?.deliveryQuote;
+              let finalAmt = parseFloat(
+                (pendingOrder?.stripeTotal / 100).toFixed(2)
+              );
+              let cartSum = parseFloat(
+                (pendingOrder?.cartSum / 100).toFixed(2)
+              );
+              let name = pendingOrder?.customer;
+              let userEmail = pendingOrder?.email;
+              let cart = pendingOrder?.cartTotal;
+              let restName = pendingOrder?.restaurant;
+              let calculatedTip = pendingOrder?.tip;
+              let totalTax = pendingOrder?.tax;
+              let appyFee = pendingOrder?.AMFee;
+              let newCount = pendingOrder?.number;
+              let restaurantPhoneNumber = pendingOrder?.number;
+              let restAddress = pendingOrder?.doorDashInfo?.pickup_address;
+              let restCity = pendingOrder?.doorDashInfo?.pickup_address;
+              let restState = pendingOrder?.doorDashInfo?.pickup_address;
+              let restZip = pendingOrder?.doorDashInfo?.pickup_address;
+              let deliveryQuote = pendingOrder?.deliveryQuote;
 
               await sendOrderEmail(
                 name,
@@ -104,6 +118,7 @@ export default async function handler(
             try {
               //update order master count
               updateCount();
+              deletePendingOrder(email);
             } catch {}
           });
         }
