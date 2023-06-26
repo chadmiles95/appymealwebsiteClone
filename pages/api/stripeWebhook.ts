@@ -7,7 +7,7 @@ import { updateCount } from "services/ordernumber";
 import deletePendingOrder from "services/deletePendingOrder";
 
 // Initialize your stripe instance
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.stripe_secret_key || "", {
   apiVersion: "2022-11-15",
 });
 
