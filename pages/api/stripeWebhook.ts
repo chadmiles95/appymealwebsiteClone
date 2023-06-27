@@ -7,9 +7,14 @@ import { updateCount } from "services/ordernumber";
 import deletePendingOrder from "services/deletePendingOrder";
 
 // Initialize your stripe instance
-const stripe = new Stripe(process.env.stripe_secret_key || "", {
+
+const stripe = require("stripe")(process.env.stripe_secret_key, {
   apiVersion: "2022-11-15",
 });
+
+// const stripe = new Stripe(process.env.stripe_secret_key, {
+//   apiVersion: "2022-11-15",
+// });
 
 // Webhook handler
 export default async function handler(
