@@ -18,78 +18,78 @@ spec:
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: cloud.google.com/gke-preemptible
-                operator: DoesNotExist
-            weight: 100
+            - preference:
+                matchExpressions:
+                  - key: cloud.google.com/gke-preemptible
+                    operator: DoesNotExist
+              weight: 100
       imagePullSecrets:
         - name: reg-cred
       containers:
-      - name: web
-        image: appymeal/web-frontend:latest
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
-        ports:
-        - containerPort: 3000
-        env:
-          - name: GOOGLE_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                name: google-client-id
-                key: GOOGLECLIENTID
-          - name: GOOGLE_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: google-client-secret
-                key: GOOGLECLIENTSECRET
-          - name: STRIPE_PUBLIC_KEY
-            valueFrom:
-              secretKeyRef:
-                name: stripe-public-key
-                key: STRIPEPUBLICKEY
-          - name: STRIPE_SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: stripe-secret-key
-                key: STRIPESECRETKEY
-          - name: STRIPE_WEBHOOK_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: stripe-webhook-secret
-                key: STRIPEWEBHOOKSECRET
-          - name: FRBSE_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: firebase-api-key
-                key: FRBSEAPIKEY
-          - name: FRBSE_APP_ID
-            valueFrom:
-              secretKeyRef:
-                name: firebase-app-id
-                key: FRBSEAPPID
-          - name: NEXTAUTH_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: next-auth-secret
-                key: NEXTAUTHSECRET
-          - name: HOST
-            value: "https://appymeal.com/"
-          - name: FRBSE_AUTH_DOMAIN
-            value: "mealstogo-dabbc.firebaseapp.com"
-          - name: FRBSE_PROJECT_ID
-            value: "mealstogo-dabbc"
-          - name: FRBSE_STORAGE_BUCKET
-            value: "mealstogo-dabbc.appspot.com"
-          - name: FRBSE_MESSAGING_SENDER_ID
-            value: "582485062757"
-          - name: NEXTAUTH_URL
-            value: "https://appymeal.com"
-          - name: NEXT_PUBLIC_GOOGLE_MAPS_KEY
-            value: "your-public-google-maps-key"
-          - name: LOG_LEVEL
-            value: "info"
-          - name: LOGGING_DATASET
-            value: "production"
+        - name: web
+          image: appymeal/web-frontend:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-id
+                  key: GOOGLECLIENTID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-secret
+                  key: GOOGLECLIENTSECRET
+            - name: STRIPE_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-public-key
+                  key: STRIPEPUBLICKEY
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret-key
+                  key: STRIPESECRETKEY
+            - name: STRIPE_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-webhook-secret
+                  key: STRIPEWEBHOOKSECRET
+            - name: FRBSE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: firebase-api-key
+                  key: FRBSEAPIKEY
+            - name: FRBSE_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: firebase-app-id
+                  key: FRBSEAPPID
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: next-auth-secret
+                  key: NEXTAUTHSECRET
+            - name: HOST
+              value: "https://appymeal.com/"
+            - name: FRBSE_AUTH_DOMAIN
+              value: "mealstogo-dabbc.firebaseapp.com"
+            - name: FRBSE_PROJECT_ID
+              value: "mealstogo-dabbc"
+            - name: FRBSE_STORAGE_BUCKET
+              value: "mealstogo-dabbc.appspot.com"
+            - name: FRBSE_MESSAGING_SENDER_ID
+              value: "582485062757"
+            - name: NEXTAUTH_URL
+              value: "https://appymeal.com"
+            - name: NEXT_PUBLIC_GOOGLE_MAPS_KEY
+              value: "your-public-google-maps-key"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: LOGGING_DATASET
+              value: "production"

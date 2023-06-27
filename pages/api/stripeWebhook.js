@@ -1,52 +1,37 @@
-import { doc, setDoc, collection, addDoc, getDoc } from "firebase/firestore";
-import { db } from "../../pages/_app"; // import your Firestore instance
-import { NextApiRequest, NextApiResponse } from "next";
-import Stripe from "stripe";
-import { sendOrderEmail } from "services/email";
-import { updateCount } from "services/ordernumber";
-import deletePendingOrder from "services/deletePendingOrder";
+const { doc, setDoc, getDoc } = require("firebase/firestore");
+const { db } = require("../_app");
+const Stripe = require("stripe");
+const { sendOrderEmail } = require("services/email");
+const { updateCount } = require("services/ordernumber");
+const deletePendingOrder = require("services/deletePendingOrder");
 
-// Initialize your stripe instance
-
-const stripe = require("stripe")(process.env.stripe_secret_key, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
 });
 
-// const stripe = new Stripe(process.env.stripe_secret_key, {
-//   apiVersion: "2022-11-15",
-// });
-
-// Webhook handler
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  let event: Stripe.Event;
+async function handler(req, res) {
+  let event;
 
   if (req.method === "POST") {
     try {
-      const buf = await new Promise<Buffer>((resolve, reject) => {
-        let chunks: Uint8Array[] = [];
-        req.on("data", (chunk: Uint8Array) => chunks.push(chunk));
+      const buf = await new Promise((resolve, reject) => {
+        const chunks = [];
+        req.on("data", (chunk) => chunks.push(chunk));
         req.on("end", () => resolve(Buffer.concat(chunks)));
         req.on("error", reject);
       });
 
-      const sig = req.headers["stripe-signature"]! as string;
+      const sig = req.headers["stripe-signature"];
 
-      // Verify the event by checking its signature
       event = stripe.webhooks.constructEvent(
         buf.toString(),
         sig,
-        process.env.STRIPE_WEBHOOK_SECRET!
+        process.env.STRIPE_WEBHOOK_SECRET
       );
 
-      // Successfully constructed event, handle the event type
       if (event.type === "checkout.session.completed") {
-        const session = event.data.object as Stripe.Checkout.Session;
+        const session = event.data.object;
         if (session?.metadata?.app === "nextjs") {
-          // Retrieve the pending order from the "pendingOrders" collection using the email address
-
           let email = session?.customer_email
             ? session?.customer_email
             : JSON.parse(session?.metadata?.email);
@@ -79,8 +64,6 @@ export default async function handler(
               );
             } catch (e) {}
             try {
-              //send order email
-
               let finalAmt = parseFloat(
                 (pendingOrder?.stripeTotal / 100).toFixed(2)
               );
@@ -122,7 +105,6 @@ export default async function handler(
               );
             } catch {}
             try {
-              //update order master count
               updateCount();
               deletePendingOrder(email);
             } catch {}
@@ -130,10 +112,8 @@ export default async function handler(
         }
       }
 
-      // Return a response to acknowledge the event was processed successfully
       res.json({ received: true });
-    } catch (err: any) {
-      // On error, log and return the error message
+    } catch (err) {
       console.log(`Error message: ${err.message}`);
       res.status(400).send(`Webhook Error: ${err.message}`);
       return;
@@ -144,8 +124,9 @@ export default async function handler(
   }
 }
 
-// Disable the default body parser to receive the raw body as a Buffer in the webhook handler
-export const config = {
+module.exports = handler;
+
+module.exports.config = {
   api: {
     bodyParser: false,
   },
