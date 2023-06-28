@@ -5,6 +5,8 @@ const { sendOrderEmail } = require("services/email");
 const { updateCount } = require("services/ordernumber");
 const deletePendingOrder = require("services/deletePendingOrder");
 
+// small update to deploy
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
 });
