@@ -374,7 +374,7 @@ const CartPageComponent = () => {
           "api/create-checkout-session",
           {
             items: productData,
-            email: session?.user?.email,
+            email: useEmail,
             tip: tip,
             tax: taxAmt,
             deliveryFee: deliveryQuote,
