@@ -7,8 +7,8 @@ const { updateCount } = require("services/ordernumber");
 const deletePendingOrder = require("services/deletePendingOrder");
 
 // const firebase = require("firebase/app");
-const initializeApp = require("firebase/app");
-const getFirestore = require("firebase/firestore");
+const { initializeApp } = require("firebase/app");
+const { getFirestore } = require("firebase/firestore");
 
 // require("firebase/firestore");
 
