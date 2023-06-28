@@ -6,8 +6,11 @@ const { sendOrderEmail } = require("services/email");
 const { updateCount } = require("services/ordernumber");
 const deletePendingOrder = require("services/deletePendingOrder");
 
-const firebase = require("firebase/app");
-require("firebase/firestore");
+// const firebase = require("firebase/app");
+const initializeApp = require("firebase/app");
+const getFirestore = require("firebase/firestore");
+
+// require("firebase/firestore");
 
 // small update to deploy
 
@@ -28,8 +31,8 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID,
 };
 
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 async function handler(req, res) {
   let event;
