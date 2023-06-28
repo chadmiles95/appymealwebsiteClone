@@ -174,9 +174,15 @@ async function handler(req, res) {
 
           console.log("Email:", email);
 
+          console.log("db", db);
+
           // const pendingOrderRef =  doc(db, "pendingOrders", email);
           if (email) {
-            const pendingOrderRef = doc(db, "pendingOrders", email);
+            const pendingOrderRef = db.collection("pendingOrders").doc(email);
+            // const pendingOrderRef = doc(db, "pendingOrders", email);
+            console.log("OTHER WAY WORKED");
+
+            console.log("pendingOrderRef", pendingOrderRef);
 
             const pendingOrderSnapshot = await getDoc(pendingOrderRef);
 
