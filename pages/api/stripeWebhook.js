@@ -133,7 +133,8 @@
 // };
 
 const { doc, setDoc, getDoc } = require("firebase/firestore");
-const { db } = require("../_app");
+// const { db } = require("../_app");
+import { db } from "../_app";
 const Stripe = require("stripe");
 const { sendOrderEmail } = require("services/email");
 const { updateCount } = require("services/ordernumber");
