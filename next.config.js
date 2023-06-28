@@ -12,7 +12,8 @@ const nextConfig = {
   },
   env: {
     stripe_public_key: process.env.STRIPE_PUBLIC_KEY,
-    stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     FIREBASE_API_KEY: process.env.FRBSE_API_KEY,
     FIREBASE_AUTH_DOMAIN: process.env.FRBSE_AUTH_DOMAIN,
     FIREBASE_PROJECT_ID: process.env.FRBSE_PROJECT_ID,
@@ -23,7 +24,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  output: 'standalone',
+  output: "standalone",
 };
 
 module.exports = nextConfig;
