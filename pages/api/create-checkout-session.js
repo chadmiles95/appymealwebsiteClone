@@ -65,7 +65,6 @@ const createCheckoutSession = async (req, res) => {
     customer_email: email,
     metadata: {
       app: "nextjs", // specify the app name here
-      email: JSON.stringify(email),
     },
   });
   res.status(200).json({
