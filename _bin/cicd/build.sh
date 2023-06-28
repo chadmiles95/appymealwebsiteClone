@@ -46,7 +46,8 @@ if should_build_web_app; then
     --build-arg FRBSE_STORAGE_BUCKET=${FRBSE_STORAGE_BUCKET} \
     --build-arg FRBSE_MESSAGING_SENDER_ID=${FRBSE_MESSAGING_SENDER_ID} \
     --build-arg STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY} \
-    --build-arg STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY} .
+    --build-arg STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY} \
+    --build-arg STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET} .
 fi
 
 echo "Docker build complete for all services with changes"
