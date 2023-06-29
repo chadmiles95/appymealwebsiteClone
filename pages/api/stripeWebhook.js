@@ -14,6 +14,21 @@ const { getFirestore } = require("firebase/firestore");
 
 // small update to deploy
 
+// Function to break down the address
+function breakDownAddress(address) {
+  const [street, ...rest] = address.split(",");
+  const [cityStateZip] = rest.join(",").trim().split(" ");
+  const [city, stateZip] = cityStateZip.trim().split(" ");
+  const [state, zip] = stateZip.trim().split(" ");
+
+  return {
+    street: street.trim(),
+    city: city.trim(),
+    state: state.trim(),
+    zip: zip.trim(),
+  };
+}
+
 //initalize Stripe
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -101,8 +116,9 @@ async function handler(req, res) {
               },
               { merge: true }
             ).then(async () => {
+              console.log("MADE IT TO USERS EMAIL", email);
               try {
-                const userRef = doc(db, "users", pendingOrder?.email);
+                const userRef = doc(db, "users", email);
                 await setDoc(
                   userRef,
                   {
@@ -110,8 +126,34 @@ async function handler(req, res) {
                   },
                   { merge: true }
                 );
-              } catch (e) {}
+              } catch (e) {
+                console.log("ERRROR", e);
+              }
               try {
+                console.log("MADE IT TO SETTING UP ORDER EMAIL STUFF");
+
+                const pickupAddress =
+                  pendingOrder?.doorDashInfo?.pickup_address;
+
+                const { street, city, state, zip } = await breakDownAddress(
+                  pickupAddress
+                );
+
+                console.log(
+                  "CHECKS: ",
+                  pendingOrder?.customer,
+                  pendingOrder?.cartTotal,
+                  pendingOrder?.restaurant,
+                  pendingOrder?.tip,
+                  pendingOrder?.tax,
+                  pendingOrder?.AMFee,
+                  pendingOrder?.number,
+                  pendingOrder?.doorDashInfo?.pickup_address,
+                  street,
+                  city,
+                  state,
+                  zip
+                );
                 let finalAmt = parseFloat(
                   (pendingOrder?.stripeTotal / 100).toFixed(2)
                 );
@@ -119,7 +161,7 @@ async function handler(req, res) {
                   (pendingOrder?.cartSum / 100).toFixed(2)
                 );
                 let name = pendingOrder?.customer;
-                let userEmail = pendingOrder?.email;
+                let userEmail = email;
                 let cart = pendingOrder?.cartTotal;
                 let restName = pendingOrder?.restaurant;
                 let calculatedTip = pendingOrder?.tip;
@@ -127,10 +169,10 @@ async function handler(req, res) {
                 let appyFee = pendingOrder?.AMFee;
                 let newCount = pendingOrder?.number;
                 let restaurantPhoneNumber = pendingOrder?.number;
-                let restAddress = pendingOrder?.doorDashInfo?.pickup_address;
-                let restCity = pendingOrder?.doorDashInfo?.pickup_address;
-                let restState = pendingOrder?.doorDashInfo?.pickup_address;
-                let restZip = pendingOrder?.doorDashInfo?.pickup_address;
+                let restAddress = street;
+                let restCity = city;
+                let restState = state;
+                let restZip = zip;
                 let deliveryQuote = pendingOrder?.deliveryQuote;
 
                 console.log("Sending order email...");
