@@ -1,7 +1,7 @@
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../pages/_app"; // import your Firestore instance
 
-async function deletePendingOrder(email) {
+async function deletePendingOrder(email: string) {
   const docRef = doc(db, "pendingOrders", email);
   await deleteDoc(docRef);
 }
