@@ -72,6 +72,18 @@ async function handler(req, res) {
 
             const docRef = doc(db, "orders", pendingOrder.orderDate);
 
+            //fucntion check order number - if the number in the order number is the same as in the obj, then we are good. If not, pull new number and use that.
+
+            const orderRef = doc(db, "orders", "number");
+            const docSnap = await getDoc(orderRef);
+            let total_count = docSnap?.data()?.ordernumber;
+
+            total_count
+              ? total_count === pendingOrder.number
+                ? null
+                : (pendingOrder.number = total_count)
+              : null;
+
             // change status in orderInfo to "succeeded" if it is "complete" in the "session" object
 
             session?.status === "complete"
@@ -151,7 +163,6 @@ async function handler(req, res) {
                 console.log("Updating count...");
                 updateCount();
                 console.log("Count updated successfully.");
-
                 console.log("Deleting pending order...");
                 deletePendingOrder(email);
                 console.log("Pending order deleted successfully.");
