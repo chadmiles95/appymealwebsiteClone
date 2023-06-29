@@ -61,24 +61,22 @@ async function handler(req, res) {
         if (session?.metadata?.app === "nextjs") {
           let email = session?.customer_email;
 
-          console.log("Email:", email);
-
-          console.log("db", db);
-
           // const pendingOrderRef =  doc(db, "pendingOrders", email);
           if (email && db) {
             // const pendingOrderRef = db.collection("pendingOrders").doc(email);
             const pendingOrderRef = doc(db, "pendingOrders", email);
 
-            console.log("pendingOrderRef", pendingOrderRef);
-
             const pendingOrderSnapshot = await getDoc(pendingOrderRef);
 
             const pendingOrder = pendingOrderSnapshot.data()?.pendingOrder;
 
-            console.log("Pending order:", pendingOrder);
-
             const docRef = doc(db, "orders", pendingOrder.orderDate);
+
+            // change status in orderInfo to "succeeded" if it is "complete" in the "session" object
+
+            session?.status === "complete"
+              ? (session.status = "succeeded")
+              : null;
 
             await setDoc(
               docRef,
