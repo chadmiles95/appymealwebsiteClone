@@ -64,9 +64,6 @@ const CartPageComponent = () => {
   const [name, setName] = useState<string | null>(null);
   const [isAlertVisible, setAlertVisible] = useState(false);
 
-  // delivery address stuff
-  console.log("rest?.taxRate", rest?.taxRate);
-
   const deliveryAddressRef = useRef(null);
 
   // doc changes to
@@ -83,6 +80,8 @@ const CartPageComponent = () => {
       if (autocomplete) {
         autocomplete.addListener("place_changed", () => {
           const place = autocomplete.getPlace();
+          //change miles to be distance from place object by miles like 1 or 2.4. use the calculateDistance function to find distance between returned lat and lng and restaurant alt and lng
+
           const zip = place.address_components.find((ac: any) =>
             ac.types.includes("postal_code")
           )?.short_name;
@@ -109,56 +108,119 @@ const CartPageComponent = () => {
             setIsLoading(true);
             let randID = `testID: ${Math.random() * 10000}`;
             let restAddress = `${rest.address} ${rest.city}, ${rest.state} ${rest.zip}`;
-            // //  trying to get Doordash delivery need to add checks right before this if they are inhouse
-            // // if(rest.deliveryType.type === "DoorDash" && rest.enableDelivery === true){}
 
-            try {
-              getDeliveryQuote(randID, tempAddress, restAddress).then(
-                (result: any) => {
-                  if (result.hasOwnProperty("data")) {
-                    console.log("result.data.data.fee", result.data.data.fee);
-                    console.log("DELIVERT FEE", result.data.data.fee);
-                    setDeliveryQuote(result.data.data.fee);
-                    setDeliveryAccepted(true);
-                    setIsLoading(false);
-                  } else {
-                    setDeliveryQuote(0);
-                    setIsLoading(false);
-                    setDeliveryAccepted(false);
-                    if (result !== null) {
-                      if (
-                        result?.message ===
-                        "Allowed distance between addresses exceeded"
-                      ) {
-                        alert("Address is outside delivery range!");
-                        setDeliveryQuote(0);
-                        setDeliveryAccepted(false);
+            if (rest.deliveryType.type === "DoorDash") {
+              try {
+                getDeliveryQuote(randID, tempAddress, restAddress).then(
+                  (result: any) => {
+                    if (result.hasOwnProperty("data")) {
+                      setDeliveryQuote(result.data.data.fee);
+                      setDeliveryAccepted(true);
+                      setIsLoading(false);
+                    } else {
+                      setDeliveryQuote(0);
+                      setIsLoading(false);
+                      setDeliveryAccepted(false);
+                      if (result !== null) {
+                        if (
+                          result?.message ===
+                          "Allowed distance between addresses exceeded"
+                        ) {
+                          alert("Address is outside delivery range!");
+                          setDeliveryQuote(0);
+                          setDeliveryAccepted(false);
+                          setIsLoading(false);
+                        } else {
+                          alert("Invalid delivery address!");
+                          setDeliveryQuote(0);
+                          setDeliveryAccepted(false);
+                          setIsLoading(false);
+                        }
                       } else {
                         alert("Invalid delivery address!");
                         setDeliveryQuote(0);
                         setDeliveryAccepted(false);
+                        setIsLoading(false);
                       }
-                    } else {
-                      alert("Invalid delivery address!");
-                      setDeliveryQuote(0);
-                      setDeliveryAccepted(false);
                     }
                   }
+                );
+              } catch (error) {
+                setDeliveryQuote(0);
+                setDeliveryAccepted(false);
+                setIsLoading(false);
+                alert(
+                  "Issue getting delivery quote. Please try again or try new address."
+                );
+              }
+            } else {
+              calculateDistance({
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+              }).then((miles: number) => {
+                if (miles <= 5) {
+                  setDeliveryQuote(
+                    parseFloat((rest.deliveryType.near.price * 100).toFixed(2))
+                  );
+                  setDeliveryAccepted(true);
+                  setIsLoading(false);
+                } else if (
+                  miles <= 10 &&
+                  rest.deliveryType.far.enable === true
+                ) {
+                  setDeliveryQuote(
+                    parseFloat((rest.deliveryType.far.price * 100).toFixed(2))
+                  );
+                  setDeliveryAccepted(true);
+                  setIsLoading(false);
+                } else {
+                  alert("Address is outside delivery range!");
+                  setDeliveryQuote(0);
+                  setDeliveryAccepted(false);
+                  setIsLoading(false);
                 }
-              );
-            } catch (error) {
-              setDeliveryQuote(0);
-              setDeliveryAccepted(false);
-              setIsLoading(false);
-              alert(
-                "Issue getting delivery quote. Please try again or try new address."
-              );
+              });
             }
           }
         });
       }
     }
   }, [isPickup, rest]);
+
+  const calculateDistance = (cord1: { lat: number; lng: number }) => {
+    return new Promise<number>((resolve) => {
+      let cord2 = {
+        lat: rest.lat,
+        lng: rest.lng,
+      };
+
+      if (cord2 && cord1) {
+        if (cord1.lat === cord2.lat && cord1.lng === cord2.lng) {
+          resolve(0);
+        }
+
+        const radlat1 = (Math.PI * cord1.lat) / 180;
+        const radlat2 = (Math.PI * cord2.lat) / 180;
+
+        const theta = cord1.lng - cord2.lng;
+        const radtheta = (Math.PI * theta) / 180;
+
+        let dist =
+          Math.sin(radlat1) * Math.sin(radlat2) +
+          Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+
+        if (dist > 1) {
+          dist = 1;
+        }
+
+        dist = Math.acos(dist);
+        dist = (dist * 180) / Math.PI;
+        dist = dist * 60 * 1.1515;
+
+        resolve(Number(dist)); // Convert distance to a number
+      }
+    });
+  };
 
   useEffect(() => {
     let amt = 0;
