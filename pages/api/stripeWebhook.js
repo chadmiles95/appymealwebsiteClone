@@ -69,7 +69,7 @@ async function handler(req, res) {
         process.env.STRIPE_WEBHOOK_SECRET
       );
 
-      console.log("Received event:", event);
+      // console.log("Received event:", event);
 
       if (event.type === "checkout.session.completed") {
         const session = event.data.object;
@@ -104,117 +104,125 @@ async function handler(req, res) {
             session?.status === "complete"
               ? (session.status = "succeeded")
               : null;
-
-            await setDoc(
-              docRef,
-              {
-                [pendingOrder.number]: {
-                  ...pendingOrder,
-                  orderInfo: session,
-                  paymentIntent: session?.payment_intent,
-                },
-              },
-              { merge: true }
-            ).then(async () => {
-              console.log("MADE IT TO USERS EMAIL", email);
-              try {
-                const userRef = doc(db, "users", email);
-                await setDoc(
-                  userRef,
-                  {
-                    [pendingOrder?.number]: pendingOrder,
+            try {
+              await setDoc(
+                docRef,
+                {
+                  [pendingOrder.number]: {
+                    ...pendingOrder,
+                    orderInfo: session,
+                    paymentIntent: session?.payment_intent,
                   },
-                  { merge: true }
-                );
-              } catch (e) {
-                console.log("ERRROR", e);
-              }
-              try {
-                console.log("MADE IT TO SETTING UP ORDER EMAIL STUFF");
+                },
+                { merge: true }
+              );
+              // .then(async () => {
+            } catch (e) {
+              console.log("ERRROR", e);
+            }
 
-                const pickupAddress =
-                  pendingOrder?.doorDashInfo?.pickup_address;
+            console.log("MADE IT TO USERS EMAIL", email);
+            try {
+              const userRef = doc(db, "users", email);
+              await setDoc(
+                userRef,
+                {
+                  [pendingOrder.number]: {
+                    ...pendingOrder,
+                    orderInfo: session,
+                    paymentIntent: session?.payment_intent,
+                  },
+                },
+                { merge: true }
+              );
+            } catch (e) {
+              console.log("ERRROR", e);
+            }
+            try {
+              console.log("MADE IT TO SETTING UP ORDER EMAIL STUFF");
 
-                const { street, city, state, zip } = await breakDownAddress(
-                  pickupAddress
-                );
+              const pickupAddress = pendingOrder?.doorDashInfo?.pickup_address;
 
-                console.log(
-                  "CHECKS: ",
-                  pendingOrder?.customer,
-                  pendingOrder?.cartTotal,
-                  pendingOrder?.restaurant,
-                  pendingOrder?.tip,
-                  pendingOrder?.tax,
-                  pendingOrder?.AMFee,
-                  pendingOrder?.number,
-                  pendingOrder?.doorDashInfo?.pickup_address,
-                  street,
-                  city,
-                  state,
-                  zip
-                );
-                let finalAmt = parseFloat(
-                  (pendingOrder?.stripeTotal / 100).toFixed(2)
-                );
-                let cartSum = parseFloat(
-                  (pendingOrder?.cartSum / 100).toFixed(2)
-                );
-                let name = pendingOrder?.customer;
-                let userEmail = email;
-                let cart = pendingOrder?.cartTotal;
-                let restName = pendingOrder?.restaurant;
-                let calculatedTip = pendingOrder?.tip;
-                let totalTax = pendingOrder?.tax;
-                let appyFee = pendingOrder?.AMFee;
-                let newCount = pendingOrder?.number;
-                let restaurantPhoneNumber = pendingOrder?.number;
-                let restAddress = street;
-                let restCity = city;
-                let restState = state;
-                let restZip = zip;
-                let deliveryQuote = pendingOrder?.deliveryQuote;
+              const { street, city, state, zip } = await breakDownAddress(
+                pickupAddress
+              );
 
-                console.log("Sending order email...");
+              console.log(
+                "CHECKS: ",
+                pendingOrder?.customer,
+                pendingOrder?.cartTotal,
+                pendingOrder?.restaurant,
+                pendingOrder?.tip,
+                pendingOrder?.tax,
+                pendingOrder?.AMFee,
+                pendingOrder?.number,
+                pendingOrder?.doorDashInfo?.pickup_address,
+                street,
+                city,
+                state,
+                zip
+              );
+              let finalAmt = parseFloat(
+                (pendingOrder?.stripeTotal / 100).toFixed(2)
+              );
+              let cartSum = parseFloat(
+                (pendingOrder?.cartSum / 100).toFixed(2)
+              );
+              let name = pendingOrder?.customer;
+              let userEmail = email;
+              let cart = pendingOrder?.cartTotal;
+              let restName = pendingOrder?.restaurant;
+              let calculatedTip = pendingOrder?.tip;
+              let totalTax = pendingOrder?.tax;
+              let appyFee = pendingOrder?.AMFee;
+              let newCount = pendingOrder?.number;
+              let restaurantPhoneNumber = pendingOrder?.number;
+              let restAddress = street;
+              let restCity = city;
+              let restState = state;
+              let restZip = zip;
+              let deliveryQuote = pendingOrder?.deliveryQuote;
 
-                await sendOrderEmail(
-                  name,
-                  userEmail,
-                  cart,
-                  restName,
-                  finalAmt,
-                  cartSum,
-                  calculatedTip,
-                  totalTax,
-                  appyFee,
-                  newCount,
-                  restaurantPhoneNumber,
-                  restAddress,
-                  restCity,
-                  restState,
-                  restZip,
-                  deliveryQuote
-                );
+              console.log("Sending order email...");
 
-                console.log("Order email sent successfully.");
-              } catch (error) {
-                console.log("Error sending order email:", error);
-              }
+              await sendOrderEmail(
+                name,
+                userEmail,
+                cart,
+                restName,
+                finalAmt,
+                cartSum,
+                calculatedTip,
+                totalTax,
+                appyFee,
+                newCount,
+                restaurantPhoneNumber,
+                restAddress,
+                restCity,
+                restState,
+                restZip,
+                deliveryQuote
+              );
 
-              try {
-                console.log("Updating count...");
-                updateCount();
-                console.log("Count updated successfully.");
-                console.log("Deleting pending order...");
-                deletePendingOrder(email);
-                console.log("Pending order deleted successfully.");
-              } catch (error) {
-                console.log(
-                  "Error updating count or deleting pending order:",
-                  error
-                );
-              }
-            });
+              console.log("Order email sent successfully.");
+            } catch (error) {
+              console.log("Error sending order email:", error);
+            }
+
+            try {
+              console.log("Updating count...");
+              updateCount();
+              console.log("Count updated successfully.");
+              console.log("Deleting pending order...");
+              deletePendingOrder(email);
+              console.log("Pending order deleted successfully.");
+            } catch (error) {
+              console.log(
+                "Error updating count or deleting pending order:",
+                error
+              );
+            }
+            // });
           }
         }
       }
