@@ -237,66 +237,76 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           {/* MENU ITEMS START */}
           {Object.entries(restaurant.menus)
             .filter(([category]) => category !== "properties")
-            .map(([category, items]) => (
-              <div key={category} className="w-full mt-12 flex flex-col">
-                <p className="font-semibold text-xl text-dark mb-6">
-                  {category}
-                </p>
-                <div className="py-6 px-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {items.map(
-                    (item: any) =>
-                      item.isShowing && (
-                        <div
-                          key={item.name}
-                          onClick={
-                            item.isAvailable
-                              ? () => handleMenuItemClick(item)
-                              : undefined
-                          }
-                          className={`relative flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 ${
-                            item.isAvailable
-                              ? "hover:bg-smoke cursor-pointer duration-300"
-                              : "bg-gray-300 cursor-not-allowed"
-                          }`}
-                        >
-                          {!item.isAvailable && (
-                            <div className="absolute top-0 right-0 bg-primary text-white px-2 py-1 rounded-bl-lg">
-                              OUT
+            .map(([category, items]) => {
+              const categoryProperties = restaurant.menus.properties.find(
+                (property) => property.name === category
+              );
+
+              if (categoryProperties && !categoryProperties.isShowing) {
+                return null; // Skip the category if isShowing is false
+              }
+
+              return (
+                <div key={category} className="w-full mt-12 flex flex-col">
+                  <p className="font-semibold text-xl text-dark mb-6">
+                    {category}
+                  </p>
+                  <div className="py-6 px-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {items.map(
+                      (item: any) =>
+                        item.isShowing && (
+                          <div
+                            key={item.name}
+                            onClick={
+                              item.isAvailable
+                                ? () => handleMenuItemClick(item)
+                                : undefined
+                            }
+                            className={`relative flex flex-col w-full border border-lightdark border-solid h-32 rounded-xl bg-white px-4 py-2 ${
+                              item.isAvailable
+                                ? "hover:bg-smoke cursor-pointer duration-300"
+                                : "bg-gray-300 cursor-not-allowed"
+                            }`}
+                          >
+                            {!item.isAvailable && (
+                              <div className="absolute top-0 right-0 bg-primary text-white px-2 py-1 rounded-bl-lg">
+                                OUT
+                              </div>
+                            )}
+                            <div className="h-1/4 flex-nowrap overflow-hidden">
+                              <p className="text-dark">{item.name}</p>
                             </div>
-                          )}
-                          <div className="h-1/4 flex-nowrap overflow-hidden">
-                            <p className="text-dark">{item.name}</p>
+                            <div className="h-2/4 py-1 overflow-hidden text-dark text-sm">
+                              <p
+                                className="overflow-hidden -webkit-line-clamp-2"
+                                style={{
+                                  display: "-webkit-box",
+                                  WebkitBoxOrient: "vertical",
+                                  lineHeight: "1.7",
+                                  padding: "0",
+                                  margin: "0",
+                                }}
+                              >
+                                {item.desc}
+                              </p>
+                            </div>
+                            <div className="h-1/4">
+                              <p className="text-dark">
+                                $
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "decimal",
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }).format(item.price)}
+                              </p>
+                            </div>
                           </div>
-                          <div className="h-2/4 py-1 overflow-hidden text-dark text-sm">
-                            <p
-                              className="overflow-hidden -webkit-line-clamp-2"
-                              style={{
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                lineHeight: "1.7",
-                                padding: "0",
-                                margin: "0",
-                              }}
-                            >
-                              {item.desc}
-                            </p>
-                          </div>
-                          <div className="h-1/4">
-                            <p className="text-dark">
-                              $
-                              {new Intl.NumberFormat("en-US", {
-                                style: "decimal",
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }).format(item.price)}
-                            </p>
-                          </div>
-                        </div>
-                      )
-                  )}
+                        )
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
         <div className=" lgl:w-1/3 lg:w-2/5 sm:w-full md:w-3/4 mdl:w-1/2 flex flex-col mx-auto sm:px-4 md:px-2 lg:px-2 lgl:px-2 items-center">
           <p className="text-xl font-semibold text-dark">Methods Available</p>
