@@ -1,13 +1,11 @@
-const { doc, setDoc, getDoc } = require("firebase/firestore");
-// const { db } = require("../_app");
-// import { db } from "../_app";
+const { doc, setDoc, getDoc, deleteDoc } = require("firebase/firestore");
+
 const Stripe = require("stripe");
 const { sendOrderEmail } = require("../../services/email");
-const { updateCount } = require("../../services/ordernumber");
-const deletePendingOrder = require("../../services/deletePendingOrder");
 
 // const firebase = require("firebase/app");
 const { initializeApp } = require("firebase/app");
+
 const { getFirestore } = require("firebase/firestore");
 
 // require("firebase/firestore");
@@ -15,7 +13,9 @@ const { getFirestore } = require("firebase/firestore");
 // small update to deploy
 
 // Function to break down the address
-function breakDownAddress(address) {
+const breakDownAddress = (address) => {
+  console.log("ADDRESS BEING PASSED IN", address);
+
   const [street, ...rest] = address.split(",");
   const [cityStateZip] = rest.join(",").trim().split(" ");
   const [city, stateZip] = cityStateZip.trim().split(" ");
@@ -27,7 +27,28 @@ function breakDownAddress(address) {
     state: state.trim(),
     zip: zip.trim(),
   };
-}
+};
+
+const deletePendingOrder = async (email) => {
+  const docRef = doc(db, "pendingOrders", email);
+  await deleteDoc(docRef);
+};
+
+const updateCount = async () => {
+  let newCount = await getCount();
+  try {
+    const docRef = doc(db, "orders", "number");
+    setDoc(
+      docRef,
+      {
+        ordernumber: newCount + 1,
+      },
+      { merge: true }
+    );
+  } catch (e) {
+    return;
+  }
+};
 
 //initalize Stripe
 
