@@ -13,19 +13,41 @@ const { getFirestore } = require("firebase/firestore");
 // small update to deploy
 
 // Function to break down the address
+// const breakDownAddress = (address) => {
+//   console.log("ADDRESS BEING PASSED IN", address);
+
+//   const [street, ...rest] = address.split(",");
+//   const [cityStateZip] = rest.join(",").trim().split(" ");
+//   const [city, stateZip] = cityStateZip.trim().split(" ");
+//   const [state, zip] = stateZip.trim().split(" ");
+
+//   return {
+//     street: street.trim(),
+//     city: city.trim(),
+//     state: state.trim(),
+//     zip: zip.trim(),
+//   };
+// };
+
 const breakDownAddress = (address) => {
   console.log("ADDRESS BEING PASSED IN", address);
 
   const [street, ...rest] = address.split(",");
-  const [cityStateZip] = rest.join(",").trim().split(" ");
-  const [city, stateZip] = cityStateZip.trim().split(" ");
-  const [state, zip] = stateZip.trim().split(" ");
+
+  const cityStateZip = rest.join(",").split(" ").filter(Boolean);
+  const [city, stateZip] = cityStateZip[0].split(" ");
+  const [state, zip] = stateZip.split(" ");
+
+  console.log("street", street.replace(/^\s+|\s+$/g, ""));
+  console.log("city", city.replace(/^\s+|\s+$/g, ""));
+  console.log("state", state.replace(/^\s+|\s+$/g, ""));
+  console.log("zip", zip.replace(/^\s+|\s+$/g, ""));
 
   return {
-    street: street.trim(),
-    city: city.trim(),
-    state: state.trim(),
-    zip: zip.trim(),
+    street: street.replace(/^\s+|\s+$/g, ""),
+    city: city.replace(/^\s+|\s+$/g, ""),
+    state: state.replace(/^\s+|\s+$/g, ""),
+    zip: zip.replace(/^\s+|\s+$/g, ""),
   };
 };
 
@@ -35,7 +57,9 @@ const deletePendingOrder = async (email) => {
 };
 
 const updateCount = async () => {
-  let newCount = await getCount();
+  const docRef = doc(db, "orders", "number");
+  const docSnap = await getDoc(docRef);
+  let newCount = docSnap?.data().ordernumber;
   try {
     const docRef = doc(db, "orders", "number");
     setDoc(
@@ -161,21 +185,6 @@ async function handler(req, res) {
                   pendingOrder?.doorDashInfo?.pickup_address
                 );
 
-                console.log(
-                  "CHECKS: ",
-                  pendingOrder?.customer,
-                  pendingOrder?.cartTotal,
-                  pendingOrder?.restaurant,
-                  pendingOrder?.tip,
-                  pendingOrder?.tax,
-                  pendingOrder?.AMFee,
-                  pendingOrder?.number,
-                  pendingOrder?.doorDashInfo?.pickup_address,
-                  street,
-                  city,
-                  state,
-                  zip
-                );
                 let finalAmt = parseFloat(
                   (pendingOrder?.stripeTotal / 100).toFixed(2)
                 );
