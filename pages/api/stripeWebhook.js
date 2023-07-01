@@ -32,7 +32,12 @@ const { getFirestore } = require("firebase/firestore");
 const breakDownAddress = (address) => {
   console.log("ADDRESS BEING PASSED IN", address);
 
-  const [street, ...rest] = address.split(",");
+  const addressString = String(address);
+
+  const [street, ...rest] = addressString.split(",");
+
+  console.log("rest", rest);
+  console.log("street", street);
 
   const cityStateZip = rest.join(",").split(" ").filter(Boolean);
   const [city, stateZip] = cityStateZip[0].split(" ");
@@ -161,7 +166,6 @@ async function handler(req, res) {
             ).then(async () => {
               //code seems to stop here
 
-              console.log("MADE IT TO USERS EMAIL", email);
               try {
                 const userRef = doc(db, "users", email);
                 await setDoc(
@@ -179,8 +183,6 @@ async function handler(req, res) {
                 console.log("ERRROR", e);
               }
               try {
-                console.log("MADE IT TO SETTING UP ORDER EMAIL STUFF");
-
                 const { street, city, state, zip } = await breakDownAddress(
                   pendingOrder?.doorDashInfo?.pickup_address
                 );
@@ -226,19 +228,14 @@ async function handler(req, res) {
                   restZip,
                   deliveryQuote
                 );
-
-                console.log("Order email sent successfully.");
               } catch (error) {
                 console.log("Error sending order email:", error);
               }
 
               try {
-                console.log("Updating count...");
                 updateCount();
-                console.log("Count updated successfully.");
-                console.log("Deleting pending order...");
+
                 deletePendingOrder(email);
-                console.log("Pending order deleted successfully.");
               } catch (error) {
                 console.log(
                   "Error updating count or deleting pending order:",
