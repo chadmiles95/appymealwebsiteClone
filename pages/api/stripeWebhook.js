@@ -142,6 +142,11 @@ const updateCount = async () => {
   }
 };
 
+async function deletePendingOrder(email) {
+  const docRef = doc(db, "pendingOrders", email);
+  await deleteDoc(docRef);
+}
+
 //initalize Stripe
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -258,7 +263,7 @@ async function handler(req, res) {
                 );
                 let name = pendingOrder?.customer;
                 let userEmail = email;
-                let cart = pendingOrder?.cartTotal;
+                let cart = pendingOrder?.cart;
                 let restName = pendingOrder?.restaurant;
                 let calculatedTip = pendingOrder?.tip;
                 let totalTax = pendingOrder?.tax;
