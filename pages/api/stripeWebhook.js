@@ -29,36 +29,99 @@ const { getFirestore } = require("firebase/firestore");
 //   };
 // };
 
+// const breakDownAddress = (address) => {
+//   console.log("ADDRESS BEING PASSED IN", address);
+
+//   const addressString = String(address);
+
+//   const [street, ...rest] = addressString.split(",");
+
+//   console.log("rest", rest);
+//   console.log("street", street);
+
+//   const cityStateZip = rest[0].join(",").split(" ").filter(Boolean);
+//   const [city, stateZip] = cityStateZip[0].split(" ");
+//   const [state, zip] = stateZip.split(" ");
+
+//   console.log("street", street.replace(/^\s+|\s+$/g, ""));
+//   console.log("city", city.replace(/^\s+|\s+$/g, ""));
+//   console.log("state", state.replace(/^\s+|\s+$/g, ""));
+//   console.log("zip", zip.replace(/^\s+|\s+$/g, ""));
+
+//   return {
+//     street: street.replace(/^\s+|\s+$/g, ""),
+//     city: city.replace(/^\s+|\s+$/g, ""),
+//     state: state.replace(/^\s+|\s+$/g, ""),
+//     zip: zip.replace(/^\s+|\s+$/g, ""),
+//   };
+// };
+
+// const breakDownAddress = (address) => {
+//   console.log("ADDRESS BEING PASSED IN", address);
+
+//   const addressString = String(address);
+
+//   const [street, ...rest] = addressString.split(",");
+
+//   console.log("rest", rest);
+//   console.log("street", street);
+
+//   const cityStateZip = rest[0].split(" ").filter(Boolean);
+//   const [city, stateZip] = cityStateZip;
+//   const [state, zip] = stateZip.split(" ");
+
+//   console.log("street", street.replace(/^\s+|\s+$/g, ""));
+//   console.log("city", city.replace(/^\s+|\s+$/g, ""));
+//   console.log("state", state.replace(/^\s+|\s+$/g, ""));
+//   console.log("zip", zip.replace(/^\s+|\s+$/g, ""));
+
+//   return {
+//     street: street.replace(/^\s+|\s+$/g, ""),
+//     city: city.replace(/^\s+|\s+$/g, ""),
+//     state: state.replace(/^\s+|\s+$/g, ""),
+//     zip: zip.replace(/^\s+|\s+$/g, ""),
+//   };
+// };
+
 const breakDownAddress = (address) => {
-  console.log("ADDRESS BEING PASSED IN", address);
+  console.log("address", address);
 
-  const addressString = String(address);
+  const addressComponents = address
+    .split(",")
+    .map((component) => component.trim());
 
-  const [street, ...rest] = addressString.split(",");
+  const zipRegex = /^\d{5}(?:[-\s]\d{4})?$/;
+  const zipMatch =
+    addressComponents[addressComponents.length - 1].match(zipRegex);
+  const zip = zipMatch ? zipMatch[0] : "";
 
-  console.log("rest", rest);
-  console.log("street", street);
+  let city = "";
+  let state = "";
 
-  const cityStateZip = rest.join(",").split(" ").filter(Boolean);
-  const [city, stateZip] = cityStateZip[0].split(" ");
-  const [state, zip] = stateZip.split(" ");
+  if (addressComponents.length > 1) {
+    const cityStateZip =
+      addressComponents[addressComponents.length - 2].split(/\s+/);
+    if (cityStateZip.length > 1) {
+      state = cityStateZip.pop();
+      city = cityStateZip.join(" ");
+    } else {
+      city = cityStateZip[0];
+    }
+  }
 
-  console.log("street", street.replace(/^\s+|\s+$/g, ""));
-  console.log("city", city.replace(/^\s+|\s+$/g, ""));
-  console.log("state", state.replace(/^\s+|\s+$/g, ""));
-  console.log("zip", zip.replace(/^\s+|\s+$/g, ""));
+  const street = addressComponents[0];
+
+  console.log("street ", street);
+  console.log("city", city);
+  console.log("state", state);
+  console.log("zip", zip);
 
   return {
-    street: street.replace(/^\s+|\s+$/g, ""),
-    city: city.replace(/^\s+|\s+$/g, ""),
-    state: state.replace(/^\s+|\s+$/g, ""),
-    zip: zip.replace(/^\s+|\s+$/g, ""),
+    street,
+    city,
+    state,
+    zip,
   };
-};
-
-const deletePendingOrder = async (email) => {
-  const docRef = doc(db, "pendingOrders", email);
-  await deleteDoc(docRef);
 };
 
 const updateCount = async () => {
