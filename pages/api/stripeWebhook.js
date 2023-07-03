@@ -1,11 +1,7 @@
 const { doc, setDoc, getDoc, deleteDoc } = require("firebase/firestore");
-
 const Stripe = require("stripe");
 const { sendOrderEmail } = require("../../services/email");
-
-// const firebase = require("firebase/app");
 const { initializeApp } = require("firebase/app");
-
 const { getFirestore } = require("firebase/firestore");
 
 const breakDownAddress = (address) => {
