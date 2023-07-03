@@ -34,6 +34,7 @@ spec:
   - hosts:
       - appymeal.com
       - www.appymeal.com
+      - api.appymeal.com
     secretName: appymeal-network-secret
   rules:
   - host: appymeal.com
@@ -55,5 +56,15 @@ spec:
             name: web-frontend-cluster-ip-service
             port:
               number: 3000
+        pathType: ImplementationSpecific
+  - host: api.appymeal.com
+    http:
+      paths:
+      - path: /?(.*)
+        backend:
+          service:
+            name: api-gateway-service-loadbalancer-service
+            port:
+              number: 3330
         pathType: ImplementationSpecific
           
