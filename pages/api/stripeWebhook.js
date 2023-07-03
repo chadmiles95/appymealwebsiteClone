@@ -8,84 +8,7 @@ const { initializeApp } = require("firebase/app");
 
 const { getFirestore } = require("firebase/firestore");
 
-// require("firebase/firestore");
-
-// small update to deploy
-
-// Function to break down the address
-// const breakDownAddress = (address) => {
-//   console.log("ADDRESS BEING PASSED IN", address);
-
-//   const [street, ...rest] = address.split(",");
-//   const [cityStateZip] = rest.join(",").trim().split(" ");
-//   const [city, stateZip] = cityStateZip.trim().split(" ");
-//   const [state, zip] = stateZip.trim().split(" ");
-
-//   return {
-//     street: street.trim(),
-//     city: city.trim(),
-//     state: state.trim(),
-//     zip: zip.trim(),
-//   };
-// };
-
-// const breakDownAddress = (address) => {
-//   console.log("ADDRESS BEING PASSED IN", address);
-
-//   const addressString = String(address);
-
-//   const [street, ...rest] = addressString.split(",");
-
-//   console.log("rest", rest);
-//   console.log("street", street);
-
-//   const cityStateZip = rest[0].join(",").split(" ").filter(Boolean);
-//   const [city, stateZip] = cityStateZip[0].split(" ");
-//   const [state, zip] = stateZip.split(" ");
-
-//   console.log("street", street.replace(/^\s+|\s+$/g, ""));
-//   console.log("city", city.replace(/^\s+|\s+$/g, ""));
-//   console.log("state", state.replace(/^\s+|\s+$/g, ""));
-//   console.log("zip", zip.replace(/^\s+|\s+$/g, ""));
-
-//   return {
-//     street: street.replace(/^\s+|\s+$/g, ""),
-//     city: city.replace(/^\s+|\s+$/g, ""),
-//     state: state.replace(/^\s+|\s+$/g, ""),
-//     zip: zip.replace(/^\s+|\s+$/g, ""),
-//   };
-// };
-
-// const breakDownAddress = (address) => {
-//   console.log("ADDRESS BEING PASSED IN", address);
-
-//   const addressString = String(address);
-
-//   const [street, ...rest] = addressString.split(",");
-
-//   console.log("rest", rest);
-//   console.log("street", street);
-
-//   const cityStateZip = rest[0].split(" ").filter(Boolean);
-//   const [city, stateZip] = cityStateZip;
-//   const [state, zip] = stateZip.split(" ");
-
-//   console.log("street", street.replace(/^\s+|\s+$/g, ""));
-//   console.log("city", city.replace(/^\s+|\s+$/g, ""));
-//   console.log("state", state.replace(/^\s+|\s+$/g, ""));
-//   console.log("zip", zip.replace(/^\s+|\s+$/g, ""));
-
-//   return {
-//     street: street.replace(/^\s+|\s+$/g, ""),
-//     city: city.replace(/^\s+|\s+$/g, ""),
-//     state: state.replace(/^\s+|\s+$/g, ""),
-//     zip: zip.replace(/^\s+|\s+$/g, ""),
-//   };
-// };
-
 const breakDownAddress = (address) => {
-  console.log("address", address);
-
   const addressComponents = address
     .split(",")
     .map((component) => component.trim());
@@ -110,11 +33,6 @@ const breakDownAddress = (address) => {
   }
 
   const street = addressComponents[0];
-
-  console.log("street ", street);
-  console.log("city", city);
-  console.log("state", state);
-  console.log("zip", zip);
 
   return {
     street,
@@ -277,8 +195,6 @@ async function handler(req, res) {
                 let restState = state;
                 let restZip = zip;
                 let deliveryQuote = pendingOrder?.deliveryQuote;
-
-                console.log("Sending order email...");
 
                 await sendOrderEmail(
                   name,

@@ -249,8 +249,8 @@ const CartPageComponent = () => {
     );
     let tipAmt = parseFloat((amt * (selectedTip / 100)).toFixed(2));
 
-    setTip(tipAmt);
-    setTotalAmt(amtWithTip);
+    setTip(parseFloat(tipAmt.toFixed(2)));
+    setTotalAmt(parseFloat(amtWithTip.toFixed(2)));
   }, [productData, selectedTip, deliveryQuote, rest?.taxRate]);
 
   const handleCheckout = async () => {
@@ -432,14 +432,18 @@ const CartPageComponent = () => {
           { merge: true }
         );
 
+        let tempTip = parseFloat(tip.toFixed(2));
+        let tempTax = parseFloat(taxAmt.toFixed(2));
+        let tempDeliveryFee = parseFloat(deliveryQuote.toFixed(2));
+
         const checkoutSession = await axios.post(
           "api/create-checkout-session",
           {
             items: productData,
             email: useEmail,
-            tip: tip,
-            tax: taxAmt,
-            deliveryFee: deliveryQuote,
+            tip: tempTip,
+            tax: tempTax,
+            deliveryFee: tempDeliveryFee,
           }
         );
 
