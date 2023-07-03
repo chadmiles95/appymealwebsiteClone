@@ -256,10 +256,12 @@ async function handler(req, res) {
                 );
 
                 let finalAmt = parseFloat(
-                  (pendingOrder?.stripeTotal / 100).toFixed(2)
+                  (pendingOrder?.stripeTotal).toFixed(2)
+                  // (pendingOrder?.stripeTotal / 100).toFixed(2)
                 );
                 let cartSum = parseFloat(
-                  (pendingOrder?.cartSum / 100).toFixed(2)
+                  (pendingOrder?.cartTotal).toFixed(2)
+                  // (pendingOrder?.cartTotal / 100).toFixed(2)
                 );
                 let name = pendingOrder?.customer;
                 let userEmail = email;
