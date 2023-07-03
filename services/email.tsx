@@ -57,13 +57,11 @@ export const sendOrderEmail = (
         if (formattedTempArr === "") {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
-            2
-          )}</td>`;
+          }</td><td style="text-align: left">$${item.price.toFixed(2)}</td>`;
         } else {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
+          }</td><td style="text-align: left">$${item.price.toFixed(
             2
           )}</td></tr><td style="padding-bottom: 5px">${formattedTempArr}</td>`;
         }
@@ -71,13 +69,11 @@ export const sendOrderEmail = (
         if (formattedTempArr === "") {
           return `<tr class="details"><td style="text-align: left; border-bottom: 1px solid #eee">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
-            2
-          )}</td>`;
+          }</td><td style="text-align: left">$${item.price.toFixed(2)}</td>`;
         } else {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
+          }</td><td style="text-align: left">$${item.price.toFixed(
             2
           )}</td></tr><td style="border-bottom: 1px solid #eee; padding-bottom: 5px">${formattedTempArr}</td>`;
         }
