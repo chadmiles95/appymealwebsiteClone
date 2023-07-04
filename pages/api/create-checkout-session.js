@@ -6,7 +6,7 @@ const createCheckoutSession = async (req, res) => {
   const modifiedItems = items.map((item) => ({
     price_data: {
       currency: "usd",
-      unit_amount: item.price * 100,
+      unit_amount: parseFloat((item.price * 100).toFixed(0)),
       product_data: {
         name: item.item,
       },
@@ -19,7 +19,7 @@ const createCheckoutSession = async (req, res) => {
     modifiedItems.push({
       price_data: {
         currency: "usd",
-        unit_amount: tip * 100, // multiply by 100 to convert dollars to cents
+        unit_amount: parseFloat((tip * 100).toFixed(0)), // multiply by 100 to convert dollars to cents
         product_data: {
           name: "Tip",
         },
@@ -33,7 +33,7 @@ const createCheckoutSession = async (req, res) => {
     modifiedItems.push({
       price_data: {
         currency: "usd",
-        unit_amount: tax * 100,
+        unit_amount: parseFloat((tax * 100).toFixed(2)),
         product_data: {
           name: "Tax",
         },
