@@ -7,7 +7,10 @@ const RestaurantsPage = () => {
     <>
       <Head>
         <title>Appymeal.com | Restaurants Guide</title>
-        <meta name="description" content="Restaurant delivery & pickup service" />
+        <meta
+          name="description"
+          content="Restaurant delivery & pickup service"
+        />
       </Head>
       <Restaurants />
     </>
