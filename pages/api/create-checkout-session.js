@@ -6,7 +6,7 @@ const createCheckoutSession = async (req, res) => {
   const modifiedItems = items.map((item) => ({
     price_data: {
       currency: "usd",
-      unit_amount: parseFloat((item.price * 100).toFixed(0)),
+      unit_amount: parseFloat(item.price.toFixed(0)),
       product_data: {
         name: item.item,
       },

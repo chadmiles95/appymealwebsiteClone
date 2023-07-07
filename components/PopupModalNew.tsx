@@ -245,10 +245,8 @@ export const PopupModalNew: React.FC<ModalProps> = ({
           id: tempKey,
           price: parseFloat(
             (
-              item.price +
-              firstOptionPrice +
-              secondOptionPrice +
-              sidePrice
+              (item.price + firstOptionPrice + secondOptionPrice + sidePrice) *
+              100
             ).toFixed(2)
           ),
           modifiers: [
@@ -269,10 +267,8 @@ export const PopupModalNew: React.FC<ModalProps> = ({
           id: tempKey,
           price: parseFloat(
             (
-              item.price +
-              firstOptionPrice +
-              secondOptionPrice +
-              sidePrice
+              (item.price + firstOptionPrice + secondOptionPrice + sidePrice) *
+              100
             ).toFixed(2)
           ),
           modifiers: [],
@@ -288,10 +284,9 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     setSelectedOption(event.target.value);
   };
 
-  const handleAddToCart = () => {
-    console.log("Selected option:", selectedOption);
-    closeModal();
-  };
+  // const handleAddToCart = () => {
+  //   closeModal();
+  // };
 
   useEffect(() => {
     let tempArray: any = [];

@@ -7,6 +7,7 @@ interface ShopperState {
   userInfo: null | UserInfo;
   currentTime: string;
   currentRestaurant: any;
+  order: any;
   menuSelected: any;
   militaryTime: string;
   lastVisitedPage: string;
@@ -18,6 +19,7 @@ const initialState: ShopperState = {
   userInfo: null,
   currentTime: new Date().toString(),
   currentRestaurant: {},
+  order: {},
   menuSelected: "",
   militaryTime: "0000",
   lastVisitedPage: "",
@@ -97,6 +99,7 @@ export const shopperslice = createSlice({
       if (state.currentRestaurant?.name !== action.payload.rest.name) {
         state.currentRestaurant = action.payload.rest;
         state.productData = [];
+        state.order = {};
       } else {
         null;
       }
@@ -111,6 +114,12 @@ export const shopperslice = createSlice({
     },
     updateCurrentRestaurant: (state, action) => {
       state.currentRestaurant = action.payload;
+    },
+    setOrder: (state, action) => {
+      state.order = action.payload;
+    },
+    clearOrder: (state, action) => {
+      state.order = {};
     },
   },
 });
@@ -130,5 +139,7 @@ export const {
   checkCurrentRestaurant,
   updateCurrentMenu,
   updateCurrentRestaurant,
+  setOrder,
+  clearOrder,
 } = shopperslice.actions;
 export default shopperslice.reducer;

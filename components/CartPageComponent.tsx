@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   ship1Img,
   ship2Img,
@@ -16,12 +16,12 @@ import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import { StoreProduct } from "../type";
 import FormatPrice from "./FormatPrice";
-import { useDispatch } from "react-redux";
 import {
   deleteItem,
   minusQuantity,
   plusQuantity,
   resetCart,
+  setOrder,
 } from "../redux/shoppersSlice";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
@@ -226,7 +226,7 @@ const CartPageComponent = () => {
     let amt = 0;
 
     productData.map((item: StoreProduct) => {
-      amt += item.price * item.quantity;
+      amt += parseFloat(((item.price * item.quantity) / 100).toFixed(2));
       return;
     });
 
@@ -242,9 +242,9 @@ const CartPageComponent = () => {
 
     let amtWithTip = parseFloat(
       (
-        amt * (1 + selectedTip / 100) +
-        parseFloat((deliveryQuote / 100).toFixed(2)) +
-        tempTaxAmt
+        parseFloat((amt * 100).toFixed(2)) * (1 + selectedTip / 100) +
+        parseFloat(deliveryQuote.toFixed(2)) +
+        parseFloat((amt * rest?.taxRate).toFixed(2))
       ).toFixed(2)
     );
     let tipAmt = parseFloat((amt * (selectedTip / 100)).toFixed(2));
@@ -436,6 +436,9 @@ const CartPageComponent = () => {
         let tempTax = parseFloat(taxAmt.toFixed(2));
         let tempDeliveryFee = parseFloat(deliveryQuote.toFixed(2));
 
+        // Pass order object to Redux
+        dispatch(setOrder(order));
+
         const checkoutSession = await axios.post(
           "api/create-checkout-session",
           {
@@ -446,6 +449,8 @@ const CartPageComponent = () => {
             deliveryFee: tempDeliveryFee,
           }
         );
+
+        //need to pass order obj to checkout screen
 
         // redirect user to stripe checkout
         const result: any = await stripe?.redirectToCheckout({
@@ -584,10 +589,12 @@ const CartPageComponent = () => {
                 setIsLoading(false);
                 alert("Please check delivery address");
                 resolve(false);
-              } else if (name?.length === 0 || phoneNumber?.length === 0) {
-                alert(
-                  "Please fill out name and phone number fields on the information tab."
-                );
+              } else if (phoneNumber?.length === 0) {
+                alert("Please fill out phone number field.");
+                setIsLoading(false);
+                resolve(false);
+              } else if (name?.length === 0) {
+                alert("Please fill out name field.");
                 setIsLoading(false);
                 resolve(false);
               } else if (totalAmt > 30000) {
@@ -602,10 +609,12 @@ const CartPageComponent = () => {
 
             // LAYER 4 - checking if it was a delivery that it has all the necessary stuff
             else {
-              if (name?.length === 0 || phoneNumber?.length === 0) {
-                alert(
-                  "Please fill out name and phone number fields on the information tab."
-                );
+              if (phoneNumber?.length === 0) {
+                alert("Please fill out phone number field.");
+                setIsLoading(false);
+                resolve(false);
+              } else if (name?.length === 0) {
+                alert("Please fill out name field.");
                 setIsLoading(false);
                 resolve(false);
               }
@@ -736,7 +745,11 @@ const CartPageComponent = () => {
 
                     <div className="w-full text-right flex flex-col items-end gap-1 justify-center">
                       <p className="font-semibold text-xl text-dark">
-                        <FormatPrice amount={item.price * item.quantity} />
+                        <FormatPrice
+                          amount={parseFloat(
+                            ((item.price * item.quantity) / 100).toFixed(2)
+                          )}
+                        />
                       </p>
                     </div>
                   </div>
@@ -768,8 +781,8 @@ const CartPageComponent = () => {
             }}
             className="bg-primary hover:bg-muted w-full text-white h-10 rounded-full font-semibold duration-300 mt-2"
           >
-            Place {isPickup ? "Pickup" : "Delivery"} Order | $
-            {totalAmt.toFixed(2)}
+            Place {isPickup ? "Pickup" : "Delivery"} Order |
+            <FormatPrice amount={parseFloat((totalAmt / 100).toFixed(2))} />
           </button>
           <div className="w-full flex flex-col  border-b-[1px] border-b-zinc-200 pb-4">
             <div className="py-0 gap-2 flex flex-col ">
@@ -784,7 +797,9 @@ const CartPageComponent = () => {
 
                   <p className="text-sm">
                     You are missing out on{" "}
-                    <span className="font-semibold">{totalAmt.toFixed(0)}</span>{" "}
+                    <span className="font-semibold">
+                      {parseFloat((totalAmt / 100).toFixed(0))}
+                    </span>{" "}
                     points by not ordering through the app!
                   </p>
                   <IoMdClose
@@ -1008,7 +1023,7 @@ const CartPageComponent = () => {
           <div className="flex items-center justify-between ">
             <p className="text-dark">Final Total</p>
             <p className="text-zinc-800 font-bold text-lg">
-              <FormatPrice amount={totalAmt} />
+              <FormatPrice amount={parseFloat((totalAmt / 100).toFixed(2))} />
             </p>
           </div>
         </div>

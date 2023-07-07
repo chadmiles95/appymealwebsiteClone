@@ -57,11 +57,13 @@ export const sendOrderEmail = (
         if (formattedTempArr === "") {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${item.price.toFixed(2)}</td>`;
+          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
+            2
+          )}</td>`;
         } else {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${item.price.toFixed(
+          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
             2
           )}</td></tr><td style="padding-bottom: 5px">${formattedTempArr}</td>`;
         }
@@ -69,11 +71,13 @@ export const sendOrderEmail = (
         if (formattedTempArr === "") {
           return `<tr class="details"><td style="text-align: left; border-bottom: 1px solid #eee">${
             item.item
-          }</td><td style="text-align: left">$${item.price.toFixed(2)}</td>`;
+          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
+            2
+          )}</td>`;
         } else {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${item.price.toFixed(
+          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
             2
           )}</td></tr><td style="border-bottom: 1px solid #eee; padding-bottom: 5px">${formattedTempArr}</td>`;
         }
@@ -81,13 +85,13 @@ export const sendOrderEmail = (
     }
   });
 
-  let formattedTotal = `$${parseFloat(finalAmt).toFixed(2)}`;
+  let formattedTotal = `$${parseFloat(finalAmt / 100).toFixed(2)}`;
   // console.log(htmlOrder.join(""));
   let formattedHtmlOrder = htmlOrder.join("");
 
   // console.log(formattedHtmlOrder);
 
-  return fetch(`${host}/sendOrderMail`, {
+  return fetch(`${host}/sendWebOrderMail`, {
     body: JSON.stringify({
       name,
       email,
