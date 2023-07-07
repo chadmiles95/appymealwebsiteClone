@@ -336,7 +336,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                   style: "decimal",
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
-                }).format(totalAmt)}
+                }).format(parseFloat((totalAmt / 100).toFixed(2)))}
               </p>
             </div>
             <div className="px-8 py-2 whitespace-nowrap">
@@ -388,7 +388,11 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                           style: "decimal",
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
-                        }).format(item.price * item.quantity)}
+                        }).format(
+                          parseFloat(
+                            ((item.price * item.quantity) / 100).toFixed(2)
+                          )
+                        )}
                       </p>
                     </div>
                     {item.modifiers &&

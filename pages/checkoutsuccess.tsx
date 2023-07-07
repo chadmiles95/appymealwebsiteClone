@@ -4,7 +4,7 @@ import SuccessPage from "../components/SuccessPage";
 const checkoutsuccess = () => {
   return (
     <div className="w-full flex-1 flex items-center justify-center py-20">
-      <SuccessPage />
+      <SuccessPage /> {/* Pass the order object to SuccessPage */}
     </div>
   );
 };
