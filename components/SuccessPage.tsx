@@ -13,10 +13,14 @@ const SuccessPage = () => {
 
   return (
     <div className="flex flex-col gap-2 items-center justify-center">
-      <h1 className="text-2xl text-primary font-semibold pl-12 pr-12 md:pr-0 md:pl-0">
-        Thank you for helping us support local restaurants!
-      </h1>
-
+      <button
+        // onClick={() => dispatch(resetCart())}
+        className="text-lg text-dark "
+      >
+        <p className="text-xl md:text-2xl text-primary font-semibold ">
+          Thank you for helping us support local restaurants!
+        </p>
+      </button>
       <Image src={CircleLogo} className="w-12 lg:w-40" alt="logo" />
 
       <div></div>
@@ -25,7 +29,7 @@ const SuccessPage = () => {
 
       <button
         // onClick={() => dispatch(resetCart())}
-        className="text-lg text-dark "
+        className="text-lg text-dark pl-4 pr-4"
       >
         <h2 className="text-dark">Order Details:</h2>
         <p className="text-dark">Order Number: {order?.number}</p>
