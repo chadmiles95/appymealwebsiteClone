@@ -119,7 +119,7 @@ export const sendOrderEmail = (
     }
   });
 
-  let formattedTotal = `$${new Number(finalAmt / 100).toLocaleString("en-us", {
+  let formattedTotal = `${new Number(finalAmt / 100).toLocaleString("en-us", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
