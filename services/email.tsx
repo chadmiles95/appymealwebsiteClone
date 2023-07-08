@@ -21,8 +21,8 @@ export const sendOrderEmail = (
   restName: string,
   finalAmt: number,
   cartSum: number,
-  calculatedTip: number,
-  totalTax: number,
+  calculatedTip: any,
+  totalTax: any,
   appyFee: number,
   newCount: number,
   restaurantPhoneNumber: string,
@@ -32,12 +32,28 @@ export const sendOrderEmail = (
   restZip: string,
   deliveryQuote: number
 ) => {
-  let sum = parseFloat(cartSum.toFixed(2));
+  let sum = new Number(cartSum).toLocaleString("en-us", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
   let tempName = capitalizeFirstLetter(name);
-  calculatedTip = parseFloat(calculatedTip.toFixed(2));
-  totalTax = parseFloat(totalTax.toFixed(2));
+  calculatedTip = new Number(calculatedTip).toLocaleString("en-us", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+  totalTax = new Number(totalTax).toLocaleString("en-us", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
   let email = userEmail;
-  let quote = parseFloat((parseFloat(deliveryQuote) / 100).toFixed(2));
+  let quote = new Number(deliveryQuote / 100).toLocaleString("en-us", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
   let orderNumber = newCount;
   let restNumber = restaurantPhoneNumber;
   let subject = `${tempName}, your order has been placed!`;
@@ -59,35 +75,55 @@ export const sendOrderEmail = (
         if (formattedTempArr === "") {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
-            2
-          )}</td>`;
+          }</td><td style="text-align: left">${new Number(
+            item.price / 100
+          ).toLocaleString("en-us", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+          })}</td>`;
         } else {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
-            2
-          )}</td></tr><td style="padding-bottom: 5px">${formattedTempArr}</td>`;
+          }</td><td style="text-align: left">$${new Number(
+            item.price / 100
+          ).toLocaleString("en-us", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+          })}</td></tr><td style="padding-bottom: 5px">${formattedTempArr}</td>`;
         }
       } else {
         if (formattedTempArr === "") {
           return `<tr class="details"><td style="text-align: left; border-bottom: 1px solid #eee">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
-            2
-          )}</td>`;
+          }</td><td style="text-align: left">$${new Number(
+            item.price / 100
+          ).toLocaleString("en-us", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+          })}</td>`;
         } else {
           return `<tr class="details"><td style="text-align: left">${
             item.item
-          }</td><td style="text-align: left">$${(item.price / 100).toFixed(
-            2
-          )}</td></tr><td style="border-bottom: 1px solid #eee; padding-bottom: 5px">${formattedTempArr}</td>`;
+          }</td><td style="text-align: left">$${new Number(
+            item.price / 100
+          ).toLocaleString("en-us", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+          })}</td></tr><td style="border-bottom: 1px solid #eee; padding-bottom: 5px">${formattedTempArr}</td>`;
         }
       }
     }
   });
 
-  let formattedTotal = `$${parseFloat((finalAmt / 100).toFixed(2))}`;
+  let formattedTotal = `$${new Number(finalAmt / 100).toLocaleString("en-us", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  })}`;
   // console.log(htmlOrder.join(""));
   let formattedHtmlOrder = htmlOrder.join("");
 
