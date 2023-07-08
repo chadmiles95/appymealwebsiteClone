@@ -32,8 +32,10 @@ export const sendOrderEmail = (
   restZip: string,
   deliveryQuote: number
 ) => {
-  let sum = cartSum;
+  let sum = parseFloat(cartSum.toFixed(2));
   let tempName = capitalizeFirstLetter(name);
+  calculatedTip = parseFloat(calculatedTip.toFixed(2));
+  totalTax = parseFloat(totalTax.toFixed(2));
   let email = userEmail;
   let quote = parseFloat((parseFloat(deliveryQuote) / 100).toFixed(2));
   let orderNumber = newCount;
