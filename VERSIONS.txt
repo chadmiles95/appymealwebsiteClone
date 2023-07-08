@@ -1,3 +1,0 @@
-
-LAST_PUBLISHED_GIT_SHA=edbc0f311d0aa604facdcb4e090f16296c3dcabd
-
