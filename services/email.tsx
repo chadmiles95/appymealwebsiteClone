@@ -87,7 +87,7 @@ export const sendOrderEmail = (
     }
   });
 
-  let formattedTotal = `$${parseFloat(finalAmt / 100).toFixed(2)}`;
+  let formattedTotal = `$${parseFloat((finalAmt / 100).toFixed(2))}`;
   // console.log(htmlOrder.join(""));
   let formattedHtmlOrder = htmlOrder.join("");
 
