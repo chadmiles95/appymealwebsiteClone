@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetCart } from "../redux/shoppersSlice";
 import { Spacer } from "./Spacer";
@@ -10,6 +10,10 @@ const SuccessPage = () => {
   // used to remove items and reset cart
   const order = useSelector((state: any) => state.shopper.order); // Access the order object from Redux state
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(resetCart());
+  }, []);
 
   return (
     <div className="flex flex-col gap-2 items-center justify-center">
