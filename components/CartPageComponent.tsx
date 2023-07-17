@@ -264,7 +264,6 @@ const CartPageComponent = () => {
       alert("Error checking restaurant. Please try again.");
       return; // Exit the function
     }
-    console.log("updatedRest", updatedRest);
 
     if (!updatedRest) {
       alert("Issues contacting restaurant. Please try again.");
@@ -459,7 +458,7 @@ const CartPageComponent = () => {
         if (result?.error) {
           alert(result?.error.message);
         } else {
-          console.log("checkoutSession.data", checkoutSession.data);
+          // console.log("checkoutSession.data", checkoutSession.data);
           //push data for order.
         }
       } catch (err) {
@@ -554,10 +553,8 @@ const CartPageComponent = () => {
         }
         // LAYER 2 - checking if rest is closed by open/closed boolean value
         else {
-          // console.log("currentTime", currentTime);
-
           let dateObject = new Date(currentTime);
-          let tempHour = parseFloat(dateObject.getUTCHours().toString());
+          let tempHour = parseFloat(dateObject.getHours().toString());
           let tempMin = parseFloat(dateObject.getMinutes().toString());
 
           let tempTime;
@@ -573,8 +570,6 @@ const CartPageComponent = () => {
               (parseFloat(tempTime) < parseFloat(res.menuHours.substr(0, 4)) ||
                 parseFloat(tempTime) >= parseFloat(res.menuHours.substr(5, 4))))
           ) {
-            // console.log(res.hours);
-
             setIsLoading(false);
             alert("Restaurant is currently closed");
             resolve(false);
