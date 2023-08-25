@@ -301,7 +301,7 @@ const CartPageComponent = () => {
       const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
 
       let appyFee = parseFloat(
-        (totalAmt * (updatedRest?.webFee / 100)).toFixed(2)
+        ((totalAmt / 100) * (updatedRest?.webFee / 100)).toFixed(2)
       );
 
       if (orderNumber === null) {

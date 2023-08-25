@@ -30,12 +30,20 @@ interface Item {
   firstOptions: Array<Option>;
   secondOptionName: string;
   secondOptions: Array<Option>;
+  thirdOptionName: string;
+  thirdOptions: Array<Option>;
+  fourthOptionName: string;
+  fourthOptions: Array<Option>;
   sides: Array<Option>;
   showTemp: boolean;
-  secondOptionMultiple: boolean;
   firstOptionMultiple: boolean;
   firstOptionRequired: boolean;
   secondOptionRequired: boolean;
+  secondOptionMultiple: boolean;
+  thirdOptionRequired: boolean;
+  thirdOptionMultiple: boolean;
+  fourthOptionRequired: boolean;
+  fourthOptionMultiple: boolean;
   sidesRequired: boolean;
 }
 
@@ -79,6 +87,10 @@ export const PopupModalNew: React.FC<ModalProps> = ({
   const [firstOptionPrice, setFirstOptionPrice] = useState(0);
   const [secondOptionChoice, setSecondOptionChoice] = useState<string[]>([]);
   const [secondOptionPrice, setSecondOptionPrice] = useState(0);
+  const [thirdOptionChoice, setThirdOptionChoice] = useState<string[]>([]);
+  const [thirdOptionPrice, setThirdOptionPrice] = useState(0);
+  const [fourthOptionChoice, setFourthOptionChoice] = useState<string[]>([]);
+  const [fourthOptionPrice, setFourthOptionPrice] = useState(0);
   const [sideChoice, setSideChoice] = useState<string | null>(null);
   const [sidePrice, setSidePrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -102,12 +114,25 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     setItemPrice(
       parseFloat(
         (
-          (item.price + firstOptionPrice + secondOptionPrice + sidePrice) *
+          (item.price +
+            firstOptionPrice +
+            secondOptionPrice +
+            thirdOptionPrice +
+            fourthOptionPrice +
+            sidePrice) *
           quantity
         ).toFixed(2)
       )
     );
-  }, [secondOptionPrice, sidePrice, firstOptionPrice, item.price, quantity]);
+  }, [
+    secondOptionPrice,
+    sidePrice,
+    firstOptionPrice,
+    item.price,
+    quantity,
+    thirdOptionPrice,
+    fourthOptionPrice,
+  ]);
 
   const setFirstOption = (price: string, name: string): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -180,6 +205,86 @@ export const PopupModalNew: React.FC<ModalProps> = ({
     });
   };
 
+  const setThirdOption = (price: string, name: string): Promise<void> => {
+    // console.log(price, name);
+    // console.log("FOC", firstOptionChoice);
+    return new Promise((resolve, reject) => {
+      let tempPrice = 0;
+      // console.log(props.route.params.item.firstOptionMultiple);
+      item?.thirdOptionMultiple === false
+        ? parseFloat(price) === 0 || !price
+          ? // console.log("nonmultiple"),
+            (setThirdOptionPrice(0), setThirdOptionChoice([name]), resolve())
+          : (setThirdOptionPrice(parseFloat(price)),
+            setThirdOptionChoice([name]),
+            resolve())
+        : !thirdOptionChoice
+        ? (setThirdOptionPrice(parseFloat(price)),
+          setThirdOptionChoice([name]),
+          resolve())
+        : thirdOptionChoice.includes(name) === false
+        ? thirdOptionChoice.length === 0
+          ? // console.log("multiple, doesn't include name, and length is 0."),
+            ((tempPrice = parseFloat(price) + thirdOptionPrice),
+            // console.log(tempPrice),
+            setThirdOptionPrice(tempPrice),
+            setThirdOptionChoice((oldArray): any => [...oldArray, name]),
+            resolve())
+          : //   console.log("multiple map & doesnt include name"),
+            // console.log(firstOptionChoice),
+            ((tempPrice = parseFloat(price) + thirdOptionPrice),
+            setThirdOptionPrice(tempPrice),
+            setThirdOptionChoice((oldArray): any => [...oldArray, name]),
+            resolve())
+        : ((tempPrice = Math.max(thirdOptionPrice - parseFloat(price), 0)),
+          // console.log("TP", tempPrice),
+          setThirdOptionPrice(tempPrice),
+          setThirdOptionChoice(thirdOptionChoice.filter((v) => v !== name)),
+          // console.log("FOC", firstOptionChoice),
+          resolve());
+    });
+  };
+
+  const setFourthOption = (price: string, name: string): Promise<void> => {
+    // console.log(price, name);
+    // console.log("FOC", firstOptionChoice);
+    return new Promise((resolve, reject) => {
+      let tempPrice = 0;
+      // console.log(props.route.params.item.firstOptionMultiple);
+      item?.fourthOptionMultiple === false
+        ? parseFloat(price) === 0 || !price
+          ? // console.log("nonmultiple"),
+            (setFourthOptionPrice(0), setFourthOptionChoice([name]), resolve())
+          : (setFourthOptionPrice(parseFloat(price)),
+            setFourthOptionChoice([name]),
+            resolve())
+        : !fourthOptionChoice
+        ? (setFourthOptionPrice(parseFloat(price)),
+          setFourthOptionChoice([name]),
+          resolve())
+        : fourthOptionChoice.includes(name) === false
+        ? fourthOptionChoice.length === 0
+          ? // console.log("multiple, doesn't include name, and length is 0."),
+            ((tempPrice = parseFloat(price) + fourthOptionPrice),
+            // console.log(tempPrice),
+            setFourthOptionPrice(tempPrice),
+            setFourthOptionChoice((oldArray): any => [...oldArray, name]),
+            resolve())
+          : //   console.log("multiple map & doesnt include name"),
+            // console.log(firstOptionChoice),
+            ((tempPrice = parseFloat(price) + fourthOptionPrice),
+            setFourthOptionPrice(tempPrice),
+            setFourthOptionChoice((oldArray): any => [...oldArray, name]),
+            resolve())
+        : ((tempPrice = Math.max(fourthOptionPrice - parseFloat(price), 0)),
+          // console.log("TP", tempPrice),
+          setFourthOptionPrice(tempPrice),
+          setFourthOptionChoice(fourthOptionChoice.filter((v) => v !== name)),
+          // console.log("FOC", firstOptionChoice),
+          resolve());
+    });
+  };
+
   const setSideOption = (price: string, name: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (parseFloat(price) === 0 || !price) {
@@ -214,6 +319,14 @@ export const PopupModalNew: React.FC<ModalProps> = ({
       alert("Please make selections on required sections");
       return;
     }
+    if (item?.thirdOptionRequired && thirdOptionChoice.length === 0) {
+      alert("Please make selections on required sections");
+      return;
+    }
+    if (item?.fourthOptionRequired && fourthOptionChoice.length === 0) {
+      alert("Please make selections on required sections");
+      return;
+    }
     if (item.sidesRequired && sideChoice === null) {
       alert("Please make selections on required sections");
       return;
@@ -233,11 +346,20 @@ export const PopupModalNew: React.FC<ModalProps> = ({
 
     //check if there are any modifiers, if not just push to cart with empty array
 
-    if (firstOptionChoice || secondOptionChoice || sideChoice || valueTemp) {
+    if (
+      firstOptionChoice ||
+      secondOptionChoice ||
+      thirdOptionChoice ||
+      fourthOptionChoice ||
+      sideChoice ||
+      valueTemp
+    ) {
       //remove duplicates from arrays
 
       let uniqueFirstOptionChoices = Array.from(new Set(firstOptionChoice));
       let uniqueSecondOptionChoices = Array.from(new Set(secondOptionChoice));
+      let uniqueThirdOptionChoices = Array.from(new Set(thirdOptionChoice));
+      let uniqueFourthOptionChoices = Array.from(new Set(fourthOptionChoice));
 
       dispatch(
         addToCart({
@@ -245,13 +367,20 @@ export const PopupModalNew: React.FC<ModalProps> = ({
           id: tempKey,
           price: parseFloat(
             (
-              (item.price + firstOptionPrice + secondOptionPrice + sidePrice) *
+              (item.price +
+                firstOptionPrice +
+                secondOptionPrice +
+                thirdOptionPrice +
+                fourthOptionPrice +
+                sidePrice) *
               100
             ).toFixed(2)
           ),
           modifiers: [
             ...uniqueFirstOptionChoices,
             ...uniqueSecondOptionChoices,
+            ...uniqueThirdOptionChoices,
+            ...uniqueFourthOptionChoices,
             sideChoice,
             valueTemp,
           ],
@@ -267,7 +396,12 @@ export const PopupModalNew: React.FC<ModalProps> = ({
           id: tempKey,
           price: parseFloat(
             (
-              (item.price + firstOptionPrice + secondOptionPrice + sidePrice) *
+              (item.price +
+                firstOptionPrice +
+                secondOptionPrice +
+                thirdOptionPrice +
+                fourthOptionPrice +
+                sidePrice) *
               100
             ).toFixed(2)
           ),
@@ -516,6 +650,76 @@ export const PopupModalNew: React.FC<ModalProps> = ({
             </div>
           </>
         )}
+
+        {item?.thirdOptionName && (
+          <>
+            <div className="w-3/4  mt-2">
+              <div className="w-2/3 sm:w-full lg:w-2/3 justify-between flex flex-row items-center ">
+                <h3 className="text-lg text-dark ">
+                  Choose: {item.thirdOptionName}{" "}
+                </h3>
+                <p className=" text-dark ">
+                  {item?.thirdOptionRequired ? "  *Selection Required" : ""}
+                </p>
+              </div>
+              <div className="py-4 px-2 grid grid-cols-2 gap-4 mt-2">
+                {item.thirdOptions.map((option, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <input
+                      type={item.thirdOptionMultiple ? "checkbox" : "radio"}
+                      id={`thirdOption-${index}`}
+                      name="thirdOption"
+                      value={option.name}
+                      onChange={() => setThirdOption(option.price, option.name)}
+                    />
+                    <label
+                      htmlFor={`thirdOption-${index}`}
+                      className="pl-2 text-dark"
+                    >
+                      {option.name} {option.price !== 0 && `+ $${option.price}`}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+        {item?.fourthOptionName && (
+          <>
+            <div className="w-3/4  mt-2">
+              <div className="w-2/3 sm:w-full lg:w-2/3 justify-between flex flex-row items-center ">
+                <h3 className="text-lg text-dark ">
+                  Choose: {item.fourthOptionName}{" "}
+                </h3>
+                <p className=" text-dark ">
+                  {item?.fourthOptionRequired ? "  *Selection Required" : ""}
+                </p>
+              </div>
+              <div className="py-4 px-2 grid grid-cols-2 gap-4 mt-2">
+                {item.fourthOptions.map((option, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <input
+                      type={item.fourthOptionMultiple ? "checkbox" : "radio"}
+                      id={`fourthOption-${index}`}
+                      name="fourthOption"
+                      value={option.name}
+                      onChange={() =>
+                        setFourthOption(option.price, option.name)
+                      }
+                    />
+                    <label
+                      htmlFor={`fourthOption-${index}`}
+                      className="pl-2 text-dark"
+                    >
+                      {option.name} {option.price !== 0 && `+ $${option.price}`}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {item.sides.length > 0 && (
           <>
             <div className="w-3/4  mt-2">
