@@ -106,8 +106,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
     const startTime = time.substring(0, 2) + ":" + time.substring(2, 4);
     const endTime = time.substring(5, 7) + ":" + time.substring(7, 9);
 
-    console.log(startTime, "startTime");
-    console.log(endTime, "endTime");
+    // console.log(startTime, "startTime");
+    // console.log(endTime, "endTime");
 
     const formattedStartTime = new Date(
       "1970-01-01T" + startTime + ":00Z"
@@ -269,7 +269,10 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                             }`}
                           >
                             {!item.isAvailable && (
-                              <div className="absolute top-0 right-0 bg-primary text-white px-2 py-1 rounded-bl-lg">
+                              <div
+                                style={{ top: -1, right: -1 }}
+                                className="absolute  bg-primary text-white px-2 py-0 rounded-bl-lg"
+                              >
                                 OUT
                               </div>
                             )}

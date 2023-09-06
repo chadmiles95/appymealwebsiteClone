@@ -15,12 +15,16 @@ const OpenStatus: React.FC<OpenStatusProps> = ({
 }) => {
   const [currentlyOpen, setCurrentlyOpen] = useState(false);
 
+  // console.log("rest", restaurant);
+  // console.log("militaryTime", militaryTime);
+
   useEffect(() => {
     if (
       typeof restaurant.hours === "undefined" ||
       restaurant?.menuStatus === false
     ) {
       setCurrentlyOpen(false);
+      // console.log("trigs1");
     } else if (
       parseFloat(militaryTime) >
         parseFloat(restaurant?.hours?.substring(0, 4)) &&
@@ -37,6 +41,7 @@ const OpenStatus: React.FC<OpenStatusProps> = ({
       setCurrentlyOpen(true);
     } else {
       setCurrentlyOpen(false);
+      // console.log("trigs2");
     }
   }, [restaurant, militaryTime]);
 
