@@ -92,6 +92,17 @@ export const shopperslice = createSlice({
     addRestaurant: (state, action) => {
       state.restaurants.push(action.payload);
     },
+    addOrReplaceRestaurant: (state, action) => {
+      const existingIndex = state.restaurants.findIndex(
+        (restaurant) => restaurant.name === action.payload.name
+      );
+
+      if (existingIndex !== -1) {
+        state.restaurants[existingIndex] = action.payload;
+      } else {
+        state.restaurants.push(action.payload);
+      }
+    },
     setLastVisitedPage: (state, action) => {
       state.lastVisitedPage = action.payload;
     },
@@ -141,5 +152,6 @@ export const {
   updateCurrentRestaurant,
   setOrder,
   clearOrder,
+  addOrReplaceRestaurant,
 } = shopperslice.actions;
 export default shopperslice.reducer;

@@ -55,6 +55,7 @@ const useFetchRestaurants = () => {
 
                 if (menus) {
                   const menuEntries = Object.entries(menus);
+
                   const menuLength = menuEntries.length;
 
                   menuEntries.forEach(([key, value], i) => {
@@ -111,6 +112,7 @@ const useFetchRestaurants = () => {
                   (parseFloat(tempTime) <
                     parseFloat((restaurant.menuHours as any).substring(5, 9)) ||
                     restaurant.menuHours === "All Day");
+
                 return { ...restaurant, isOpen };
               })
               .sort((a, b) => {

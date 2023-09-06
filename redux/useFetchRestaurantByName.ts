@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { addRestaurant } from "./shoppersSlice";
+import { useEffect, useState } from "react";
+import { addRestaurant, addOrReplaceRestaurant } from "./shoppersSlice";
+import { UseUpdateRestaurantByName } from "redux/useUpdateRestaurantByName";
 import { db } from "../pages/_app";
 import { doc, getDoc } from "firebase/firestore";
 import { Restaurant } from "../type";
@@ -8,6 +9,7 @@ import { Restaurant } from "../type";
 const useFetchRestaurantByName = (name: string | string[] | undefined) => {
   const dispatch = useDispatch();
   const restaurants = useSelector((state: any) => state.shopper.restaurants);
+  const [usedName, setUsedName] = useState<string | null>(null);
 
   const setTimeForUse = () => {
     return new Promise<{ tempDay: string; tempTime: number }>(
@@ -37,8 +39,9 @@ const useFetchRestaurantByName = (name: string | string[] | undefined) => {
         (restaurant: any) => restaurant.name === name
       );
 
-      if (!restaurantExists) {
-        const fetchRestaurant = async () => {
+      const fetchRestaurant = async () => {
+        if (!restaurantExists && usedName !== name) {
+          setUsedName(name);
           const restaurantDoc = doc(db, "restaurants", name);
           const restaurantSnapshot = await getDoc(restaurantDoc);
 
@@ -51,7 +54,10 @@ const useFetchRestaurantByName = (name: string | string[] | undefined) => {
 
             // Add your logic to manipulate the single restaurant object here
             const menus = restaurant.hours[tempDay]?.menus;
-            let data: Partial<Restaurant> = { ...restaurant, menuStatus: false };
+            let data: Partial<Restaurant> = {
+              ...restaurant,
+              menuStatus: false,
+            };
 
             if (menus) {
               const menuEntries = Object.entries(menus);
@@ -60,8 +66,10 @@ const useFetchRestaurantByName = (name: string | string[] | undefined) => {
               menuEntries.forEach(([key, value], i) => {
                 if (
                   value === "All Day" ||
-                  (parseFloat(tempTime) > parseFloat((value as string).substring(0, 4)) &&
-                    parseFloat(tempTime) < parseFloat((value as string).substring(5, 9)))
+                  (parseFloat(tempTime) >
+                    parseFloat((value as string).substring(0, 4)) &&
+                    parseFloat(tempTime) <
+                      parseFloat((value as string).substring(5, 9)))
                 ) {
                   data = {
                     ...data,
@@ -90,10 +98,17 @@ const useFetchRestaurantByName = (name: string | string[] | undefined) => {
 
             dispatch(addRestaurant(data as Restaurant));
           }
-        };
-
-        fetchRestaurant();
-      }
+        } else {
+          if (usedName === name) {
+            return;
+          } else {
+            setUsedName(name);
+            let updatedRest = await UseUpdateRestaurantByName(name);
+            dispatch(addOrReplaceRestaurant(updatedRest as Restaurant));
+          }
+        }
+      };
+      fetchRestaurant();
     }
   }, [name, dispatch, restaurants]);
 
