@@ -32,6 +32,7 @@ import { UseUpdateRestaurantByName } from "redux/useUpdateRestaurantByName";
 import { getOrderNumber } from "services/ordernumber";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/pages/_app";
+import useGoogleMaps from "./useGoogleMaps";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -68,18 +69,18 @@ const CartPageComponent = () => {
 
   // doc changes to
 
-  useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      typeof window?.google !== "undefined"
-    ) {
-      const autocomplete =
-        window?.google?.maps?.places?.Autocomplete &&
-        new window.google.maps.places.Autocomplete(deliveryAddressRef.current);
+  const initAutocomplete = () => {
+    if (window.google) {
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        deliveryAddressRef.current
+      );
 
+      // Add a listener for the "place_changed" event on the autocomplete object
       if (autocomplete) {
         autocomplete.addListener("place_changed", () => {
           const place = autocomplete.getPlace();
+          // Your existing logic for handling place changes can go here
+          // For example, extracting zip, state, etc., and setting them in your component's state
           //change miles to be distance from place object by miles like 1 or 2.4. use the calculateDistance function to find distance between returned lat and lng and restaurant alt and lng
 
           const zip = place.address_components.find((ac: any) =>
@@ -185,6 +186,123 @@ const CartPageComponent = () => {
         });
       }
     }
+  };
+
+  // Use the hook to ensure Google Maps API is loaded
+  useGoogleMaps(initAutocomplete);
+
+  useEffect(() => {
+    // if (
+    //   typeof window !== "undefined" &&
+    //   typeof window?.google !== "undefined"
+    // ) {
+    //   const autocomplete =
+    //     window?.google?.maps?.places?.Autocomplete &&
+    //     new window.google.maps.places.Autocomplete(deliveryAddressRef.current);
+    //   if (autocomplete) {
+    //     autocomplete.addListener("place_changed", () => {
+    //       const place = autocomplete.getPlace();
+    //       //change miles to be distance from place object by miles like 1 or 2.4. use the calculateDistance function to find distance between returned lat and lng and restaurant alt and lng
+    //       const zip = place.address_components.find((ac: any) =>
+    //         ac.types.includes("postal_code")
+    //       )?.short_name;
+    //       const state = place.address_components.find((ac: any) =>
+    //         ac.types.includes("administrative_area_level_1")
+    //       )?.short_name;
+    //       if (
+    //         !zip ||
+    //         !state ||
+    //         !place.address_components[0]?.long_name ||
+    //         !place.address_components[1]?.short_name ||
+    //         !place.address_components[2]?.short_name
+    //       ) {
+    //         setDeliveryQuote(0);
+    //         setIsLoading(false);
+    //         setDeliveryAccepted(false);
+    //         alert("Address not accepted!");
+    //         return;
+    //       } else {
+    //         let tempAddress = `${place.address_components[0].long_name} ${place.address_components[1].short_name} ${place.address_components[2].short_name}, ${state} ${zip}`;
+    //         setDeliveryAddress(tempAddress);
+    //         setIsLoading(true);
+    //         let randID = `testID: ${Math.random() * 10000}`;
+    //         let restAddress = `${rest.address} ${rest.city}, ${rest.state} ${rest.zip}`;
+    //         if (rest.deliveryType.type === "DoorDash") {
+    //           try {
+    //             getDeliveryQuote(randID, tempAddress, restAddress).then(
+    //               (result: any) => {
+    //                 if (result.hasOwnProperty("data")) {
+    //                   setDeliveryQuote(result.data.data.fee);
+    //                   setDeliveryAccepted(true);
+    //                   setIsLoading(false);
+    //                 } else {
+    //                   setDeliveryQuote(0);
+    //                   setIsLoading(false);
+    //                   setDeliveryAccepted(false);
+    //                   if (result !== null) {
+    //                     if (
+    //                       result?.message ===
+    //                       "Allowed distance between addresses exceeded"
+    //                     ) {
+    //                       alert("Address is outside delivery range!");
+    //                       setDeliveryQuote(0);
+    //                       setDeliveryAccepted(false);
+    //                       setIsLoading(false);
+    //                     } else {
+    //                       alert("Invalid delivery address!");
+    //                       setDeliveryQuote(0);
+    //                       setDeliveryAccepted(false);
+    //                       setIsLoading(false);
+    //                     }
+    //                   } else {
+    //                     alert("Invalid delivery address!");
+    //                     setDeliveryQuote(0);
+    //                     setDeliveryAccepted(false);
+    //                     setIsLoading(false);
+    //                   }
+    //                 }
+    //               }
+    //             );
+    //           } catch (error) {
+    //             setDeliveryQuote(0);
+    //             setDeliveryAccepted(false);
+    //             setIsLoading(false);
+    //             alert(
+    //               "Issue getting delivery quote. Please try again or try new address."
+    //             );
+    //           }
+    //         } else {
+    //           calculateDistance({
+    //             lat: place.geometry.location.lat(),
+    //             lng: place.geometry.location.lng(),
+    //           }).then((miles: number) => {
+    //             if (miles <= 5) {
+    //               setDeliveryQuote(
+    //                 parseFloat((rest.deliveryType.near.price * 100).toFixed(2))
+    //               );
+    //               setDeliveryAccepted(true);
+    //               setIsLoading(false);
+    //             } else if (
+    //               miles <= 10 &&
+    //               rest.deliveryType.far.enable === true
+    //             ) {
+    //               setDeliveryQuote(
+    //                 parseFloat((rest.deliveryType.far.price * 100).toFixed(2))
+    //               );
+    //               setDeliveryAccepted(true);
+    //               setIsLoading(false);
+    //             } else {
+    //               alert("Address is outside delivery range!");
+    //               setDeliveryQuote(0);
+    //               setDeliveryAccepted(false);
+    //               setIsLoading(false);
+    //             }
+    //           });
+    //         }
+    //       }
+    //     });
+    //   }
+    // }
   }, [isPickup, rest]);
 
   const calculateDistance = (cord1: { lat: number; lng: number }) => {
