@@ -59,7 +59,7 @@ const CartPageComponent = () => {
   const deliveryAddressRef = useRef(null);
 
   const initAutocomplete = () => {
-    if (window.google) {
+    if (window.google && deliveryAddressRef) {
       const autocomplete = new window.google.maps.places.Autocomplete(
         deliveryAddressRef.current
       );
