@@ -40,6 +40,8 @@ spec:
                 secretKeyRef:
                   name: google-client-id
                   key: GOOGLECLIENTID
+            - name: NEXT_PUBLIC_GOOGLE_MAPS_KEY
+              value: AIzaSyBqqmJKGTYGv6s4kb3fu5tmP6J4j_hASGw
             - name: GOOGLE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

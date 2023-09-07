@@ -1,17 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  ship1Img,
-  ship2Img,
-  ship3Img,
-  emptyCart,
-  phoneImg,
-  warningImg,
-  download,
-} from "../public/assets/images";
-import { TbReload } from "react-icons/tb";
+import { download } from "../public/assets/images";
 import { HiMinusSmall } from "react-icons/hi2";
-import { MdClose, MdOutlineAdd } from "react-icons/md";
+import { MdOutlineAdd } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import { StoreProduct } from "../type";
@@ -66,8 +57,6 @@ const CartPageComponent = () => {
   const [isAlertVisible, setAlertVisible] = useState(false);
 
   const deliveryAddressRef = useRef(null);
-
-  // doc changes to
 
   const initAutocomplete = () => {
     if (window.google) {
