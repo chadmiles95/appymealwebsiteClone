@@ -58,8 +58,6 @@ const CartPageComponent = () => {
 
   const deliveryAddressRef = useRef(null);
 
-  // doc changes to
-
   const initAutocomplete = () => {
     if (window.google) {
       const autocomplete = new window.google.maps.places.Autocomplete(
