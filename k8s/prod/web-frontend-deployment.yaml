@@ -92,8 +92,6 @@ spec:
               value: "582485062757"
             - name: NEXTAUTH_URL
               value: "https://appymeal.com"
-            - name: NEXT_PUBLIC_GOOGLE_MAPS_KEY
-              value: "your-public-google-maps-key"
             - name: LOG_LEVEL
               value: "info"
             - name: LOGGING_DATASET
