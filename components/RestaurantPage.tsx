@@ -47,6 +47,10 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
   const militaryTime = useSelector((state: any) => state.shopper.militaryTime);
   const updateTime = useUpdateTime();
 
+  useEffect(() => {
+    updateTime();
+  }, []);
+
   //   SET RESTAURNAT OPEN/CLOSED DEPENDING ON TIME, MENU & MASTER TOGGLE
   useEffect(() => {
     if (
@@ -128,8 +132,6 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
     return formattedStartTime + " - " + formattedEndTime;
   };
 
-  //   console.log(restaurant.menus.burgers[0]);
-
   return (
     <div className="w-full h-full flex-1">
       <div className="w-full h-12 lg:h-14 bg-white justify-center items-center flex flex-row flex-nowrap lg:sticky top-20 z-5">
@@ -205,6 +207,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
           </p>
           <HourDisplay hours={restaurant.hours} />
           <OpenStatus restaurant={restaurant} militaryTime={militaryTime} />
+
           <div className="md:hidden text-sm text-dark">
             <p>{restaurant.name}</p>
           </div>
