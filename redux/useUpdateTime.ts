@@ -8,6 +8,7 @@ const useUpdateTime = () => {
     const currentTime = new Date();
 
     // Convert the current time to Eastern Standard Time
+
     const easternTime = new Date(
       currentTime.toLocaleString("en-US", { timeZone: "America/New_York" })
     );
@@ -15,7 +16,10 @@ const useUpdateTime = () => {
     const militaryTime =
       easternTime.getHours().toString().padStart(2, "0") +
       easternTime.getMinutes().toString().padStart(2, "0");
-    dispatch(updateCurrentTime({ currentTime: easternTime.toString(), militaryTime }));
+
+    dispatch(
+      updateCurrentTime({ currentTime: easternTime.toString(), militaryTime })
+    );
   };
 
   return updateTime;
