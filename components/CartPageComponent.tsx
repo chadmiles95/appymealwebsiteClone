@@ -465,10 +465,24 @@ const CartPageComponent = () => {
         updatedRest?.expectedWaitTime
       );
 
+      //fix cart here:
+
+      const expandedCart = cart
+        .map((item) => {
+          return Array(item?.quantity)
+            .fill(undefined)
+            .map(() => ({
+              ...item,
+              quantity: 1,
+              modifiers: [...item?.modifiers], // This ensures a shallow copy of the modifiers array
+            }));
+        })
+        .flat();
+
       //full order data
 
       let order = {
-        cart: cart,
+        cart: expandedCart,
         customer: name,
         stripeTotal: totalAmt,
         total: totalAmt,
