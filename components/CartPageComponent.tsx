@@ -438,7 +438,7 @@ const CartPageComponent = () => {
         dropoff_phone_number: phoneNumber,
         locale: "en-US",
         dropoff_contact_given_name: name,
-        order_value: stipreAmt,
+        order_value: totalAmt,
         currency: "USD",
         order_contains: {
           alcohol: false,
