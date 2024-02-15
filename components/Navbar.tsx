@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { CircleLogo } from "../public/assets/images/index";
 import { IoSearchOutline } from "react-icons/io5";
@@ -12,12 +12,80 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { addUser, removeUser } from "../redux/shoppersSlice";
 import { colors } from "../infastructure/theme/colors";
 
+const useCurrentDevicePermissions = (permissionName: PermissionName) => {
+  const [permission, setPermission] = useState(null as any);
+  
+  useEffect(() => {
+    let ignore = false;
+    navigator.permissions.query({ name: permissionName }).then((perm) => {
+      if (!ignore) {
+        setPermission(perm);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    }
+  }, [permissionName]);
+
+  useEffect(() => {
+    if(!permission) return;
+    
+    const changeHandler = (e: any) => setPermission(e.target);
+    
+    permission.addEventListener('change', changeHandler);
+  
+    return () => {
+      permission.removeEventListener('change', changeHandler);
+    };
+  }, [permission]);
+    
+  return permission;
+};
+
+
 const Navbar = () => {
   const { data: session } = useSession();
   const dispatch = useDispatch();
   const productData = useSelector((state: any) => state.shopper.productData);
   const userInfo = useSelector((state: any) => state.shopper.userInfo);
   const [totalAmt, setTotalAmt] = useState(0);
+  const [userLocation, setUserLocation] = useState({ longitude: null, latitude: null })
+
+  const permission = useCurrentDevicePermissions('geolocation');
+
+  const handleLocation = ({
+    coords: {
+        latitude,
+        longitude,
+    },
+  }: any) => {
+    setUserLocation({
+      latitude,
+      longitude,
+    });
+  };
+  
+  const handleLocationError = (err: any) => {
+    console.log(err);
+  };
+
+  useEffect(() => {
+    console.log(`geolocation permission status: ${permission?.state}`)
+    if (permission?.state === 'granted' || permission?.state === 'prompt') {
+      navigator.geolocation.getCurrentPosition(handleLocation, handleLocationError, {
+        timeout: 30 * 1000,
+      });
+    }
+  }, [permission?.state])
+
+  useEffect(() => {
+    if (userLocation?.latitude && userLocation?.longitude) {
+      console.log('User Location:', userLocation);
+      // TODO: Fetch nearest restaurants and update Redux state
+      // ie. api.appymeal.com/v1/restaurants/search-by-location
+    }
+  }, [userLocation]);
 
   useEffect(() => {
     if (session) {
