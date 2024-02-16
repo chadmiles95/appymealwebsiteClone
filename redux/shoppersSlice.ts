@@ -4,6 +4,9 @@ import { StoreProduct, UserInfo, Restaurants } from "../type";
 interface ShopperState {
   productData: StoreProduct[];
   restaurants: (typeof Restaurants)[];
+  restaurantsFiltered: {
+    id: string;
+  }[];
   userInfo: null | UserInfo;
   currentTime: string;
   currentRestaurant: any;
@@ -16,6 +19,7 @@ interface ShopperState {
 const initialState: ShopperState = {
   productData: [],
   restaurants: [],
+  restaurantsFiltered: [],
   userInfo: null,
   currentTime: new Date().toString(),
   currentRestaurant: {},
@@ -89,6 +93,9 @@ export const shopperslice = createSlice({
     setRestaurants: (state, action) => {
       state.restaurants = action.payload;
     },
+    setRestaurantsFiltered: (state, action) => {
+      state.restaurantsFiltered = action.payload;
+    },
     addRestaurant: (state, action) => {
       state.restaurants.push(action.payload);
     },
@@ -145,6 +152,7 @@ export const {
   removeUser,
   updateCurrentTime,
   setRestaurants,
+  setRestaurantsFiltered,
   addRestaurant,
   setLastVisitedPage,
   checkCurrentRestaurant,
