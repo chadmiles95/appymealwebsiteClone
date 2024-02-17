@@ -13,6 +13,7 @@ const nextConfig = {
   env: {
     stripe_public_key: process.env.STRIPE_PUBLIC_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    NEXT_PUBLIC_API_HOST: process.env.API_HOST,
     NEXT_PUBLIC_GOOGLE_MAPS_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     FIREBASE_API_KEY: process.env.FRBSE_API_KEY,

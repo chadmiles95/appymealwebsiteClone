@@ -67,11 +67,11 @@ const RestaurantCard = ({ restaurant, updateTime }: any) => {
       {/* Description */}
       <div className="px-2 py-0 flex flex-col justify-between">
         <div className="flex justify-between pt-3 pb-2">
-          <div>
-            <p className="text-lg font-semibold">
-              {restaurant.name.substring(0, 25)}
+          <div className="max-w-[235px]">
+            <p className="text-lg font-semibold text-ellipsis">
+              {restaurant.name}
             </p>
-            <p className="pt-0 mt-0">{restaurant.address.substring(0, 30)}</p>
+            <p className="pt-0 mt-0 text-ellipsis">{restaurant.address}</p>
             <p className="pt-0 mt-0">
               {restaurant.city}, {restaurant.state}
             </p>
