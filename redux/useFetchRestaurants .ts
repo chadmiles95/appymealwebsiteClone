@@ -1,12 +1,15 @@
 // useFetchRestaurants.ts
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setRestaurants } from "./shoppersSlice";
-import { onSnapshot, collection } from "firebase/firestore";
+import { onSnapshot, collection, where, query, limit } from "firebase/firestore";
 import { db } from "../pages/_app";
 import { Restaurant } from "../type";
 
+const MAX_RESTAURANTS_PER_PAGE = 50;
+
 const useFetchRestaurants = () => {
+  const restaurantsFiltered = useSelector((state: any) => state.shopper.restaurantsFiltered);
   const dispatch = useDispatch();
 
   const setTimeForUse = () => {
@@ -36,8 +39,12 @@ const useFetchRestaurants = () => {
       try {
         const { tempDay, tempTime }: any = await setTimeForUse();
 
+        const restaurantsQuery = restaurantsFiltered?.length
+          ? query(collection(db, "restaurants"), where('id', 'in', restaurantsFiltered.filter((r: any) => r.id).map((r: any) => r.id)))
+          : query(collection(db, "restaurants"), limit(MAX_RESTAURANTS_PER_PAGE + 1));
+
         const unsubscribe = onSnapshot(
-          collection(db, "restaurants"),
+          restaurantsQuery,
           (snapshot) => {
             const tempRestaurants: Restaurant[] = [];
 
@@ -136,7 +143,7 @@ const useFetchRestaurants = () => {
     };
 
     retrieveRestaurants();
-  }, [dispatch]);
+  }, [dispatch, restaurantsFiltered]);
 
   return {};
 };

@@ -80,6 +80,8 @@ spec:
                 secretKeyRef:
                   name: next-auth-secret
                   key: NEXTAUTHSECRET
+            - name: API_HOST
+              value: "https://api.appymeal.com/"
             - name: HOST
               value: "https://appymeal.com/"
             - name: FRBSE_AUTH_DOMAIN

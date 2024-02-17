@@ -28,3 +28,9 @@
     background: #555;
   }
 }
+
+.text-ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
