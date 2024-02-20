@@ -1,0 +1,18 @@
+.search-results {
+  position: absolute;
+  z-index: 100;
+  width: calc(100% - 48px);
+  display: flex;
+  flex-direction: column;
+  top: 52px;
+  left: 24px;
+  background: #fff;
+  
+  .search-result-item {
+      padding: .25rem .5rem;
+      border-bottom: 1px solid lightgray;  
+      &:last-child {
+          border-bottom: none;
+      }
+  }
+}

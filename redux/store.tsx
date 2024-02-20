@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
 // eslint-disable-next-line import/extensions, import/no-unresolved
 import { CurriedGetDefaultMiddleware } from '@reduxjs/toolkit/dist/getDefaultMiddleware';
@@ -21,7 +21,12 @@ const persistConfig = {
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, shopperReducer);
+const rootReducer = combineReducers({
+  shopper: shopperReducer,
+  // TODO: We can add more reducers here do better organize sub-categories
+  // Typically I see keys like restaurants, user, cart, etc.
+})
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const getMiddleware = (getDefaultMiddleware: CurriedGetDefaultMiddleware<any>) => {
   if (process.env.NODE_ENV === 'development') {
@@ -41,7 +46,7 @@ const getMiddleware = (getDefaultMiddleware: CurriedGetDefaultMiddleware<any>) =
 };
 
 export const store = configureStore({
-  reducer: { shopper: persistedReducer },
+  reducer: persistedReducer,
   middleware: getMiddleware,
   devTools: process.env.NODE_ENV === 'development',
 });

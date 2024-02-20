@@ -1,11 +1,5 @@
 import Head from "next/head";
-import Banner from "../components/Banner";
-import Navbar from "../components/Navbar";
 import { Product, Restaurant } from "../type";
-import Products from "../components/Products";
-import Footer from "../components/Footer";
-import TopFooter from "../components/TopFooter";
-import Restaurants from "../components/Restaurants";
 import LandingPage from "../components/LandingPage";
 
 interface Props {
