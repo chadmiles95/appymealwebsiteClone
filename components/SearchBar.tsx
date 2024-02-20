@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsRestaurantsSearchResultsVisible, setRestaurantsSearchResults, setRestaurantsSearchText } from "../redux/shoppersSlice";
-import { getPlacesSearchAutoComplete } from "../services/location";
+import { setIsRestaurantsSearchResultsVisible, setRestaurantsFiltered, setRestaurantsSearchResults, setRestaurantsSearchText } from "../redux/shoppersSlice";
+import { getPlacesSearchAutoComplete, searchRestaurantsByLocation } from "../services/location";
 
 export const searchBarPlaceHolderText = 'Enter a city to search';
 export const RESTAURANT_INPUT_ID = 'restaurant-search-input';
@@ -22,7 +22,6 @@ const SearchBar = () => {
   const isRestaurantsSearchResultsVisible = useSelector((state: any) => state.shopper.isRestaurantsSearchResultsVisible);
 
   const searchLocations = useCallback(debounce((query: string) => {
-    console.log(`TODO: Send location search request with query, ${query}`);
     if (!query?.length) {
       dispatch(setIsRestaurantsSearchResultsVisible(false));
       dispatch(setRestaurantsSearchResults([]));
@@ -34,7 +33,6 @@ const SearchBar = () => {
       latitude: 33.7673401, // TODO: Default to Atlanta or user's location
       longitude: -84.5025305, // TODO: Default to Atlanta or user's location
     }).then((response) => {
-      console.log('Google API location predictions:', response.data);
       dispatch(setIsRestaurantsSearchResultsVisible(true));
       dispatch(setRestaurantsSearchResults(response.data?.predictions || []));
     }).catch((err) => {
@@ -47,6 +45,22 @@ const SearchBar = () => {
     dispatch(setRestaurantsSearchText(value));
     searchLocations(value);
   };
+
+  const onSelectResult = (event: any) => {
+    const result = searchResults?.find((r: any) => r?.place_id === event.currentTarget?.id)
+    if (result) {
+      console.log('TODO: Get place details and search restaurants by geometry (longitude/latitude)', result)
+    }
+    // searchRestaurantsByLocation({
+    //   latitude: userLocation.latitude,
+    //   longitude: userLocation.longitude,
+    // }).then((response) => {
+    //   const nearbyRestaurants = response.data;
+    //   dispatch(setRestaurantsFiltered(nearbyRestaurants))
+    // }).catch((err) => {
+    //   console.log(err);
+    // });
+  }
 
   return (
     <div className="h-12 w-full flex flex-1 relative">
@@ -68,7 +82,7 @@ const SearchBar = () => {
         <ul className="search-results text-dark text-base border-[1px] shadow-md">
           {
             searchResults?.map((prediction: any) => (
-              <li key={prediction.place_id} className="search-result-item">{prediction.description}</li>
+              <li key={prediction.place_id} onClick={onSelectResult} id={prediction.place_id} className="search-result-item">{prediction.description}</li>
             ))
           }
           {

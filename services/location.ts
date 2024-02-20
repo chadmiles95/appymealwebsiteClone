@@ -42,6 +42,27 @@ const getPlacesSearchAutoComplete = ({
   });
 };
 
+interface ISearchRestaurantsByLocation {
+  latitude: number;
+  longitude: number;
+  radius?: number;
+}
+
+const searchRestaurantsByLocation = ({
+  latitude,
+  longitude,
+  radius,
+}: ISearchRestaurantsByLocation) => axios({
+  method: 'post',
+  url: `${process.env.NEXT_PUBLIC_API_HOST}v1/restaurants/search-by-location`,
+  data: {
+    latitude,
+    longitude,
+    radius: radius || 50 * 1000, // 50km (~31 miles)
+  }
+});
+
 export {
     getPlacesSearchAutoComplete,
+    searchRestaurantsByLocation,
 };

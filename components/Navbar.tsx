@@ -1,17 +1,13 @@
 import Image from "next/image";
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-
 import { CircleLogo } from "../public/assets/images/index";
-import { IoSearchOutline } from "react-icons/io5";
 import { AiOutlineHeart, AiOutlineUser } from "react-icons/ai";
 import { BsCart2 } from "react-icons/bs";
-import NavBarBottom from "./NavBarBottom";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { addUser, removeUser, setRestaurantsFiltered } from "../redux/shoppersSlice";
-import { colors } from "../infastructure/theme/colors";
+import { searchRestaurantsByLocation } from "../services/location";
 
 const useCurrentDevicePermissions = (permissionName: PermissionName) => {
   const dispatch = useDispatch();
@@ -84,16 +80,9 @@ const Navbar = () => {
   useEffect(() => {
     if (userLocation?.latitude && userLocation?.longitude) {
       console.log('User Location:', userLocation);
-      // TODO: Fetch nearest restaurants and update Redux state
-      // ie. api.appymeal.com/v1/restaurants/search-by-location
-      axios({
-        method: 'post',
-        url: `${process.env.NEXT_PUBLIC_API_HOST}v1/restaurants/search-by-location`,
-        data: {
-          latitude: userLocation.latitude,
-          longitude: userLocation.longitude,
-          radius: 50 * 1000, // 50km (~31 miles)
-        }
+      searchRestaurantsByLocation({
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
       }).then((response) => {
         const nearbyRestaurants = response.data;
         dispatch(setRestaurantsFiltered(nearbyRestaurants))

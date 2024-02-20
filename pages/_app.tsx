@@ -16,7 +16,7 @@ import {
 } from "firebase/auth";
 import { ThemeProvider } from "../infastructure/ThemeProvider";
 import { theme } from "../infastructure/theme";
-import { MouseEventHandler, useCallback } from "react";
+import { useCallback } from "react";
 import { RESTAURANT_INPUT_ID } from "@/components/SearchBar";
 import { setIsRestaurantsSearchResultsVisible } from "redux/shoppersSlice";
 
@@ -45,8 +45,10 @@ const Main = ({
   pageProps: { session, ...pageProps },
 }: any) => {
   const dispatch = useDispatch();
+  /**
+   * Used to close modals when clicking anywhere else on the webpage
+   */
   const handleClickAway = useCallback((event: any) => {
-    console.log(event.target?.id);
     if (event.target?.id !== RESTAURANT_INPUT_ID) {
       dispatch(setIsRestaurantsSearchResultsVisible(false));
     }
