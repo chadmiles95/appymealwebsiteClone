@@ -21,7 +21,7 @@ const SearchBar = () => {
   const searchResults = useSelector((state: any) => state.shopper.restaurantsSearchResults);
   const isRestaurantsSearchResultsVisible = useSelector((state: any) => state.shopper.isRestaurantsSearchResultsVisible);
 
-  const searchLocations = useCallback(debounce((query: string) => {
+  const getPredictions = (query: string) => {
     if (!query?.length) {
       dispatch(setIsRestaurantsSearchResultsVisible(false));
       dispatch(setRestaurantsSearchResults([]));
@@ -38,7 +38,9 @@ const SearchBar = () => {
     }).catch((err) => {
       console.log('Google API location predictions error:', err);
     })
-  }, 300), [setRestaurantsSearchResults, setIsRestaurantsSearchResultsVisible]);
+  }
+
+  const searchLocations = useCallback(debounce(getPredictions, 300), [setRestaurantsSearchResults, setIsRestaurantsSearchResultsVisible]);
 
   const onSearchChange = (event: any) => {
     const { value } = event.currentTarget;
@@ -46,9 +48,18 @@ const SearchBar = () => {
     searchLocations(value);
   };
 
+  const onClickInput = (event: any) => {
+    const { value } = event.currentTarget;
+    if (value?.length) {
+      dispatch(setRestaurantsSearchText(value));
+      getPredictions(value);
+    }
+  }
+
   const onSelectResult = (event: any) => {
     const result = searchResults?.find((r: any) => r?.place_id === event.currentTarget?.id)
     if (result) {
+      dispatch(setRestaurantsSearchText(result.description));
       console.log('TODO: Get place details and search restaurants by geometry (longitude/latitude)', result)
     }
     // searchRestaurantsByLocation({
@@ -72,6 +83,7 @@ const SearchBar = () => {
         onChange={onSearchChange}
         placeholder={searchBarPlaceHolderText}
         value={restaurantSearchText}
+        onClick={onClickInput}
       />
       <span className="absolute w-12 h-12 rounded-full flex items-center justify-center top-50 right-0 bg-dark text-smoke text-xl">
         <IoSearchOutline />
