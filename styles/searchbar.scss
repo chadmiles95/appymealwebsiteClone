@@ -1,6 +1,6 @@
 .search-results {
   position: absolute;
-  z-index: 100;
+  z-index: 40;
   width: calc(100% - 48px);
   display: flex;
   flex-direction: column;
@@ -9,10 +9,26 @@
   background: #fff;
   
   .search-result-item {
-      padding: .25rem .5rem;
-      border-bottom: 1px solid lightgray;  
+      button {
+        padding: .25rem .5rem;
+        border-bottom: 1px solid lightgray;
+        text-align: left;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background: lightgray;
+      }
+
       &:last-child {
           border-bottom: none;
       }
   }
+}
+
+#restaurant-search-input {
+  padding-right: 3.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

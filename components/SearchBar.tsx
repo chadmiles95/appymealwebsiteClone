@@ -57,6 +57,7 @@ const SearchBar = () => {
   }
 
   const onSelectResult = (event: any) => {
+    event.preventDefault();
     const result = searchResults?.find((r: any) => r?.place_id === event.currentTarget?.id)
     if (result) {
       dispatch(setRestaurantsSearchText(result.description));
@@ -94,7 +95,9 @@ const SearchBar = () => {
         <ul className="search-results text-dark text-base border-[1px] shadow-md">
           {
             searchResults?.map((prediction: any) => (
-              <li key={prediction.place_id} onClick={onSelectResult} id={prediction.place_id} className="search-result-item">{prediction.description}</li>
+              <li key={prediction.place_id} className="search-result-item">
+                <button id={prediction.place_id} className="w-full" onClick={onSelectResult} onSelect={onSelectResult}>{prediction.description}</button>
+              </li>
             ))
           }
           {
