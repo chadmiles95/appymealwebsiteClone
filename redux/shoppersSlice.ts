@@ -7,7 +7,10 @@ interface ShopperState {
   restaurantsFiltered: {
     id: string;
   }[];
-  restaurantsSearchText: string;
+  restaurantsSearch: {
+    input: string;
+    selectedId: string; // place_id
+  };
   restaurantsSearchResults: {
     place_id: string;
     description: string;
@@ -26,7 +29,10 @@ const initialState: ShopperState = {
   productData: [],
   restaurants: [],
   restaurantsFiltered: [],
-  restaurantsSearchText: '',
+  restaurantsSearch: {
+    input: '',
+    selectedId: '',
+  },
   restaurantsSearchResults: [],
   isRestaurantsSearchResultsVisible: false,
   userInfo: null,
@@ -105,8 +111,11 @@ export const shopperslice = createSlice({
     setRestaurantsFiltered: (state, action) => {
       state.restaurantsFiltered = action.payload;
     },
-    setRestaurantsSearchText: (state, action) => {
-      state.restaurantsSearchText = action.payload;
+    setRestaurantsSearch: (state, action) => {
+      state.restaurantsSearch = {
+        ...state.restaurantsSearch,
+        ...action.payload,
+      };
     },
     setRestaurantsSearchResults: (state, action) => {
       state.restaurantsSearchResults = action.payload;
@@ -171,7 +180,7 @@ export const {
   updateCurrentTime,
   setRestaurants,
   setRestaurantsFiltered,
-  setRestaurantsSearchText,
+  setRestaurantsSearch,
   setRestaurantsSearchResults,
   setIsRestaurantsSearchResultsVisible,
   addRestaurant,

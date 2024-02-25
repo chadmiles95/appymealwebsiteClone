@@ -29,21 +29,27 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className=" bg-smoke flex flex-col flex-1 justify-center items-center">
+    <div className=" bg-smoke flex flex-col flex-1 justify-start items-center">
       <div className="justify-center items-center w-3/4 md:w-1/3 mt-8">
         <SearchBar />
       </div>
-      <div className="py-6 px-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2 items-start justify-items-center">
-        {restaurantData.map((restaurant: Restaurant) => {
-          return (
-            <RestaurantCard
-              key={restaurant.name}
-              restaurant={restaurant}
-              updateTime={updateTime}
-            />
-          );
-        })}
-      </div>
+      {
+        restaurantData?.length < 1 ?
+        <div className="py-6 px-0 gap-4 mt-2 items-center justify-items-center">
+          No restaurants found. Try searching a different location.
+        </div> :
+        <div className="py-6 px-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2 items-center justify-items-center">
+          {restaurantData.map((restaurant: Restaurant) => {
+            return (
+              <RestaurantCard
+                key={restaurant.name}
+                restaurant={restaurant}
+                updateTime={updateTime}
+              />
+            );
+          })}
+        </div>
+      }
       <Toaster
         reverseOrder={false}
         position="top-center"

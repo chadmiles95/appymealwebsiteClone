@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsRestaurantsSearchResultsVisible, setRestaurantsFiltered, setRestaurantsSearchResults, setRestaurantsSearchText } from "../redux/shoppersSlice";
-import { getPlacesSearchAutoComplete, searchRestaurantsByLocation } from "../services/location";
+import { setIsRestaurantsSearchResultsVisible, setRestaurantsFiltered, setRestaurantsSearch, setRestaurantsSearchResults } from "../redux/shoppersSlice";
+import { getPlaceDetails, getPlacesSearchAutoComplete, searchRestaurantsByLocation } from "../services/location";
 
 export const searchBarPlaceHolderText = 'Enter a city to search';
 export const RESTAURANT_INPUT_ID = 'restaurant-search-input';
@@ -17,7 +17,7 @@ const debounce = (func: Function, timeout = 300) => {
 
 const SearchBar = () => {
   const dispatch = useDispatch();
-  const restaurantSearchText = useSelector((state: any) => state.shopper.restaurantsSearchText);
+  const restaurantSearch = useSelector((state: any) => state.shopper.restaurantsSearch);
   const searchResults = useSelector((state: any) => state.shopper.restaurantsSearchResults);
   const isRestaurantsSearchResultsVisible = useSelector((state: any) => state.shopper.isRestaurantsSearchResultsVisible);
 
@@ -40,18 +40,28 @@ const SearchBar = () => {
     })
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const searchLocations = useCallback(debounce(getPredictions, 300), [setRestaurantsSearchResults, setIsRestaurantsSearchResultsVisible]);
 
   const onSearchChange = (event: any) => {
     const { value } = event.currentTarget;
-    dispatch(setRestaurantsSearchText(value));
+    const search: any = {
+      input: value,
+    };
+    if (!value) {
+      search.selectedId = ''; // clears the input to reset result set
+    }
+    dispatch(setRestaurantsSearch(search));
     searchLocations(value);
+    dispatch(setRestaurantsFiltered([]))
   };
 
   const onClickInput = (event: any) => {
     const { value } = event.currentTarget;
     if (value?.length) {
-      dispatch(setRestaurantsSearchText(value));
+      dispatch(setRestaurantsSearch({
+        input: value,
+      }));
       getPredictions(value);
     }
   }
@@ -60,18 +70,30 @@ const SearchBar = () => {
     event.preventDefault();
     const result = searchResults?.find((r: any) => r?.place_id === event.currentTarget?.id)
     if (result) {
-      dispatch(setRestaurantsSearchText(result.description));
-      console.log('TODO: Get place details and search restaurants by geometry (longitude/latitude)', result)
+      dispatch(setRestaurantsSearch({
+        input: result.description,
+        selectedId: result.place_id,
+      }));
+
+      getPlaceDetails({
+        placeId: result.place_id,
+      }).then((placeResponse) => {
+        const {
+          lat,
+          lng,
+        } = placeResponse?.data?.result?.geometry?.location;
+
+        return searchRestaurantsByLocation({
+          latitude: lat,
+          longitude: lng,
+        }).then((response) => {
+          const nearbyRestaurants = response.data;
+          dispatch(setRestaurantsFiltered(nearbyRestaurants))
+        })
+      }).catch((err) => {
+        console.log(err);
+      });
     }
-    // searchRestaurantsByLocation({
-    //   latitude: userLocation.latitude,
-    //   longitude: userLocation.longitude,
-    // }).then((response) => {
-    //   const nearbyRestaurants = response.data;
-    //   dispatch(setRestaurantsFiltered(nearbyRestaurants))
-    // }).catch((err) => {
-    //   console.log(err);
-    // });
   }
 
   return (
@@ -83,7 +105,7 @@ const SearchBar = () => {
         type="text"
         onChange={onSearchChange}
         placeholder={searchBarPlaceHolderText}
-        value={restaurantSearchText}
+        value={restaurantSearch?.input || ''}
         onClick={onClickInput}
       />
       <span className="absolute w-12 h-12 rounded-full flex items-center justify-center top-50 right-0 bg-dark text-smoke text-xl">
@@ -102,7 +124,7 @@ const SearchBar = () => {
           }
           {
             searchResults?.length < 1 &&
-            <li className="search-result-item">No results found...</li>
+            <li className="search-result-item no-results">No results found...</li>
           }
         </ul>
       }

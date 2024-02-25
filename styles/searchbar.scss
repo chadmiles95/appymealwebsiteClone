@@ -9,13 +9,14 @@
   background: #fff;
   
   .search-result-item {
-      button {
+      button,
+      &.no-results {
         padding: .25rem .5rem;
         border-bottom: 1px solid lightgray;
         text-align: left;
       }
 
-      &:hover {
+      button:hover {
         cursor: pointer;
         background: lightgray;
       }
