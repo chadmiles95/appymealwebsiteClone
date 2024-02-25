@@ -24,8 +24,8 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
   useFetchRestaurants();
 
   const restaurantData = useSelector((state: any) => state.shopper.restaurants);
+  const restaurantSearch = useSelector((state: any) => state.shopper.restaurantsSearch);
   const updateTime = useUpdateTime();
-
   const dispatch = useDispatch();
 
   return (
@@ -34,10 +34,18 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
         <SearchBar />
       </div>
       {
-        restaurantData?.length < 1 ?
+        restaurantSearch?.isLoading &&
+        <div className="py-6 px-0 gap-4 mt-2 items-center justify-items-center">
+          Loading search results...
+        </div>
+      }
+      {
+        !restaurantSearch?.isLoading && restaurantData?.length < 1 &&
         <div className="py-6 px-0 gap-4 mt-2 items-center justify-items-center">
           No restaurants found. Try searching a different location.
-        </div> :
+        </div>
+      }
+      { !restaurantSearch?.isLoading && restaurantData?.length > 0 &&
         <div className="py-6 px-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2 items-center justify-items-center">
           {restaurantData.map((restaurant: Restaurant) => {
             return (

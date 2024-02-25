@@ -10,6 +10,7 @@ interface ShopperState {
   restaurantsSearch: {
     input: string;
     selectedId: string; // place_id
+    isLoading?: boolean;
   };
   restaurantsSearchResults: {
     place_id: string;
@@ -32,6 +33,7 @@ const initialState: ShopperState = {
   restaurantsSearch: {
     input: '',
     selectedId: '',
+    isLoading: false,
   },
   restaurantsSearchResults: [],
   isRestaurantsSearchResultsVisible: false,

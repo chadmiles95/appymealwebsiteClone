@@ -22,6 +22,8 @@ const SearchBar = () => {
   const isRestaurantsSearchResultsVisible = useSelector((state: any) => state.shopper.isRestaurantsSearchResultsVisible);
 
   const getPredictions = (query: string) => {
+    dispatch(setRestaurantsFiltered([]));
+
     if (!query?.length) {
       dispatch(setIsRestaurantsSearchResultsVisible(false));
       dispatch(setRestaurantsSearchResults([]));
@@ -53,7 +55,6 @@ const SearchBar = () => {
     }
     dispatch(setRestaurantsSearch(search));
     searchLocations(value);
-    dispatch(setRestaurantsFiltered([]))
   };
 
   const onClickInput = (event: any) => {
@@ -73,6 +74,7 @@ const SearchBar = () => {
       dispatch(setRestaurantsSearch({
         input: result.description,
         selectedId: result.place_id,
+        isLoading: true,
       }));
 
       getPlaceDetails({
@@ -92,6 +94,10 @@ const SearchBar = () => {
         })
       }).catch((err) => {
         console.log(err);
+      }).finally(() => {
+        dispatch(setRestaurantsSearch({
+          isLoading: false,
+        }));
       });
     }
   }
