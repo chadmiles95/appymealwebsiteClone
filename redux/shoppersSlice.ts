@@ -7,6 +7,16 @@ interface ShopperState {
   restaurantsFiltered: {
     id: string;
   }[];
+  restaurantsSearch: {
+    input: string;
+    selectedId: string; // place_id
+    isLoading?: boolean;
+  };
+  restaurantsSearchResults: {
+    place_id: string;
+    description: string;
+  }[];
+  isRestaurantsSearchResultsVisible: boolean;
   userInfo: null | UserInfo;
   currentTime: string;
   currentRestaurant: any;
@@ -20,6 +30,13 @@ const initialState: ShopperState = {
   productData: [],
   restaurants: [],
   restaurantsFiltered: [],
+  restaurantsSearch: {
+    input: '',
+    selectedId: '',
+    isLoading: false,
+  },
+  restaurantsSearchResults: [],
+  isRestaurantsSearchResultsVisible: false,
   userInfo: null,
   currentTime: new Date().toString(),
   currentRestaurant: {},
@@ -96,6 +113,18 @@ export const shopperslice = createSlice({
     setRestaurantsFiltered: (state, action) => {
       state.restaurantsFiltered = action.payload;
     },
+    setRestaurantsSearch: (state, action) => {
+      state.restaurantsSearch = {
+        ...state.restaurantsSearch,
+        ...action.payload,
+      };
+    },
+    setRestaurantsSearchResults: (state, action) => {
+      state.restaurantsSearchResults = action.payload;
+    },
+    setIsRestaurantsSearchResultsVisible: (state, action) => {
+      state.isRestaurantsSearchResultsVisible = action.payload;
+    },
     addRestaurant: (state, action) => {
       state.restaurants.push(action.payload);
     },
@@ -153,6 +182,9 @@ export const {
   updateCurrentTime,
   setRestaurants,
   setRestaurantsFiltered,
+  setRestaurantsSearch,
+  setRestaurantsSearchResults,
+  setIsRestaurantsSearchResultsVisible,
   addRestaurant,
   setLastVisitedPage,
   checkCurrentRestaurant,

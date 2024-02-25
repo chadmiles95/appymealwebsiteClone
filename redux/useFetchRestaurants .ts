@@ -10,6 +10,7 @@ const MAX_RESTAURANTS_PER_PAGE = 50;
 
 const useFetchRestaurants = () => {
   const restaurantsFiltered = useSelector((state: any) => state.shopper.restaurantsFiltered);
+  const restaurantSearch = useSelector((state: any) => state.shopper.restaurantsSearch);
   const dispatch = useDispatch();
 
   const setTimeForUse = () => {
@@ -38,8 +39,13 @@ const useFetchRestaurants = () => {
     const retrieveRestaurants = async () => {
       try {
         const { tempDay, tempTime }: any = await setTimeForUse();
+        const shouldUseFilteredList = restaurantSearch?.selectedId || restaurantsFiltered?.length;
 
-        const restaurantsQuery = restaurantsFiltered?.length
+        if (shouldUseFilteredList && !restaurantsFiltered?.length) {
+          return dispatch(setRestaurants([]));;
+        }
+
+        let restaurantsQuery = shouldUseFilteredList
           ? query(collection(db, "restaurants"), where('id', 'in', restaurantsFiltered.filter((r: any) => r.id).map((r: any) => r.id)))
           : query(collection(db, "restaurants"), limit(MAX_RESTAURANTS_PER_PAGE + 1));
 
@@ -135,7 +141,9 @@ const useFetchRestaurants = () => {
         );
 
         return () => {
-          unsubscribe();
+          if (unsubscribe) {
+            unsubscribe();
+          }
         };
       } catch (error) {
         console.error("Error fetching restaurants:", error);
