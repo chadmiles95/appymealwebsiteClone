@@ -24,26 +24,40 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
   useFetchRestaurants();
 
   const restaurantData = useSelector((state: any) => state.shopper.restaurants);
+  const restaurantSearch = useSelector((state: any) => state.shopper.restaurantsSearch);
   const updateTime = useUpdateTime();
-
   const dispatch = useDispatch();
 
   return (
-    <div className=" bg-smoke flex flex-col flex-1 justify-center items-center">
+    <div className=" bg-smoke flex flex-col flex-1 justify-start items-center">
       <div className="justify-center items-center w-3/4 md:w-1/3 mt-8">
         <SearchBar />
       </div>
-      <div className="py-6 px-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2 items-start justify-items-center">
-        {restaurantData.map((restaurant: Restaurant) => {
-          return (
-            <RestaurantCard
-              key={restaurant.name}
-              restaurant={restaurant}
-              updateTime={updateTime}
-            />
-          );
-        })}
-      </div>
+      {
+        restaurantSearch?.isLoading &&
+        <div className="py-6 px-0 gap-4 mt-2 items-center justify-items-center">
+          Loading search results...
+        </div>
+      }
+      {
+        !restaurantSearch?.isLoading && restaurantData?.length < 1 &&
+        <div className="py-6 px-0 gap-4 mt-2 items-center justify-items-center">
+          No restaurants found. Try searching a different location.
+        </div>
+      }
+      { !restaurantSearch?.isLoading && restaurantData?.length > 0 &&
+        <div className="py-6 px-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2 items-center justify-items-center">
+          {restaurantData.map((restaurant: Restaurant) => {
+            return (
+              <RestaurantCard
+                key={restaurant.name}
+                restaurant={restaurant}
+                updateTime={updateTime}
+              />
+            );
+          })}
+        </div>
+      }
       <Toaster
         reverseOrder={false}
         position="top-center"
