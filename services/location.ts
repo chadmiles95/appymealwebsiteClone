@@ -114,15 +114,18 @@ const searchRestaurantsByLocation = ({
   latitude,
   longitude,
   radius,
-}: ISearchRestaurantsByLocation) => axios({
-  method: 'post',
-  url: `${process.env.NEXT_PUBLIC_API_HOST}v1/restaurants/search-by-location`,
-  data: {
+}: ISearchRestaurantsByLocation) => {
+  const params: any = {
     latitude,
     longitude,
-    radius: radius || 50 * 1000, // 50km (~31 miles)
-  }
-});
+    radius: radius || 50 * 1000,
+  };
+  const query = new URLSearchParams(params);
+  return axios({
+    method: 'get',
+    url: `${process.env.NEXT_PUBLIC_API_HOST}v1/restaurants/search-by-location?${query.toString()}`,
+  });
+};
 
 export {
     getPlacesSearchAutoComplete,
