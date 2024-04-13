@@ -1,4 +1,4 @@
-ARG NODE_VERSION=20.3.0
+ARG NODE_VERSION=20.11.0
 FROM node:${NODE_VERSION}-alpine as base
 
 # (For Sharp image optimization) Libvips Compile with libimagequant and giflib
