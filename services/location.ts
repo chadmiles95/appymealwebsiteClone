@@ -118,7 +118,8 @@ const searchRestaurantsByLocation = ({
   const params: any = {
     latitude,
     longitude,
-    radius: radius || 50 * 1000,
+    filterBy: 'delivery-range',
+    // radiusMeters: radius || 50 * 1000,
   };
   const query = new URLSearchParams(params);
   return axios({

@@ -1,13 +1,17 @@
-ARG NODE_VERSION=20.3.0
-FROM node:${NODE_VERSION}-alpine as base
+ARG NODE_VERSION=20.11.0
+FROM node:${NODE_VERSION} as base
 
 # (For Sharp image optimization) Libvips Compile with libimagequant and giflib
-RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community --repository http://dl-3.alpinelinux.org/alpine/edge/main vips-dev
+# RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community --repository http://dl-3.alpinelinux.org/alpine/edge/main vips-dev
 
 # Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# RUN apk add --no-cache libc6-compat
+
+RUN npm i npm@latest -g
+
+# Create app directory
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
