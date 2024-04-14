@@ -1,6 +1,7 @@
 // useFetchRestaurants.ts
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { isRestaurantOpen } from "@/components/RestaurantCard";
 import { setRestaurants } from "./shoppersSlice";
 import { onSnapshot, collection, where, query, limit } from "firebase/firestore";
 import { db } from "../pages/_app";
@@ -103,7 +104,7 @@ const useFetchRestaurants = () => {
                     }
                   });
                 }
-                if (data.isShowing) {
+                if (data.isShowing || data.enable_showing) {
                   tempRestaurants.push(data);
                 }
               });
@@ -111,24 +112,12 @@ const useFetchRestaurants = () => {
             // Sort the restaurants by open/closed and fanCount
             const sortedRestaurants = tempRestaurants
               .map((restaurant) => {
-                const isOpen =
-                  typeof restaurant.hours !== "undefined" &&
-                  (restaurant.menuStatus as any) !== false &&
-                  parseFloat(tempTime) >
-                    parseFloat(restaurant.hours.substring(0, 4)) &&
-                  parseFloat(tempTime) <
-                    parseFloat(restaurant.hours.substring(5, 9)) &&
-                  restaurant.isOpen === true &&
-                  (parseFloat(tempTime) >
-                    parseFloat((restaurant.menuHours as any).substring(0, 4)) ||
-                    restaurant.menuHours === "All Day") &&
-                  (parseFloat(tempTime) <
-                    parseFloat((restaurant.menuHours as any).substring(5, 9)) ||
-                    restaurant.menuHours === "All Day");
+                const isOpen = isRestaurantOpen(restaurant, tempTime);
 
                 return { ...restaurant, isOpen };
               })
               .sort((a, b) => {
+                // TODO: Make sure this is backwards compatible with Postgres `restaurant.enable_open`
                 if (a.isOpen === b.isOpen) {
                   return b.fanCount - a.fanCount;
                 } else {

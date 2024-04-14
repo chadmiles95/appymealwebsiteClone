@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { isRestaurantOpen } from "./RestaurantCard";
 
 interface Restaurant {
   [key: string]: any;
@@ -19,30 +20,8 @@ const OpenStatus: React.FC<OpenStatusProps> = ({
   // console.log("militaryTime", militaryTime);
 
   useEffect(() => {
-    if (
-      typeof restaurant.hours === "undefined" ||
-      restaurant?.menuStatus === false
-    ) {
-      setCurrentlyOpen(false);
-      // console.log("trigs1");
-    } else if (
-      parseFloat(militaryTime) >
-        parseFloat(restaurant?.hours?.substring(0, 4)) &&
-      parseFloat(militaryTime) <
-        parseFloat(restaurant?.hours?.substring(5, 9)) &&
-      restaurant.isOpen === true &&
-      (parseFloat(militaryTime) >
-        parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
-        restaurant?.menuHours === "All Day") &&
-      (parseFloat(militaryTime) <
-        parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
-        restaurant?.menuHours === "All Day")
-    ) {
-      setCurrentlyOpen(true);
-    } else {
-      setCurrentlyOpen(false);
-      // console.log("trigs2");
-    }
+    const isRestOpen = isRestaurantOpen(restaurant, militaryTime);
+    setCurrentlyOpen(isRestOpen);
   }, [restaurant, militaryTime]);
 
   return (

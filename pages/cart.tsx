@@ -123,7 +123,7 @@ const Cart = () => {
           {Object.keys(rest).length !== 0 && (
             <>
               <p className="text-dark text-sm md:text-lg">
-                {rest.address}, {rest.city}, {rest.state}
+                {rest.address || rest.address_line_1}, {rest.city || rest.address_city}, {rest.state || rest.address_state_province_id}
               </p>
               <HourDisplay hours={rest.hours} />
               <OpenStatus restaurant={rest} militaryTime={militaryTime} />
