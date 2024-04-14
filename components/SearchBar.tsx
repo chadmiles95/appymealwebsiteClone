@@ -22,8 +22,6 @@ const SearchBar = () => {
   const isRestaurantsSearchResultsVisible = useSelector((state: any) => state.shopper.isRestaurantsSearchResultsVisible);
 
   const getPredictions = (query: string) => {
-    dispatch(setRestaurantsFiltered([]));
-
     if (!query?.length) {
       dispatch(setIsRestaurantsSearchResultsVisible(false));
       dispatch(setRestaurantsSearchResults([]));
