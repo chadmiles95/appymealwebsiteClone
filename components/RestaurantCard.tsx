@@ -81,9 +81,9 @@ const RestaurantCard = ({ restaurant, updateTime }: any) => {
             <p className="text-lg font-semibold text-ellipsis">
               {restaurant.name}
             </p>
-            <p className="pt-0 mt-0 text-ellipsis">{restaurant.address}</p>
+            <p className="pt-0 mt-0 text-ellipsis">{restaurant.address || restaurant.address_line_1}</p>
             <p className="pt-0 mt-0">
-              {restaurant.city}, {restaurant.state}
+              {restaurant.city || restaurant.address_city}, {restaurant.state || restaurant.address_state_province_id}
             </p>
           </div>
           <Link

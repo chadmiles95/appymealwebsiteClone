@@ -104,7 +104,7 @@ const useFetchRestaurants = () => {
                     }
                   });
                 }
-                if (data.isShowing || (data as any).enable_showing) {
+                if (data.isShowing || data.enable_showing) {
                   tempRestaurants.push(data);
                 }
               });

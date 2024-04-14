@@ -184,7 +184,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
         </div>
         <div className="flex flex-col justify-start items-start gap-1 md:gap-0 ml-2 md:ml-0">
           <p className="text-dark text-sm md:text-lg">
-            {restaurant.address}, {restaurant.city}, {restaurant.state}
+            {restaurant.address || restaurant.address_line_1}, {restaurant.city || restaurant.address_city}, {restaurant.state || restaurant.address_state_province_id}
           </p>
           <HourDisplay hours={restaurant.hours} />
           <OpenStatus restaurant={restaurant} militaryTime={militaryTime} />
@@ -196,7 +196,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
       </div>
       <div className="w-full h-full flex flex-row flex-wrap lg:flex-nowrap  py-12 ">
         <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col  px-4 lg:px-16">
-          <p className="text-dark">{restaurant.desc}</p>
+          <p className="text-dark">{restaurant.desc || restaurant.description}</p>
           {/* restaurant photos extra */}
           <div className="mt-12 flex flex-row w-full overflow-x-scroll md:overflow-x-auto md:flex-wrap">
             {restaurant.images.map((image: string) => {
