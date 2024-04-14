@@ -667,6 +667,7 @@ const CartPageComponent = () => {
       }
       // LAYER  - checking if menu is available for restaurant
       else {
+        // TODO: Make sure this is backwards compatible with Postgres `restaurant.enable_open`
         if (res.isOpen === false) {
           setIsLoading(false);
           alert("Restaurant is currently closed");
@@ -764,7 +765,7 @@ const CartPageComponent = () => {
   };
 
   const handleClickDelivery = () => {
-    rest.enableDelivery === true
+    (rest.enableDelivery === true || rest.enable_delivery === true)
       ? setIsPickup(false)
       : alert("Delivery Not available");
   };

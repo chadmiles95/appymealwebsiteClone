@@ -5,6 +5,36 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+export const isRestaurantOpen = (restaurant: any, customerMilitaryTime: any): boolean => {
+  // Backwards compatibility for Firebase/Postges data
+  const isOpen = restaurant?.isOpen || restaurant?.enable_open;
+
+  if (
+    typeof restaurant.hours === "undefined" ||
+    restaurant?.menuStatus === false
+  ) {
+    return false;
+  }
+  
+  if (
+    parseFloat(customerMilitaryTime) >
+      parseFloat(restaurant?.hours?.substring(0, 4)) &&
+    parseFloat(customerMilitaryTime) <
+      parseFloat(restaurant?.hours?.substring(5, 9)) &&
+      isOpen === true &&
+    (parseFloat(customerMilitaryTime) >
+      parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
+      restaurant?.menuHours === "All Day") &&
+    (parseFloat(customerMilitaryTime) <
+      parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
+      restaurant?.menuHours === "All Day")
+  ) {
+    return true;
+  }
+  
+  return false;
+}
+
 const RestaurantCard = ({ restaurant, updateTime }: any) => {
   const [currentlyOpen, setCurrentlyOpen] = useState(false);
   const currentTime = useSelector((state: any) => state.shopper.currentTime);
@@ -17,28 +47,8 @@ const RestaurantCard = ({ restaurant, updateTime }: any) => {
   }, []);
 
   useEffect(() => {
-    if (
-      typeof restaurant.hours === "undefined" ||
-      restaurant?.menuStatus === false
-    ) {
-      setCurrentlyOpen(false);
-    } else if (
-      parseFloat(militaryTime) >
-        parseFloat(restaurant?.hours?.substring(0, 4)) &&
-      parseFloat(militaryTime) <
-        parseFloat(restaurant?.hours?.substring(5, 9)) &&
-      restaurant.isOpen === true &&
-      (parseFloat(militaryTime) >
-        parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
-        restaurant?.menuHours === "All Day") &&
-      (parseFloat(militaryTime) <
-        parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
-        restaurant?.menuHours === "All Day")
-    ) {
-      setCurrentlyOpen(true);
-    } else {
-      setCurrentlyOpen(false);
-    }
+    const isRestOpen = isRestaurantOpen(restaurant, militaryTime);
+    setCurrentlyOpen(isRestOpen);
   }, [
     restaurant.hours,
     militaryTime,
@@ -103,7 +113,7 @@ const RestaurantCard = ({ restaurant, updateTime }: any) => {
             <p className="text-white">Pickup</p>
           </div>
 
-          {restaurant.enableDelivery && (
+          {(restaurant.enableDelivery || restaurant.enable_delivery) && (
             <div className="flex bg-primary w-20 h-auto justify-center items-center rounded-xl">
               <p className="text-white">Delivery</p>
             </div>
