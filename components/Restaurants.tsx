@@ -41,7 +41,7 @@ const Restaurants: React.FC<RestaurantsProps> = () => {
       }
       {
         !restaurantSearch?.isLoading && restaurantData?.length < 1 &&
-        <div className="py-6 px-0 gap-4 mt-2 items-center justify-items-center">
+        <div className="py-6 px-2 gap-4 mt-2 items-center justify-items-center text-center">
           No restaurants found. Try searching a different location.
         </div>
       }

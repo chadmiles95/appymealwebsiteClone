@@ -97,9 +97,9 @@ const CartPageComponent = () => {
             setDeliveryAddress(tempAddress);
             setIsLoading(true);
             let randID = `testID: ${Math.random() * 10000}`;
-            let restAddress = `${rest.address} ${rest.city}, ${rest.state} ${rest.zip}`;
+            let restAddress = `${rest.address || rest.address_line_1} ${rest.city || rest.address_city}, ${rest.state || rest.address_state_province_id} ${rest.zip || rest.address_zipcode}`;
 
-            if (rest.deliveryType.type === "DoorDash") {
+            if ((rest.deliveryType || rest.delivery_type).type === "DoorDash") {
               try {
                 getDeliveryQuote(randID, tempAddress, restAddress).then(
                   (result: any) => {
@@ -150,16 +150,16 @@ const CartPageComponent = () => {
               }).then((miles: number) => {
                 if (miles <= 5) {
                   setDeliveryQuote(
-                    parseFloat((rest.deliveryType.near.price * 100).toFixed(2))
+                    parseFloat(((rest.deliveryType || rest.delivery_type).near.price * 100).toFixed(2))
                   );
                   setDeliveryAccepted(true);
                   setIsLoading(false);
                 } else if (
                   miles <= 10 &&
-                  rest.deliveryType.far.enable === true
+                  (rest.deliveryType || rest.delivery_type).far.enable === true
                 ) {
                   setDeliveryQuote(
-                    parseFloat((rest.deliveryType.far.price * 100).toFixed(2))
+                    parseFloat(((rest.deliveryType || rest.delivery_type).far.price * 100).toFixed(2))
                   );
                   setDeliveryAccepted(true);
                   setIsLoading(false);
@@ -216,7 +216,7 @@ const CartPageComponent = () => {
     //         setIsLoading(true);
     //         let randID = `testID: ${Math.random() * 10000}`;
     //         let restAddress = `${rest.address} ${rest.city}, ${rest.state} ${rest.zip}`;
-    //         if (rest.deliveryType.type === "DoorDash") {
+    //         if ((rest.deliveryType || rest.delivery_type).type === "DoorDash") {
     //           try {
     //             getDeliveryQuote(randID, tempAddress, restAddress).then(
     //               (result: any) => {
@@ -267,16 +267,16 @@ const CartPageComponent = () => {
     //           }).then((miles: number) => {
     //             if (miles <= 5) {
     //               setDeliveryQuote(
-    //                 parseFloat((rest.deliveryType.near.price * 100).toFixed(2))
+    //                 parseFloat(((rest.deliveryType || rest.delivery_type).near.price * 100).toFixed(2))
     //               );
     //               setDeliveryAccepted(true);
     //               setIsLoading(false);
     //             } else if (
     //               miles <= 10 &&
-    //               rest.deliveryType.far.enable === true
+    //               (rest.deliveryType || rest.delivery_type).far.enable === true
     //             ) {
     //               setDeliveryQuote(
-    //                 parseFloat((rest.deliveryType.far.price * 100).toFixed(2))
+    //                 parseFloat(((rest.deliveryType || rest.delivery_type).far.price * 100).toFixed(2))
     //               );
     //               setDeliveryAccepted(true);
     //               setIsLoading(false);
@@ -393,6 +393,8 @@ const CartPageComponent = () => {
     } else {
       //start getting order logic and order number setup
 
+      const taxRate = updatedRest?.taxRate || updatedRest?.fee_tax_rate || 0;
+      const webFee = updatedRest?.webFee || updatedRest?.fee_web || 0;
       let orderNumber = null;
       orderNumber = await getOrderNumber();
 
@@ -401,14 +403,14 @@ const CartPageComponent = () => {
         : tempUserEmail?.toLowerCase();
       let tempRestEmail = updatedRest?.email?.toLowerCase();
 
-      let recordTax = parseFloat((updatedRest?.taxRate - 1).toFixed(2));
+      let recordTax = parseFloat((taxRate - 1).toFixed(2));
 
-      let ddRestAddress = `${updatedRest.address} ${updatedRest.city}, ${updatedRest.state}, ${updatedRest.zip}`;
+      let ddRestAddress = `${updatedRest.address || updatedRest.address_line_1} ${updatedRest.city || updatedRest.address_city}, ${updatedRest.state || updatedRest.address_state_province_id}, ${updatedRest.zip || updatedRest.address_zipcode}`;
 
       const stipreAmt = parseFloat((totalAmt * 100).toFixed(2));
 
       let appyFee = parseFloat(
-        ((totalAmt / 100) * (updatedRest?.webFee / 100)).toFixed(2)
+        ((totalAmt / 100) * (webFee / 100)).toFixed(2)
       );
 
       if (orderNumber === null) {
@@ -423,7 +425,7 @@ const CartPageComponent = () => {
 
       let tempCalculatedTip = tip;
 
-      isPickup === false && updatedRest?.deliveryType?.type === "DoorDash"
+      isPickup === false && (updatedRest?.deliveryType || updatedRest.delivery_type)?.type === "DoorDash"
         ? (tempCalculatedTip = parseFloat((tip - dasherTip / 100).toFixed(2)))
         : null;
 
@@ -447,6 +449,7 @@ const CartPageComponent = () => {
         dasher_allowed_vehicles: ["car", "bicycle", "walking"],
         dropoff_requires_signature: false,
         customer: {
+          // TODO: Use a more reliable phone number formatter function (see normalize-phone-number.ts in appymeal-services)
           phone_number: `+1${phoneNumber}`,
           business_name: "AppyMeal",
           first_name: name,
@@ -468,7 +471,7 @@ const CartPageComponent = () => {
       //fix cart here:
 
       const expandedCart = cart
-        .map((item) => {
+        .map((item: any) => {
           return Array(item?.quantity)
             .fill(undefined)
             .map(() => ({
@@ -512,7 +515,7 @@ const CartPageComponent = () => {
         restaurantPhoneNumber: updatedRest?.phoneNumber,
         orderInfo: null, //stripe reponse goes here
         paymentIntent: null, //stripe payment intent ID and split from secret phrase. logic is in app
-        taxPercent: parseFloat((updatedRest?.taxRate / 100).toFixed(2)),
+        taxPercent: parseFloat((taxRate / 100).toFixed(2)),
         tipPercent: selectedTip,
         rewardPoints: 0,
         discountTotal: 0,
@@ -522,7 +525,7 @@ const CartPageComponent = () => {
         deliveryAddress: deliveryAddress,
         deliveryQuote: deliveryQuote,
         deliveryType:
-          isPickup === true ? null : updatedRest?.deliveryType?.type,
+          isPickup === true ? null : (updatedRest?.deliveryType || updatedRest.delivery_type)?.type,
         trackRewardDiscount: null,
         newRest: null,
         doorDashInfo: doorDashInfo,
@@ -667,6 +670,7 @@ const CartPageComponent = () => {
       }
       // LAYER  - checking if menu is available for restaurant
       else {
+        // TODO: Make sure this is backwards compatible with Postgres `restaurant.enable_open`
         if (res.isOpen === false) {
           setIsLoading(false);
           alert("Restaurant is currently closed");
@@ -764,7 +768,7 @@ const CartPageComponent = () => {
   };
 
   const handleClickDelivery = () => {
-    rest.enableDelivery === true
+    (rest.enableDelivery === true || rest.enable_delivery === true)
       ? setIsPickup(false)
       : alert("Delivery Not available");
   };

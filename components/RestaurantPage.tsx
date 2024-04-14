@@ -15,6 +15,7 @@ import OpenStatus from "./OpenStatus";
 import { FaCarSide } from "react-icons/fa";
 import { FaStore } from "react-icons/fa";
 import { colors } from "@/infastructure/theme/colors";
+import { isRestaurantOpen } from "./RestaurantCard";
 
 interface MenuItemProps {
   name: string;
@@ -53,28 +54,8 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
 
   //   SET RESTAURNAT OPEN/CLOSED DEPENDING ON TIME, MENU & MASTER TOGGLE
   useEffect(() => {
-    if (
-      typeof restaurant.hours === "undefined" ||
-      restaurant?.menuStatus === false
-    ) {
-      setCurrentlyOpen(false);
-    } else if (
-      parseFloat(militaryTime) >
-        parseFloat(restaurant?.hours?.substring(0, 4)) &&
-      parseFloat(militaryTime) <
-        parseFloat(restaurant?.hours?.substring(5, 9)) &&
-      restaurant.isOpen === true &&
-      (parseFloat(militaryTime) >
-        parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
-        restaurant?.menuHours === "All Day") &&
-      (parseFloat(militaryTime) <
-        parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
-        restaurant?.menuHours === "All Day")
-    ) {
-      setCurrentlyOpen(true);
-    } else {
-      setCurrentlyOpen(false);
-    }
+    const isRestOpen = isRestaurantOpen(restaurant, militaryTime);
+    setCurrentlyOpen(isRestOpen);
   }, [militaryTime, restaurant]);
 
   const handleMenuItemClick = (item: MenuItemProps) => {
@@ -203,7 +184,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
         </div>
         <div className="flex flex-col justify-start items-start gap-1 md:gap-0 ml-2 md:ml-0">
           <p className="text-dark text-sm md:text-lg">
-            {restaurant.address}, {restaurant.city}, {restaurant.state}
+            {restaurant.address || restaurant.address_line_1}, {restaurant.city || restaurant.address_city}, {restaurant.state || restaurant.address_state_province_id}
           </p>
           <HourDisplay hours={restaurant.hours} />
           <OpenStatus restaurant={restaurant} militaryTime={militaryTime} />
@@ -215,7 +196,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
       </div>
       <div className="w-full h-full flex flex-row flex-wrap lg:flex-nowrap  py-12 ">
         <div className="basis-full lg:basis-2/3 lg:flex-1 flex-auto flex flex-col  px-4 lg:px-16">
-          <p className="text-dark">{restaurant.desc}</p>
+          <p className="text-dark">{restaurant.desc || restaurant.description}</p>
           {/* restaurant photos extra */}
           <div className="mt-12 flex flex-row w-full overflow-x-scroll md:overflow-x-auto md:flex-wrap">
             {restaurant.images.map((image: string) => {
@@ -242,10 +223,10 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
             .filter(([category]) => category !== "properties")
             .map(([category, items]) => {
               const categoryProperties = restaurant.menus.properties.find(
-                (property) => property.name === category
+                (property: any) => property.name === category
               );
 
-              if (categoryProperties && !categoryProperties.isShowing) {
+              if (categoryProperties && !(categoryProperties.isShowing || categoryProperties.enable_showing)) {
                 return null; // Skip the category if isShowing is false
               }
 
@@ -257,7 +238,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                   <div className="py-6 px-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {items.map(
                       (item: any) =>
-                        item.isShowing && (
+                        (item.isShowing || item.enable_showing) && (
                           <div
                             key={item.name}
                             onClick={
@@ -323,7 +304,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
                 <p className="text-white text-xl">Pickup</p>
               </div> */}
 
-              {restaurant.enableDelivery && (
+              {(restaurant.enableDelivery || restaurant.enable_delivery) && (
                 <FaCarSide size={50} color={colors.brand.primary} />
                 // <div className="flex bg-primary w-36 h-auto justify-center items-center rounded-full py-1">
                 //   <p className="text-white text-xl">Delivery</p>
