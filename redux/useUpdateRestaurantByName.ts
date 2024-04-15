@@ -1,5 +1,6 @@
-import { db } from "../pages/_app";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { isMenuHours } from "@/components/RestaurantCard";
+import { db } from "../pages/_app";
 import { Restaurant } from "../type";
 
 const setTimeForUse = () => {
@@ -38,11 +39,7 @@ export const UseUpdateRestaurantByName = async (name: string) => {
       const menuLength = menuEntries.length;
 
       menuEntries.forEach(([key, value], i) => {
-        if (
-          (tempTime > parseFloat((value as string).substring(0, 4)) &&
-            tempTime < parseFloat((value as string).substring(5, 9))) ||
-          value === "All Day"
-        ) {
+        if (isMenuHours(tempTime.toString(), value as string)) {
           data = {
             ...data,
             hours: restaurant.hours[tempDay]?.time,

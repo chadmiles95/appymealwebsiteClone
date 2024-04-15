@@ -5,7 +5,23 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-export const isRestaurantOpen = (restaurant: any, customerMilitaryTime: any): boolean => {
+export const isRestaurantHours = (currentMilitaryTime: string, restaurant: {
+  hours?: string;
+}): boolean => {
+  return parseFloat(currentMilitaryTime) > parseFloat(restaurant?.hours?.substring(0, 4) || '0')
+  && parseFloat(currentMilitaryTime) < parseFloat(restaurant?.hours?.substring(5, 9) || '0');
+}
+
+export const isMenuHours = (currentMilitaryTime: string, menuHours?: string): boolean => {
+  if (menuHours === "All Day") {
+    return true;
+  }
+
+  return parseFloat(currentMilitaryTime) > parseFloat(menuHours?.substring(0, 4) || '0')
+  && parseFloat(currentMilitaryTime) < parseFloat(menuHours?.substring(5, 9) || '0')
+}
+
+export const isRestaurantAndMenuOpen = (currentMilitaryTime: string, restaurant: any): boolean => {
   // Backwards compatibility for Firebase/Postges data
   const isOpen = restaurant?.isOpen || restaurant?.enable_open;
 
@@ -16,23 +32,9 @@ export const isRestaurantOpen = (restaurant: any, customerMilitaryTime: any): bo
     return false;
   }
   
-  if (
-    parseFloat(customerMilitaryTime) >
-      parseFloat(restaurant?.hours?.substring(0, 4)) &&
-    parseFloat(customerMilitaryTime) <
-      parseFloat(restaurant?.hours?.substring(5, 9)) &&
-      isOpen === true &&
-    (parseFloat(customerMilitaryTime) >
-      parseFloat(restaurant?.menuHours?.substring(0, 4)) ||
-      restaurant?.menuHours === "All Day") &&
-    (parseFloat(customerMilitaryTime) <
-      parseFloat(restaurant?.menuHours?.substring(5, 9)) ||
-      restaurant?.menuHours === "All Day")
-  ) {
-    return true;
-  }
-  
-  return false;
+  return isOpen === true
+    && isRestaurantHours(currentMilitaryTime, restaurant)
+    && isMenuHours(currentMilitaryTime, restaurant.menuHours);
 }
 
 const RestaurantCard = ({ restaurant, updateTime }: any) => {
@@ -47,7 +49,7 @@ const RestaurantCard = ({ restaurant, updateTime }: any) => {
   }, []);
 
   useEffect(() => {
-    const isRestOpen = isRestaurantOpen(restaurant, militaryTime);
+    const isRestOpen = isRestaurantAndMenuOpen(militaryTime, restaurant);
     setCurrentlyOpen(isRestOpen);
   }, [
     restaurant.hours,
