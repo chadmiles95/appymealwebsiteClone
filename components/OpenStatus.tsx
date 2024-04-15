@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { isRestaurantOpen } from "./RestaurantCard";
+import { isRestaurantAndMenuOpen } from "./RestaurantCard";
 
 interface Restaurant {
   [key: string]: any;
@@ -20,7 +20,7 @@ const OpenStatus: React.FC<OpenStatusProps> = ({
   // console.log("militaryTime", militaryTime);
 
   useEffect(() => {
-    const isRestOpen = isRestaurantOpen(restaurant, militaryTime);
+    const isRestOpen = isRestaurantAndMenuOpen(militaryTime, restaurant);
     setCurrentlyOpen(isRestOpen);
   }, [restaurant, militaryTime]);
 

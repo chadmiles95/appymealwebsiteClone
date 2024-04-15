@@ -1,7 +1,7 @@
 // useFetchRestaurants.ts
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { isRestaurantOpen } from "@/components/RestaurantCard";
+import { isMenuHours, isRestaurantAndMenuOpen } from "@/components/RestaurantCard";
 import { setRestaurants } from "./shoppersSlice";
 import { onSnapshot, collection, where, query, limit } from "firebase/firestore";
 import { db } from "../pages/_app";
@@ -39,7 +39,7 @@ const useFetchRestaurants = () => {
   useEffect(() => {
     const retrieveRestaurants = async () => {
       try {
-        const { tempDay, tempTime }: any = await setTimeForUse();
+        const { tempDay, tempTime } = await setTimeForUse();
         const shouldUseFilteredList = restaurantSearch?.selectedId || restaurantsFiltered?.length;
 
         if (shouldUseFilteredList && !restaurantsFiltered?.length) {
@@ -73,13 +73,7 @@ const useFetchRestaurants = () => {
                   const menuLength = menuEntries.length;
 
                   menuEntries.forEach(([key, value], i) => {
-                    if (
-                      (parseFloat(tempTime) >
-                        parseFloat((value as string).substring(0, 4)) &&
-                        parseFloat(tempTime) <
-                          parseFloat((value as string).substring(5, 9))) ||
-                      value === "All Day"
-                    ) {
+                    if (isMenuHours(tempTime.toString(), value as string)) {
                       data = {
                         ...data,
                         hours: restaurant.hours[tempDay]?.time,
@@ -112,7 +106,7 @@ const useFetchRestaurants = () => {
             // Sort the restaurants by open/closed and fanCount
             const sortedRestaurants = tempRestaurants
               .map((restaurant) => {
-                const isOpen = isRestaurantOpen(restaurant, tempTime);
+                const isOpen = isRestaurantAndMenuOpen(tempTime.toString(), restaurant);
 
                 return { ...restaurant, isOpen };
               })

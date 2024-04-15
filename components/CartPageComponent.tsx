@@ -24,6 +24,7 @@ import { getOrderNumber } from "services/ordernumber";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/pages/_app";
 import useGoogleMaps from "./useGoogleMaps";
+import { isMenuHours, isRestaurantHours } from "./RestaurantCard";
 
 const CartPageComponent = () => {
   const { data: session } = useSession();
@@ -687,14 +688,7 @@ const CartPageComponent = () => {
             ? (tempTime = `${tempHour}0${tempMin}`)
             : (tempTime = `${tempHour}${tempMin}`);
 
-          if (
-            parseFloat(res.hours.substr(5, 4)) <= parseFloat(tempTime) ||
-            parseFloat(tempTime) < parseFloat(res.hours.substr(0, 4)) ||
-            res.hours === "closed" ||
-            (res.menuHours !== "All Day" &&
-              (parseFloat(tempTime) < parseFloat(res.menuHours.substr(0, 4)) ||
-                parseFloat(tempTime) >= parseFloat(res.menuHours.substr(5, 4))))
-          ) {
+          if (res.hours === "closed" || !isRestaurantHours(tempTime, res) || !isMenuHours(tempTime, res.menuHours)) {
             setIsLoading(false);
             alert("Restaurant is currently closed");
             resolve(false);
