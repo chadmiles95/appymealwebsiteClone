@@ -15,7 +15,7 @@ import OpenStatus from "./OpenStatus";
 import { FaCarSide } from "react-icons/fa";
 import { FaStore } from "react-icons/fa";
 import { colors } from "@/infastructure/theme/colors";
-import { isRestaurantOpen } from "./RestaurantCard";
+import { isRestaurantAndMenuOpen } from "./RestaurantCard";
 
 interface MenuItemProps {
   name: string;
@@ -54,7 +54,7 @@ export const RestaurantPage: React.FC<RestaurantPageProps> = ({
 
   //   SET RESTAURNAT OPEN/CLOSED DEPENDING ON TIME, MENU & MASTER TOGGLE
   useEffect(() => {
-    const isRestOpen = isRestaurantOpen(restaurant, militaryTime);
+    const isRestOpen = isRestaurantAndMenuOpen(militaryTime, restaurant);
     setCurrentlyOpen(isRestOpen);
   }, [militaryTime, restaurant]);
 
