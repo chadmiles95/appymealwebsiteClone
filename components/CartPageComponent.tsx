@@ -17,9 +17,9 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { getRestaurantByName } from "services/restaurants";
 import { getDeliveryQuote } from "../services/delivery";
 import Spinner from "./Spinner";
-import { UseUpdateRestaurantByName } from "redux/useUpdateRestaurantByName";
 import { getOrderNumber } from "services/ordernumber";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/pages/_app";
@@ -366,7 +366,7 @@ const CartPageComponent = () => {
 
     let updatedRest;
     try {
-      updatedRest = await UseUpdateRestaurantByName(rest.name);
+      updatedRest = await getRestaurantByName(rest.name);
     } catch (err) {
       console.log("err", err);
       alert("Error checking restaurant. Please try again.");

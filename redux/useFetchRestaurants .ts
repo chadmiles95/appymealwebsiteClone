@@ -6,6 +6,7 @@ import { setRestaurants } from "./shoppersSlice";
 import { onSnapshot, collection, where, query, limit } from "firebase/firestore";
 import { db } from "../pages/_app";
 import { Restaurant } from "../type";
+import { reformatRestaurant } from "../utilities/restaurants";
 
 const MAX_RESTAURANTS_PER_PAGE = 50;
 
@@ -39,7 +40,7 @@ const useFetchRestaurants = () => {
   useEffect(() => {
     const retrieveRestaurants = async () => {
       try {
-        const { tempDay, tempTime } = await setTimeForUse();
+        const { tempDay, tempTime }: any = await setTimeForUse();
         const shouldUseFilteredList = restaurantSearch?.selectedId || restaurantsFiltered?.length;
 
         if (shouldUseFilteredList && !restaurantsFiltered?.length) {
@@ -53,7 +54,7 @@ const useFetchRestaurants = () => {
         const unsubscribe = onSnapshot(
           restaurantsQuery,
           (snapshot) => {
-            const tempRestaurants: Restaurant[] = [];
+            const tempRestaurants: Partial<Restaurant>[] = [];
 
             snapshot.docs
               .map(
@@ -64,40 +65,8 @@ const useFetchRestaurants = () => {
                   } as Restaurant)
               )
               .forEach((restaurant: Restaurant) => {
-                const menus = restaurant.hours[tempDay]?.menus;
-                let data = { ...restaurant, menuStatus: false };
+                const data: Partial<Restaurant> = reformatRestaurant(restaurant, tempDay, tempTime);
 
-                if (menus) {
-                  const menuEntries = Object.entries(menus);
-
-                  const menuLength = menuEntries.length;
-
-                  menuEntries.forEach(([key, value], i) => {
-                    if (isMenuHours(tempTime.toString(), value as string)) {
-                      data = {
-                        ...data,
-                        hours: restaurant.hours[tempDay]?.time,
-                        menus: restaurant.menus[key],
-                        menuSelected: key,
-                        menuStatus: true,
-                        menuHours: value as any,
-                      };
-                    } else if (
-                      i === menuLength - 1 &&
-                      data.menuStatus !== true &&
-                      typeof data.hours[tempDay].menus !== "undefined"
-                    ) {
-                      data = {
-                        ...data,
-                        hours: data.hours[tempDay]?.time,
-                        menus: data.menus[key],
-                        menuSelected: key,
-                        menuStatus: true,
-                        menuHours: value as any,
-                      };
-                    }
-                  });
-                }
                 if (data.isShowing || data.enable_showing) {
                   tempRestaurants.push(data);
                 }
@@ -113,7 +82,7 @@ const useFetchRestaurants = () => {
               .sort((a, b) => {
                 // TODO: Make sure this is backwards compatible with Postgres `restaurant.enable_open`
                 if (a.isOpen === b.isOpen) {
-                  return b.fanCount - a.fanCount;
+                  return (b.fanCount || 0) - (a.fanCount || 0);
                 } else {
                   return a.isOpen ? -1 : 1;
                 }

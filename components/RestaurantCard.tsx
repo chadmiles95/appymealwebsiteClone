@@ -5,36 +5,109 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+const isSchemaHoursOpen = (hoursSchema: string[]) => {
+  const now = new Date();
+  const today = days[now.getUTCDay()];
+  const todaysSchema = hoursSchema?.find((row) => {
+      row.includes(today);
+  });
+  if (!todaysSchema) { return false; }
+  const schemaSplit = todaysSchema.split(' ');
+  const ranges = schemaSplit[1].trim().split(',');
+  return ranges.some((range) => {
+      const rangeSplit = range.split('-');
+      const openMilitaryTime = Number(rangeSplit[0].trim());
+      const closeMilitaryTime = Number(rangeSplit[1].trim());
+      const nowMilitaryTime = Number(`${now.getUTCHours()}${now.getUTCMinutes()}`);
+      return nowMilitaryTime > openMilitaryTime && nowMilitaryTime < closeMilitaryTime;
+  });
+}
+
 export const isRestaurantHours = (currentMilitaryTime: string, restaurant: {
   hours?: string;
+  opening_hours?: {
+      store_hours: {
+          schema: string[];
+          timezone: 'UTC';
+      };
+  };
 }): boolean => {
-  return parseFloat(currentMilitaryTime) > parseFloat(restaurant?.hours?.substring(0, 4) || '0')
-  && parseFloat(currentMilitaryTime) < parseFloat(restaurant?.hours?.substring(5, 9) || '0');
-}
-
-export const isMenuHours = (currentMilitaryTime: string, menuHours?: string): boolean => {
-  if (menuHours === "All Day") {
-    return true;
+  if (restaurant.opening_hours) {
+      return isSchemaHoursOpen(restaurant.opening_hours.store_hours?.schema);
   }
 
-  return parseFloat(currentMilitaryTime) > parseFloat(menuHours?.substring(0, 4) || '0')
-  && parseFloat(currentMilitaryTime) < parseFloat(menuHours?.substring(5, 9) || '0')
+  // Backwards compatible for Firebase
+  return parseFloat(currentMilitaryTime) > parseFloat(restaurant?.hours?.substring(0, 4) || '0')
+      && parseFloat(currentMilitaryTime) < parseFloat(restaurant?.hours?.substring(5, 9) || '0');
 }
 
-export const isRestaurantAndMenuOpen = (currentMilitaryTime: string, restaurant: any): boolean => {
+export const isMenuHours = (currentMilitaryTime: string, menuHours?: string, menu_hours?: {
+  [key: string]: {
+      schema: string[];
+      timezone: 'UTC';
+      enable_active: boolean;
+  }
+}): boolean => {
+  // Backwards compatible for Firebase
+  if (menuHours === "All Day") {
+      return true;
+  }
+
+  if (menu_hours) {
+      return Object.keys(menu_hours).some((key) => {
+          if (!menu_hours[key].enable_active) {
+              return false;
+          }
+          return isSchemaHoursOpen(menu_hours[key]?.schema);
+      })
+  }
+
+  // Backwards compatible for Firebase
+  return parseFloat(currentMilitaryTime) > parseFloat(menuHours?.substring(0, 4) || '0')
+      && parseFloat(currentMilitaryTime) < parseFloat(menuHours?.substring(5, 9) || '0')
+}
+
+export const isRestaurantAndMenuOpen = (currentMilitaryTime: string, restaurant: {
+  // Old format
+  hours?: any;
+  isOpen?: boolean;
+  menuStatus?: any;
+  menuHours?: any;
+  // New Format
+  enable_open?: boolean;
+  opening_hours?: {
+      menu_hours?: {
+          [key: string]: {
+              schema: string[];
+              timezone: 'UTC';
+              enable_active: boolean;
+          }
+      };
+      store_hours: {
+          schema: string[];
+          timezone: 'UTC';
+      };
+  };
+}): boolean => {
   // Backwards compatibility for Firebase/Postges data
   const isOpen = restaurant?.isOpen || restaurant?.enable_open;
 
-  if (
-    typeof restaurant.hours === "undefined" ||
-    restaurant?.menuStatus === false
-  ) {
-    return false;
+  if (!isOpen) {
+      return false;
   }
-  
-  return isOpen === true
-    && isRestaurantHours(currentMilitaryTime, restaurant)
-    && isMenuHours(currentMilitaryTime, restaurant.menuHours);
+
+  // Backwards compatible for Firebase
+  if (
+      (typeof restaurant.hours === "undefined" || restaurant?.menuStatus === false)
+      && !restaurant.opening_hours
+  ) {
+      return false;
+  }
+
+  return isRestaurantHours(currentMilitaryTime, restaurant)
+      && isMenuHours(currentMilitaryTime, restaurant.menuHours, restaurant?.opening_hours?.menu_hours);
 }
 
 const RestaurantCard = ({ restaurant, updateTime }: any) => {

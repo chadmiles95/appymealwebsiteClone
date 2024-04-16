@@ -41,11 +41,24 @@ describe('Home', () => {
       enableFans: true,
       enableDelivery: true,
       enablePrinting: true,
-      deliveryType: {},
+      deliveryType: {
+        near: {
+            enable: true,
+            price: 1,
+        },
+        far: {
+            enable: false,
+            price: 1,
+        },
+        type: 'DoorDash',
+      },
       expectedWaitTime: 123,
       menuSelected: 'abc',
       menuHours: 'abc',
-      menuStatus: 'foo'
+      menuStatus: 'foo',
+      webFee: 1,
+      appFee: 1,
+      taxRate: 1,
     };
     render(
       <ThemeProvider>
