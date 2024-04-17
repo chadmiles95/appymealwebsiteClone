@@ -3,37 +3,40 @@ import { db } from "../pages/_app";
 import { Restaurant } from "../type";
 import { reformatRestaurant } from "../utilities/restaurants";
 
+const MAX_RESTAURANTS_PER_PAGE = 50;
+
+
 const setTimeForUse = () => {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
 
-  const weekday = ["sun", "mon", "tues", "wed", "thurs", "fri", "sat"];
-  let tempDay = weekday[d.getDay()];
+    const weekday = ["sun", "mon", "tues", "wed", "thurs", "fri", "sat"];
+    let tempDay = weekday[d.getDay()];
 
-  let hour = d.getUTCHours();
-  let minutes = d.getMinutes();
+    let hour = d.getUTCHours();
+    let minutes = d.getMinutes();
 
-  let tempTime = parseFloat(
-    `${hour.toString().padStart(2, "0")}${minutes.toString().padStart(2, "0")}`
-  );
-  return { tempDay, tempTime };
+    let tempTime = parseFloat(
+        `${hour.toString().padStart(2, "0")}${minutes.toString().padStart(2, "0")}`
+    );
+    return { tempDay, tempTime };
 };
 
 export const getRestaurantByName = async (name: string) => {
-  const restaurantDoc = doc(db, "restaurants", name);
-  const restaurantSnapshot = await getDoc(restaurantDoc);
+    const restaurantDoc = doc(db, "restaurants", name);
+    const restaurantSnapshot = await getDoc(restaurantDoc);
 
-  if (restaurantSnapshot.exists()) {
-    const { tempDay, tempTime }: any = setTimeForUse();
-    const restaurant: Partial<Restaurant> = {
-      id: restaurantSnapshot.id,
-      ...restaurantSnapshot.data(),
-    };
+    if (restaurantSnapshot.exists()) {
+        const { tempDay, tempTime }: any = setTimeForUse();
+        const restaurant: Partial<Restaurant> = {
+            id: restaurantSnapshot.id,
+            ...restaurantSnapshot.data(),
+        };
 
-    const data: Partial<Restaurant> = reformatRestaurant(restaurant, tempDay, tempTime);
+        const data: Partial<Restaurant> = reformatRestaurant(restaurant, tempDay, tempTime);
 
-    return data;
-  } else {
-    throw new Error("Restaurant does not exist");
-  }
+        return data;
+    } else {
+        throw new Error("Restaurant does not exist");
+    }
 };

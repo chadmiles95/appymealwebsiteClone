@@ -83,8 +83,7 @@ const Navbar = () => {
       searchRestaurantsByLocation({
         latitude: userLocation.latitude,
         longitude: userLocation.longitude,
-      }).then((response) => {
-        const nearbyRestaurants = response.data;
+      }).then((nearbyRestaurants) => {
         dispatch(setRestaurantsFiltered(nearbyRestaurants))
       }).catch((err) => {
         console.log(err);
