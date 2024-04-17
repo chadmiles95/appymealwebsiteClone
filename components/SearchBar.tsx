@@ -86,8 +86,7 @@ const SearchBar = () => {
         return searchRestaurantsByLocation({
           latitude: lat,
           longitude: lng,
-        }).then((response) => {
-          const nearbyRestaurants = response.data;
+        }).then((nearbyRestaurants) => {
           dispatch(setRestaurantsFiltered(nearbyRestaurants))
         })
       }).catch((err) => {
