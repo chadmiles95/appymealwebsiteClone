@@ -12,7 +12,24 @@ module.exports = {
       container: "1520px",
       contentContainer: "1280px",
     },
+   
+    
     extend: {
+      keyframes: {
+        'color-fill': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
+      animation: {
+        'color-fill': 'color-fill 1s ease forwards',
+      },
+      height: {
+        ninetyPercent: "91.5%"
+      },
+      backgroundSize: {
+        'full-width': '200% 100%',
+      },
       screens: {
         xs: "320px",
         sm: "375px",
@@ -31,7 +48,10 @@ module.exports = {
         hoverBg: "#004f9a",
         lightText: "#46474a",
         primary: "#BF1F2E",
-        secondary: "#CC4C58",
+        secondary: "#BF1F2E",
+        third: "#FCF7F8",
+        fourth: "#4E8098",
+        fifth: "#90C2E7",
         muted: "#D97982",
         preparing: "yellow",
         dark: "#240115",
@@ -46,5 +66,9 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    
+  
+  ],
+  
 };

@@ -116,26 +116,68 @@ const Navbar = () => {
   }, [productData]);
 
   return (
-    <div className="w-full bg-smoke text-white sticky top-0 z-50">
-      <div className="w-full border-b-[1px] border-b-dark">
-        <div className="max-w-container h-20 mx-0 md:mx-auto px-0 md:px-4 flex items-center justify-between gap-2">
+    <div className="w-full bg-secondary text-white sticky top-0 z-50 ">
+      <div className="w-full ">
+        <div className="max-w-Container h-20 mx-0 md:mx-auto px-0 md:px-4 flex items-center justify-between gap-2">
           {/* LOGO */}
+          
           <Link href="/">
-            <div className="navBarHover">
-              <Image src={CircleLogo} className="w-10 md:w-12" alt="logo" />
+            <div className="navBarHover ">
+              
               <span className="">
                 <p className="font-semibold text-sm md:text-xl text-dark">
-                  AppyMeal
+                  Restaurant 
                 </p>
               </span>
+              
+              
             </div>
           </Link>
           <div></div>
+          
+          
           <div>
             <div></div>
           </div>
-          <div className="h-10 flex flex-1 relative"></div>
+          <div className="h-10 flex flex-1 "></div>
           <div></div>
+        
+          
+          
+          
+         
+          <div  className=" max-w-contentContainer  gap-6 mr-4 md:mt-0 hidden lg:block">
+          <Link href="/restaurants/Adriatic Grill">
+          <button className=" animated-bg px-2 h-9   text-dark    flex items-center justify-center gap-1  hover:text-white duration-300  bg-smoke   ">
+          
+          
+          <p className="">Menu</p>
+          </button>
+          </Link>
+          <Link href="/restaurants/Adriatic Grill">
+          <button className=" animated-bg px-2 h-9   text-dark    flex items-center justify-center gap-1  hover:text-white duration-300  bg-smoke   ">
+          
+          
+          <p className="">Order Online</p>
+          </button>
+          </Link>
+          <Link href="/restaurants/Adriatic Grill">
+          <button className="bg-smoke animated-bg px-2 h-9   text-dark    flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 ">
+          <p >Catering</p>
+          </button>
+          </Link>
+          <Link href="/restaurants/Adriatic Grill">
+          <button className="bg-smoke  animated-bg px-2 h-9   text-dark    flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 ">
+          <p >Loyalty</p>
+          </button>
+          </Link>
+          <Link href="/Contact">
+          <button className="bg-smoke  animated-bg px-2 h-9   text-dark    flex items-center justify-center gap-1 hover:bg-dark hover:text-white duration-300 ">
+          <p >Contact</p>
+          </button>
+          </Link>
+          </div>
+
           {/* account starts here */}
           {userInfo ? (
             <div onClick={() => signOut()} className="navBarHover">
