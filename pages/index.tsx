@@ -11,11 +11,12 @@ export default function Home({ productData }: Props) {
   return (
     <>
       <Head>
+      
         <title>Appymeal.com | Order Now</title>
         <meta name="description" content="AppyMeal Online Ordering" />
       </Head>
-      <main className="bg-lightBlue flex-1 flex flex-col">
-        <div className="max-w-container mx-auto bg-white flex-1 flex flex-col">
+      <main className=" flex-1 flex flex-col bg-primary">
+        <div className="max-w-container mx-auto flex-1 flex flex-col bg-primary">
           <LandingPage />
         </div>
       </main>
